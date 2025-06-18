@@ -97,7 +97,7 @@ When users ask about "today", "now", "current time", etc., use this information.
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'HTTP-Referer': 'https://expo.dev',
-        'X-Title': 'Personal Assistant App',
+        'X-Title': 'Jarva Assistant App',
       },
       body: JSON.stringify({
         model: GEMINI_MODEL,
@@ -117,17 +117,7 @@ When users ask about "today", "now", "current time", etc., use this information.
     if (onStream && response.body) {
       return await handleStreamResponse(response, onStream);
     } else {
-      const responseText = await response.text();
-      
-      // Try to parse JSON
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('Failed to parse OpenRouter response:', responseText);
-        throw new Error('Invalid response format from OpenRouter API');
-      }
-      
+      const data = await response.json();
       return data.choices?.[0]?.message?.content || 'No response received from AI service';
     }
   } catch (error) {
@@ -155,7 +145,7 @@ const callPerplexityAI = async (
     if (systemMessage) {
       perplexityMessages.push({
         role: 'system',
-        content: `You are a helpful AI assistant with access to current web information. Provide accurate, up-to-date answers based on your search results.
+        content: `You are Jarva, a helpful AI assistant with access to current web information. Provide accurate, up-to-date answers based on your search results.
 
 CURRENT DATE & TIME CONTEXT:
 - Today is: ${currentDateTime.date}
@@ -176,8 +166,6 @@ Use web search to provide current, accurate information.`
       temperature: 0.7,
       stream: !!onStream,
     };
-
-    console.log('Perplexity request:', JSON.stringify(requestBody, null, 2));
 
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
@@ -200,19 +188,7 @@ Use web search to provide current, accurate information.`
     if (onStream && response.body) {
       return await handleStreamResponse(response, onStream);
     } else {
-      const responseText = await response.text();
-      
-      // Try to parse JSON
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('Failed to parse Perplexity response:', responseText);
-        // Fallback to Gemini
-        console.log('Falling back to Gemini AI due to parse error...');
-        return await callGeminiAI(messages, currentDateTime, onStream);
-      }
-      
+      const data = await response.json();
       return data.choices?.[0]?.message?.content || 'No response received from search service';
     }
   } catch (error) {
@@ -267,7 +243,7 @@ const handleStreamResponse = async (
             }
           } catch (e) {
             // Skip invalid JSON lines - this is normal for streaming
-            console.warn('Skipping invalid JSON chunk:', data.substring(0, 100));
+            continue;
           }
         }
       }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Volume2, VolumeX, Wifi } from 'lucide-react-native';
+import { Volume2, VolumeX, Sparkles } from 'lucide-react-native';
 import { Message } from '@/types';
 import { useSpeechStore } from '@/store/speechStore';
 import { Platform } from 'react-native';
@@ -31,7 +31,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
       <View style={[styles.bubble, isUser ? styles.userBubble : styles.assistantBubble]}>
         {isUser ? (
           <LinearGradient
-            colors={[colors.primary, colors.primaryLight]}
+            colors={[colors.primary, colors.accent]}
             style={styles.userBubbleGradient}
           >
             <Text style={[styles.text, styles.userText]}>
@@ -46,7 +46,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
             
             {isStreaming && (
               <View style={styles.streamingIndicator}>
-                <ActivityIndicator size="small" color={colors.primary} />
+                <View style={styles.streamingDot} />
                 <Text style={styles.streamingText}>Thinking...</Text>
               </View>
             )}
@@ -56,11 +56,16 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
                 style={styles.speakButton} 
                 onPress={handleToggleSpeech}
               >
-                {isThisMessageSpeaking ? (
-                  <VolumeX size={16} color={colors.primary} />
-                ) : (
-                  <Volume2 size={16} color={colors.textSecondary} />
-                )}
+                <LinearGradient
+                  colors={isThisMessageSpeaking ? [colors.accent, colors.primary] : [colors.surfaceSecondary, colors.surfaceTertiary]}
+                  style={styles.speakButtonGradient}
+                >
+                  {isThisMessageSpeaking ? (
+                    <VolumeX size={16} color={colors.text} />
+                  ) : (
+                    <Volume2 size={16} color={colors.textSecondary} />
+                  )}
+                </LinearGradient>
               </TouchableOpacity>
             )}
           </View>
@@ -78,7 +83,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 8,
+    marginVertical: 12,
     maxWidth: '85%',
   },
   userContainer: {
@@ -90,34 +95,35 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   bubble: {
-    borderRadius: 20,
+    borderRadius: 24,
     overflow: 'hidden',
     shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
   },
   userBubble: {
-    marginLeft: 40,
+    marginLeft: 48,
   },
   assistantBubble: {
     backgroundColor: colors.surface,
-    marginRight: 40,
+    marginRight: 48,
     borderWidth: 0.5,
     borderColor: colors.border,
   },
   userBubbleGradient: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
   },
   assistantBubbleContent: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
   },
   text: {
     fontSize: 16,
-    lineHeight: 22,
+    lineHeight: 24,
+    letterSpacing: 0.2,
   },
   userText: {
     color: colors.text,
@@ -125,39 +131,51 @@ const styles = StyleSheet.create({
   },
   assistantText: {
     color: colors.text,
+    fontWeight: '400',
   },
   timestamp: {
-    fontSize: 11,
-    marginTop: 6,
+    fontSize: 12,
+    marginTop: 8,
     fontWeight: '500',
+    letterSpacing: 0.3,
   },
   userTimestamp: {
     color: colors.textTertiary,
     alignSelf: 'flex-end',
-    marginRight: 8,
+    marginRight: 12,
   },
   assistantTimestamp: {
     color: colors.textTertiary,
     alignSelf: 'flex-start',
-    marginLeft: 8,
+    marginLeft: 12,
   },
   speakButton: {
-    marginTop: 8,
+    marginTop: 12,
     alignSelf: 'flex-end',
-    padding: 6,
-    borderRadius: 12,
-    backgroundColor: colors.surfaceSecondary,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  speakButtonGradient: {
+    padding: 8,
+    borderRadius: 16,
   },
   streamingIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 12,
+  },
+  streamingDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.primary,
+    marginRight: 8,
   },
   streamingText: {
-    fontSize: 12,
+    fontSize: 13,
     color: colors.textSecondary,
-    marginLeft: 8,
     fontStyle: 'italic',
     fontWeight: '500',
+    letterSpacing: 0.2,
   },
 });

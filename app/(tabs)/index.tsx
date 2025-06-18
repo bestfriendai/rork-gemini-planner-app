@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, FlatList, Text, ActivityIndicator, KeyboardAvoidingView, Platform, TouchableOpacity, Alert } from 'react-native';
-import { MessageSquare, ListPlus, Wifi, WifiOff, Calendar, Clock, MapPin, Calculator } from 'lucide-react-native';
+import { MessageSquare, ListPlus, Sparkles } from 'lucide-react-native';
 import { useChatStore } from '@/store/chatStore';
 import { useTaskStore } from '@/store/taskStore';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -43,8 +43,8 @@ export default function AssistantScreen() {
       });
       
       const greeting = username 
-        ? `Hello ${username}! I'm Gemini, your personal assistant powered by Google AI. Today is ${currentDate} and it's currently ${currentTime}. I can help you plan your day, create tasks, search the web for current information, answer questions, calculate math problems, and much more. Try asking me to schedule something for you or search for recent news!` 
-        : `Hello! I'm Gemini, your personal assistant powered by Google AI. Today is ${currentDate} and it's currently ${currentTime}. I can help you plan your day, create tasks, search the web for current information, answer questions, calculate math problems, and much more. Try asking me to schedule something for you or search for recent news!`;
+        ? `Hello ${username}! I'm Jarva, your intelligent personal assistant. Today is ${currentDate} and it's currently ${currentTime}. I can help you plan your day, create tasks, search the web for current information, answer questions, calculate math problems, and much more. Try asking me to schedule something for you or search for recent news!` 
+        : `Hello! I'm Jarva, your intelligent personal assistant. Today is ${currentDate} and it's currently ${currentTime}. I can help you plan your day, create tasks, search the web for current information, answer questions, calculate math problems, and much more. Try asking me to schedule something for you or search for recent news!`;
       
       addMessage({
         role: 'assistant',
@@ -127,22 +127,6 @@ export default function AssistantScreen() {
       'books': 'Recommend some popular books to read',
       'health': 'Give me some daily health and wellness tips',
       'productivity': 'Share some productivity tips for better focus',
-      'goals': 'Help me set and achieve my personal goals',
-      'learning': 'Suggest some online learning resources and courses',
-      'shopping': 'Help me create a grocery shopping list',
-      'workout': 'Create a workout plan for beginners',
-      'meditation': 'Guide me through a 5-minute meditation',
-      'creative': 'Give me some creative project ideas',
-      'business': 'Share some business and entrepreneurship tips',
-      'entertainment': 'What are some good movies or shows to watch?',
-      'technology': 'What are the latest technology trends and innovations?',
-      'science': 'Tell me some interesting science facts',
-      'explore': 'Suggest some interesting topics to explore',
-      'temperature': 'What is the current temperature in my area?',
-      'favorites': 'Help me organize my favorite things',
-      'podcast': 'Recommend some popular podcasts to listen to',
-      'device_info': 'Tell me about my device and platform',
-      'internet_status': 'Check my internet connection status',
     };
     
     const message = quickActions[action];
@@ -205,7 +189,7 @@ export default function AssistantScreen() {
             <EmptyState
               title="Your AI Assistant"
               message="Ask me anything about planning your day, managing tasks, current events, calculations, or getting things done efficiently. I can search the web for up-to-date information!"
-              icon={<MessageSquare size={60} color={colors.primary} />}
+              icon={<Sparkles size={64} color={colors.primary} />}
             />
             <QuickActions onAction={handleQuickAction} />
           </View>
@@ -231,7 +215,7 @@ export default function AssistantScreen() {
             onPress={handleAddExtractedTasks}
           >
             <LinearGradient
-              colors={[colors.primary, colors.primaryLight]}
+              colors={[colors.primary, colors.accent]}
               style={styles.taskPromptGradient}
             >
               <ListPlus size={20} color={colors.text} />
@@ -267,29 +251,30 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messageList: {
-    padding: 16,
-    paddingBottom: 100,
+    padding: 20,
+    paddingBottom: 120,
   },
   taskPrompt: {
-    margin: 16,
-    borderRadius: 16,
+    margin: 20,
+    borderRadius: 20,
     overflow: 'hidden',
     shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 12,
   },
   taskPromptGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    padding: 20,
     justifyContent: 'center',
   },
   taskPromptText: {
     color: colors.text,
-    fontWeight: '600',
-    marginLeft: 8,
+    fontWeight: '700',
+    marginLeft: 12,
     fontSize: 16,
+    letterSpacing: 0.3,
   },
 });

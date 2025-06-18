@@ -15,9 +15,9 @@ export default function TabLayout() {
           backgroundColor: Platform.OS === 'ios' ? 'transparent' : colors.surface,
           borderTopColor: colors.border,
           borderTopWidth: 0.5,
-          paddingTop: 8,
-          paddingBottom: 8,
-          height: 84,
+          paddingTop: 12,
+          paddingBottom: 12,
+          height: 88,
           position: 'absolute',
         },
         tabBarBackground: Platform.OS === 'ios' ? () => (
@@ -39,14 +39,16 @@ export default function TabLayout() {
         },
         headerShadowVisible: false,
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: '600',
-          marginTop: 4,
+          marginTop: 6,
+          letterSpacing: 0.5,
         },
         headerTitleStyle: {
           fontWeight: '700',
-          fontSize: 20,
+          fontSize: 22,
           color: colors.text,
+          letterSpacing: -0.5,
         },
       }}
     >
@@ -56,7 +58,7 @@ export default function TabLayout() {
           title: "Assistant",
           tabBarLabel: "Assistant",
           tabBarIcon: ({ color, size }) => <MessageSquare size={size} color={color} />,
-          headerTitle: "Gemini Assistant",
+          headerTitle: "Jarva",
         }}
       />
       <Tabs.Screen

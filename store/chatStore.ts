@@ -50,7 +50,7 @@ export const useChatStore = create<ChatState>()(
         return [
           { 
             role: 'system', 
-            content: `You are a helpful personal assistant named Gemini, focused on planning, scheduling, productivity, and providing current information.
+            content: `You are Jarva, a helpful personal assistant focused on planning, scheduling, productivity, and providing current information.
 
 CURRENT CONTEXT:
 - Date and time: ${dateTimeString}

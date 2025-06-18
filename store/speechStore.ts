@@ -2,54 +2,6 @@ import { create } from 'zustand';
 import { Platform } from 'react-native';
 import * as Speech from 'expo-speech';
 
-// Web Speech API type definitions
-interface SpeechRecognitionEvent extends Event {
-  results: SpeechRecognitionResultList;
-  resultIndex: number;
-}
-
-interface SpeechRecognitionResultList {
-  readonly length: number;
-  item(index: number): SpeechRecognitionResult;
-  [index: number]: SpeechRecognitionResult;
-}
-
-interface SpeechRecognitionResult {
-  readonly length: number;
-  item(index: number): SpeechRecognitionAlternative;
-  [index: number]: SpeechRecognitionAlternative;
-  isFinal: boolean;
-}
-
-interface SpeechRecognitionAlternative {
-  transcript: string;
-  confidence: number;
-}
-
-interface SpeechRecognition extends EventTarget {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  onresult: ((event: SpeechRecognitionEvent) => void) | null;
-  onend: (() => void) | null;
-  onerror: ((event: any) => void) | null;
-  start(): void;
-  stop(): void;
-}
-
-interface SpeechRecognitionConstructor {
-  new(): SpeechRecognition;
-}
-
-// Extend Window interface
-declare global {
-  interface Window {
-    SpeechRecognition?: SpeechRecognitionConstructor;
-    webkitSpeechRecognition?: SpeechRecognitionConstructor;
-    speechRecognition?: SpeechRecognition | null;
-  }
-}
-
 interface SpeechState {
   isSpeaking: boolean;
   isListening: boolean;
@@ -172,88 +124,61 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
     }
     
     // Check if browser supports speech recognition
-    const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognitionAPI) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
       console.error('Speech recognition not supported in this browser');
       return;
     }
     
     try {
       // Stop any existing recognition
-      if ((window as any).speechRecognition) {
-        (window as any).speechRecognition.stop();
-        (window as any).speechRecognition = null;
-      }
+      get().stopListening();
 
       // Create recognition instance
-      const recognition = new SpeechRecognitionAPI();
+      const recognition = new SpeechRecognition();
       recognition.continuous = false;
-      recognition.interimResults = true;
+      recognition.interimResults = false;
       recognition.lang = 'en-US';
       recognition.maxAlternatives = 1;
       
-      // Store recognition instance in window to access it later
-      (window as any).speechRecognition = recognition;
-      
-      let finalTranscript = '';
-      let timeoutId: NodeJS.Timeout;
+      let hasResult = false;
       
       // Handle results
-      recognition.onresult = (event: any) => {
-        let interimTranscript = '';
-        
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            finalTranscript += transcript;
-          } else {
-            interimTranscript += transcript;
+      recognition.onresult = (event) => {
+        if (event.results.length > 0) {
+          const transcript = event.results[0][0].transcript;
+          if (transcript.trim()) {
+            hasResult = true;
+            callback(transcript.trim());
           }
         }
-        
-        // Call callback with final transcript when available
-        if (finalTranscript.trim()) {
-          callback(finalTranscript.trim());
-          finalTranscript = '';
-          
-          // Auto-stop after getting result
-          setTimeout(() => {
-            get().stopListening();
-          }, 500);
-        }
-        
-        // Clear timeout and set new one for interim results
-        if (timeoutId) clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          if (interimTranscript.trim()) {
-            callback(interimTranscript.trim());
-          }
-          get().stopListening();
-        }, 3000); // Stop after 3 seconds of silence
       };
       
       // Handle end
       recognition.onend = () => {
-        if (timeoutId) clearTimeout(timeoutId);
         set({ isListening: false });
-        if ((window as any).speechRecognition) {
-          (window as any).speechRecognition = null;
+        if (!hasResult) {
+          console.log('No speech detected');
         }
       };
       
       // Handle errors
-      recognition.onerror = (event: any) => {
+      recognition.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
-        if (timeoutId) clearTimeout(timeoutId);
         set({ isListening: false });
-        if ((window as any).speechRecognition) {
-          (window as any).speechRecognition = null;
-        }
       };
       
       // Start listening
       recognition.start();
       set({ isListening: true });
+      
+      // Auto-stop after 10 seconds
+      setTimeout(() => {
+        if (get().isListening) {
+          recognition.stop();
+        }
+      }, 10000);
+      
     } catch (error) {
       console.error('Failed to start speech recognition:', error);
       set({ isListening: false });
@@ -264,9 +189,9 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
     if (Platform.OS !== 'web') return;
     
     try {
-      if ((window as any).speechRecognition) {
-        (window as any).speechRecognition.stop();
-        (window as any).speechRecognition = null;
+      // Stop any active recognition
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
       }
     } catch (error) {
       console.error('Error stopping speech recognition:', error);
