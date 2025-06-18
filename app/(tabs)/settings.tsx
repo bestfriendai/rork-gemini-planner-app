@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Alert, Platform, Switch } from 'react-native';
-import { User, Bell, Trash2, Moon, Info, Volume2, Wifi, Globe, Smartphone, Monitor } from 'lucide-react-native';
+import { User, Bell, Trash2, Moon, Info, Volume2, Wifi, Globe, Smartphone, Monitor, Mic, Speaker } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useChatStore } from '@/store/chatStore';
 import { useTaskStore } from '@/store/taskStore';
@@ -17,6 +17,7 @@ export default function SettingsScreen() {
   const [nameInput, setNameInput] = useState(username);
   const [textToSpeech, setTextToSpeech] = useState(true);
   const [webSearch, setWebSearch] = useState(true);
+  const [voiceInput, setVoiceInput] = useState(true);
   
   const handleSaveName = () => {
     setUsername(nameInput.trim());
@@ -117,10 +118,19 @@ export default function SettingsScreen() {
         <SettingsItem
           title="Text-to-Speech"
           subtitle="Allow assistant to speak responses"
-          icon={<Volume2 size={22} color="#4A86E8" />}
+          icon={<Speaker size={22} color="#4A86E8" />}
           isSwitch
           switchValue={textToSpeech}
           onSwitchChange={toggleTextToSpeech}
+        />
+        
+        <SettingsItem
+          title="Voice Input"
+          subtitle={Platform.OS === 'web' ? "Speech-to-text available" : "Recording available (manual transcription)"}
+          icon={<Mic size={22} color="#4A86E8" />}
+          isSwitch
+          switchValue={voiceInput}
+          onSwitchChange={setVoiceInput}
         />
         
         <SettingsItem
@@ -143,12 +153,12 @@ export default function SettingsScreen() {
       </View>
       
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Platform Features</Text>
+        <Text style={styles.sectionTitle}>Platform Capabilities</Text>
         
         <SettingsItem
           title="Speech Recognition"
-          subtitle={Platform.OS === 'web' ? "Available (Web)" : "Not available on mobile"}
-          icon={Platform.OS === 'web' ? <Monitor size={22} color="#4A86E8" /> : <Smartphone size={22} color="#6E7A8A" />}
+          subtitle={Platform.OS === 'web' ? "Full speech-to-text available" : "Recording with manual transcription"}
+          icon={Platform.OS === 'web' ? <Monitor size={22} color="#4A86E8" /> : <Smartphone size={22} color="#F9A826" />}
         />
         
         <SettingsItem
@@ -156,10 +166,22 @@ export default function SettingsScreen() {
           subtitle="Text-to-speech available on all platforms"
           icon={<Volume2 size={22} color="#4A86E8" />}
         />
+        
+        <SettingsItem
+          title="Web Search"
+          subtitle="Real-time internet search via Perplexity AI"
+          icon={<Wifi size={22} color="#4A86E8" />}
+        />
+        
+        <SettingsItem
+          title="Task Management"
+          subtitle="Create, organize, and track your tasks"
+          icon={<Bell size={22} color="#4A86E8" />}
+        />
       </View>
       
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Data</Text>
+        <Text style={styles.sectionTitle}>Data Management</Text>
         
         <SettingsItem
           title="Clear Chat History"
@@ -170,7 +192,7 @@ export default function SettingsScreen() {
       </View>
       
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>System Info</Text>
+        <Text style={styles.sectionTitle}>System Information</Text>
         
         <SettingsItem
           title="Current Date"
@@ -186,19 +208,19 @@ export default function SettingsScreen() {
         
         <SettingsItem
           title="Platform"
-          subtitle={Platform.OS === 'web' ? 'Web Browser' : `${Platform.OS} App`}
+          subtitle={Platform.OS === 'web' ? 'Web Browser' : `${Platform.OS} App (v${Platform.Version})`}
           icon={<Info size={22} color="#4A86E8" />}
         />
         
         <SettingsItem
-          title="Version"
-          subtitle="1.0.0"
+          title="App Version"
+          subtitle="1.0.0 - Personal Assistant"
           icon={<Info size={22} color="#4A86E8" />}
         />
       </View>
       
       <View style={styles.statsContainer}>
-        <Text style={styles.statsTitle}>Your Stats</Text>
+        <Text style={styles.statsTitle}>Your Productivity Stats</Text>
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{tasks.length}</Text>
@@ -211,6 +233,21 @@ export default function SettingsScreen() {
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{tasks.filter(t => !t.completed).length}</Text>
             <Text style={styles.statLabel}>Pending</Text>
+          </View>
+        </View>
+        
+        <View style={styles.statsRow}>
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{tasks.filter(t => t.priority === 'high').length}</Text>
+            <Text style={styles.statLabel}>High Priority</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{tasks.filter(t => t.date === new Date().toISOString().split('T')[0]).length}</Text>
+            <Text style={styles.statLabel}>Today</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{Math.round((tasks.filter(t => t.completed).length / Math.max(tasks.length, 1)) * 100)}%</Text>
+            <Text style={styles.statLabel}>Completion</Text>
           </View>
         </View>
       </View>
@@ -291,6 +328,7 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: 'row',
+    marginBottom: 12,
   },
   statItem: {
     flex: 1,

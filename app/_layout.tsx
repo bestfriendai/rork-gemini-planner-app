@@ -50,6 +50,7 @@ function RootLayoutNav() {
           headerShadowVisible: false,
           headerTitleStyle: {
             fontWeight: '600',
+            fontSize: 18,
           },
           contentStyle: {
             backgroundColor: "#F9FAFC",
@@ -57,7 +58,15 @@ function RootLayoutNav() {
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="task/[id]" options={{ title: "Task Details" }} />
+        <Stack.Screen 
+          name="task/[id]" 
+          options={{ 
+            title: "Task Details",
+            headerStyle: {
+              backgroundColor: "#FFFFFF",
+            },
+          }} 
+        />
       </Stack>
     </>
   );

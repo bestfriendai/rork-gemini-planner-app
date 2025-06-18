@@ -32,7 +32,7 @@ const needsWebSearch = (query: string): boolean => {
     'current', 'latest', 'recent', 'today', 'news', 'weather', 'stock', 'price',
     'what is happening', 'what happened', 'search for', 'find information',
     'look up', 'google', 'internet', 'online', 'website', 'url', 'link',
-    'trending', 'popular', 'viral', 'breaking', 'update', 'live'
+    'trending', 'popular', 'viral', 'breaking', 'update', 'live', 'now'
   ];
   
   return webSearchKeywords.some(keyword => 
@@ -123,13 +123,13 @@ const callPerplexityAI = async (
   currentDateTime: any,
   onStream?: (chunk: string) => void
 ): Promise<string> => {
-  // Filter and format messages for Perplexity (ensure alternating user/assistant)
-  const filteredMessages: CoreMessage[] = [];
+  // Prepare messages for Perplexity - ensure proper alternating pattern
+  const perplexityMessages: CoreMessage[] = [];
   
   // Add system message first
   const systemMessage = messages.find(msg => msg.role === 'system');
   if (systemMessage) {
-    filteredMessages.push({
+    perplexityMessages.push({
       ...systemMessage,
       content: `${systemMessage.content}
 
@@ -143,27 +143,26 @@ You have access to current web information. Use it to provide up-to-date answers
     });
   }
   
-  // Add user/assistant messages in proper alternating order
+  // Get conversation messages (excluding system)
   const conversationMessages = messages.filter(msg => msg.role !== 'system');
   
-  // Ensure we have proper alternating pattern
-  for (let i = 0; i < conversationMessages.length; i++) {
-    const msg = conversationMessages[i];
-    const lastAdded = filteredMessages[filteredMessages.length - 1];
-    
-    // Add message if it's different from the last role or if it's the first conversation message
-    if (!lastAdded || lastAdded.role === 'system' || lastAdded.role !== msg.role) {
-      filteredMessages.push(msg);
+  // Ensure alternating user/assistant pattern
+  let lastRole: 'user' | 'assistant' | null = null;
+  
+  for (const msg of conversationMessages) {
+    if (msg.role === 'user' || msg.role === 'assistant') {
+      if (lastRole !== msg.role) {
+        perplexityMessages.push(msg);
+        lastRole = msg.role;
+      }
     }
   }
   
-  // Ensure we end with a user message for Perplexity
-  const lastMsg = filteredMessages[filteredMessages.length - 1];
-  if (lastMsg && lastMsg.role !== 'user') {
-    // Find the last user message and add it
-    const lastUserMsg = conversationMessages.filter(msg => msg.role === 'user').pop();
-    if (lastUserMsg) {
-      filteredMessages.push(lastUserMsg);
+  // Ensure we end with a user message
+  if (perplexityMessages.length > 0 && perplexityMessages[perplexityMessages.length - 1].role !== 'user') {
+    const lastUserMessage = conversationMessages.filter(msg => msg.role === 'user').pop();
+    if (lastUserMessage) {
+      perplexityMessages.push(lastUserMessage);
     }
   }
 
@@ -175,7 +174,7 @@ You have access to current web information. Use it to provide up-to-date answers
     },
     body: JSON.stringify({
       model: PERPLEXITY_MODEL,
-      messages: filteredMessages,
+      messages: perplexityMessages,
       max_tokens: 1000,
       temperature: 0.7,
       search_mode: 'web',
@@ -292,7 +291,8 @@ export const extractTasksFromAIResponse = (text: string): Task[] => {
     
     for (const sentence of sentences) {
       // Check if sentence contains action verbs or time indicators
-      if (/\b(go|do|buy|call|meet|work|study|exercise|clean|cook|prepare|finish|start|attend|visit|pick|drop|send|write|read|watch|make)\b/i.test(sentence)) {
+      const actionVerbPattern = /\b(go|do|buy|call|meet|work|study|exercise|clean|cook|prepare|finish|start|attend|visit|pick|drop|send|write|read|watch|make)\b/i;
+      if (actionVerbPattern.test(sentence)) {
         tasks.push({
           id: Math.random().toString(36).substring(2, 9),
           title: sentence.trim(),

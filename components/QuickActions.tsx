@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { 
   Clock, Calendar, Cloud, Newspaper, CheckSquare, Bell, Calculator, MapPin, 
   Wifi, Smartphone, TrendingUp, DollarSign, Coffee, Plane, Music, Book,
-  Heart, Zap, Target, Brain
+  Heart, Zap, Target, Brain, Camera, Image, FileText, Mail, Phone, 
+  ShoppingCart, Car, Home, Briefcase, Gamepad2, Palette
 } from 'lucide-react-native';
 
 interface QuickActionsProps {
@@ -101,6 +102,36 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAction }) => {
       id: 'learning',
       title: 'Learning Resources',
       icon: <Brain size={20} color="#4A86E8" />,
+    },
+    {
+      id: 'shopping',
+      title: 'Shopping List',
+      icon: <ShoppingCart size={20} color="#4A86E8" />,
+    },
+    {
+      id: 'workout',
+      title: 'Workout Plan',
+      icon: <Heart size={20} color="#4A86E8" />,
+    },
+    {
+      id: 'meditation',
+      title: 'Meditation Guide',
+      icon: <Brain size={20} color="#4A86E8" />,
+    },
+    {
+      id: 'creative',
+      title: 'Creative Ideas',
+      icon: <Palette size={20} color="#4A86E8" />,
+    },
+    {
+      id: 'business',
+      title: 'Business Tips',
+      icon: <Briefcase size={20} color="#4A86E8" />,
+    },
+    {
+      id: 'entertainment',
+      title: 'Entertainment',
+      icon: <Gamepad2 size={20} color="#4A86E8" />,
     },
     {
       id: 'device_info',

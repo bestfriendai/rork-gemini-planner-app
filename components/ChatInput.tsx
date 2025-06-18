@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Platform, Alert } from 'react-native';
-import { Send, Mic, MicOff } from 'lucide-react-native';
+import { Send, Mic, MicOff, Square } from 'lucide-react-native';
 import { useSpeechStore } from '@/store/speechStore';
 
 interface ChatInputProps {
@@ -10,7 +10,7 @@ interface ChatInputProps {
 
 export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
   const [message, setMessage] = useState('');
-  const { isListening, startListening, stopListening } = useSpeechStore();
+  const { isListening, isRecording, startListening, stopListening, startRecording, stopRecording } = useSpeechStore();
 
   const handleSend = () => {
     if (message.trim() && !isLoading) {
@@ -20,21 +20,50 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
   };
 
   const toggleListening = () => {
-    if (Platform.OS !== 'web') {
-      Alert.alert(
-        "Speech Recognition",
-        "Speech-to-text is currently only available on web browsers. On mobile, you can use voice output by tapping the speaker icon on assistant messages.",
-        [{ text: "OK" }]
-      );
-      return;
-    }
-
-    if (isListening) {
-      stopListening();
+    if (Platform.OS === 'web') {
+      if (isListening) {
+        stopListening();
+      } else {
+        startListening((text: string) => {
+          setMessage(prev => (prev + ' ' + text).trim());
+        });
+      }
     } else {
-      startListening((text: string) => {
-        setMessage(prev => (prev + ' ' + text).trim());
-      });
+      // For mobile, show a simple recording indicator
+      if (isRecording) {
+        stopRecording();
+        Alert.alert(
+          "Voice Input",
+          "Voice-to-text transcription is not available on mobile. You can type your message or use the voice output feature by tapping the speaker icon on assistant messages.",
+          [{ text: "OK" }]
+        );
+      } else {
+        startRecording();
+        Alert.alert(
+          "Recording",
+          "Recording started. Tap the microphone again to stop. Note: Automatic transcription is only available on web browsers.",
+          [
+            { text: "Stop Recording", onPress: () => stopRecording() },
+            { text: "Continue", style: "cancel" }
+          ]
+        );
+      }
+    }
+  };
+
+  const getMicIcon = () => {
+    if (Platform.OS === 'web') {
+      return isListening ? <MicOff size={20} color="#fff" /> : <Mic size={20} color="#fff" />;
+    } else {
+      return isRecording ? <Square size={20} color="#fff" /> : <Mic size={20} color="#fff" />;
+    }
+  };
+
+  const getMicButtonStyle = () => {
+    if (Platform.OS === 'web') {
+      return [styles.micButton, isListening && styles.micButtonActive];
+    } else {
+      return [styles.micButton, isRecording && styles.micButtonRecording];
     }
   };
 
@@ -53,15 +82,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
       />
       
       <TouchableOpacity 
-        style={[styles.micButton, isListening && styles.micButtonActive]} 
+        style={getMicButtonStyle()} 
         onPress={toggleListening}
         disabled={isLoading}
       >
-        {isListening ? (
-          <MicOff size={20} color="#fff" />
-        ) : (
-          <Mic size={20} color="#fff" />
-        )}
+        {getMicIcon()}
       </TouchableOpacity>
       
       <TouchableOpacity 
@@ -119,6 +144,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   micButtonActive: {
+    backgroundColor: '#FF3B30',
+  },
+  micButtonRecording: {
     backgroundColor: '#FF3B30',
   },
 });

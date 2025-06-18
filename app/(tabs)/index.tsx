@@ -33,9 +33,16 @@ export default function AssistantScreen() {
         hour12: true 
       });
       
+      const currentDate = new Date().toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      
       const greeting = username 
-        ? `Hello ${username}! I'm Gemini, your personal assistant powered by Google AI. It's currently ${currentTime}. I can help you plan your day, create tasks, search the web for current information, answer questions, calculate math problems, and much more. Try asking me to schedule something for you or search for recent news!` 
-        : `Hello! I'm Gemini, your personal assistant powered by Google AI. It's currently ${currentTime}. I can help you plan your day, create tasks, search the web for current information, answer questions, calculate math problems, and much more. Try asking me to schedule something for you or search for recent news!`;
+        ? `Hello ${username}! I'm Gemini, your personal assistant powered by Google AI. Today is ${currentDate} and it's currently ${currentTime}. I can help you plan your day, create tasks, search the web for current information, answer questions, calculate math problems, and much more. Try asking me to schedule something for you or search for recent news!` 
+        : `Hello! I'm Gemini, your personal assistant powered by Google AI. Today is ${currentDate} and it's currently ${currentTime}. I can help you plan your day, create tasks, search the web for current information, answer questions, calculate math problems, and much more. Try asking me to schedule something for you or search for recent news!`;
       
       addMessage({
         role: 'assistant',
@@ -118,6 +125,12 @@ export default function AssistantScreen() {
       'productivity': 'Share some productivity tips for better focus',
       'goals': 'Help me set and achieve my personal goals',
       'learning': 'Suggest some online learning resources and courses',
+      'shopping': 'Help me create a grocery shopping list',
+      'workout': 'Create a workout plan for beginners',
+      'meditation': 'Guide me through a 5-minute meditation',
+      'creative': 'Give me some creative project ideas',
+      'business': 'Share some business and entrepreneurship tips',
+      'entertainment': 'What are some good movies or shows to watch?',
       'device_info': 'Tell me about my device and platform',
       'internet_status': 'Check my internet connection status',
     };

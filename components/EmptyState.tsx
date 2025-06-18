@@ -27,18 +27,20 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     marginBottom: 20,
+    opacity: 0.8,
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#1A1A1A',
-    marginBottom: 8,
+    marginBottom: 12,
     textAlign: 'center',
   },
   message: {
     fontSize: 16,
     color: '#6E7A8A',
     textAlign: 'center',
-    maxWidth: '80%',
+    maxWidth: '85%',
+    lineHeight: 24,
   },
 });

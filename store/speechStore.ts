@@ -54,16 +54,20 @@ interface SpeechState {
   isSpeaking: boolean;
   isListening: boolean;
   currentMessageId: string | null;
+  isRecording: boolean;
   speak: (text: string, messageId: string) => void;
   stopSpeaking: () => void;
   startListening: (callback: (text: string) => void) => void;
   stopListening: () => void;
+  startRecording: () => void;
+  stopRecording: () => void;
 }
 
 export const useSpeechStore = create<SpeechState>((set, get) => ({
   isSpeaking: false,
   isListening: false,
   currentMessageId: null,
+  isRecording: false,
   
   speak: async (text, messageId) => {
     // Stop any current speech
@@ -201,5 +205,15 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
     }
     
     set({ isListening: false });
+  },
+
+  startRecording: () => {
+    // For mobile, we'll use a simple recording indicator
+    // In a real app, you'd integrate with expo-av for audio recording
+    set({ isRecording: true });
+  },
+
+  stopRecording: () => {
+    set({ isRecording: false });
   },
 }));
