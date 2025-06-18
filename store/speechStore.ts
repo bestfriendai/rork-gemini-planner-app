@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { Platform } from 'react-native';
 import * as Speech from 'expo-speech';
+import type { SpeechRecognitionEvent, SpeechRecognitionErrorEvent } from '@/types/speech';
 
 interface SpeechState {
   isSpeaking: boolean;
@@ -144,7 +145,7 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
       let hasResult = false;
       
       // Handle results
-      recognition.onresult = (event) => {
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
         if (event.results.length > 0) {
           const transcript = event.results[0][0].transcript;
           if (transcript.trim()) {
@@ -163,7 +164,7 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
       };
       
       // Handle errors
-      recognition.onerror = (event) => {
+      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error('Speech recognition error:', event.error);
         set({ isListening: false });
       };
