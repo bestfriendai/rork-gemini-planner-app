@@ -6,7 +6,7 @@ const OPENROUTER_API_KEY = Constants.expoConfig?.extra?.OPENROUTER_API_KEY || 's
 const PERPLEXITY_API_KEY = Constants.expoConfig?.extra?.PERPLEXITY_API_KEY || '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';
 
 // Updated models for 2025 - using available models
-const GEMINI_MODEL = 'google/gemini-2.0-flash-thinking-exp';
+const GEMINI_MODEL = 'google/gemini-flash-1.5';
 const PERPLEXITY_MODEL = 'llama-3.1-sonar-large-128k-online';
 
 // Enhanced query classification
@@ -28,7 +28,7 @@ interface ModelConfig {
 
 const MODEL_CONFIGS: Record<string, ModelConfig> = {
   'general': {
-    primary: 'google/gemini-2.0-flash-thinking-exp',
+    primary: 'google/gemini-flash-1.5',
     fallback: ['openai/gpt-4o-mini', 'anthropic/claude-3-5-haiku'],
     maxTokens: 2000,
     temperature: 0.7,
@@ -36,21 +36,21 @@ const MODEL_CONFIGS: Record<string, ModelConfig> = {
   },
   'creative': {
     primary: 'anthropic/claude-3-5-sonnet',
-    fallback: ['openai/gpt-4o', 'google/gemini-1.5-pro'],
+    fallback: ['openai/gpt-4o', 'google/gemini-pro'],
     maxTokens: 3000,
     temperature: 0.9,
     reasoning: 'fast'
   },
   'analytical': {
     primary: 'openai/gpt-4o',
-    fallback: ['anthropic/claude-3-opus', 'google/gemini-1.5-pro'],
+    fallback: ['anthropic/claude-3-opus', 'google/gemini-pro'],
     maxTokens: 2500,
     temperature: 0.3,
     reasoning: 'thorough'
   },
   'research': {
     primary: 'anthropic/claude-3-5-sonnet',
-    fallback: ['openai/gpt-4o', 'google/gemini-1.5-pro'],
+    fallback: ['openai/gpt-4o', 'google/gemini-pro'],
     maxTokens: 3000,
     temperature: 0.5,
     reasoning: 'thorough'
