@@ -1,19 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { Bot } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
 
-interface EmptyStateProps {
-  title: string;
-  message: string;
-  icon?: React.ReactNode;
-}
-
-export const EmptyState: React.FC<EmptyStateProps> = ({ title, message, icon }) => {
+export const EmptyState: React.FC = () => {
   return (
     <View style={styles.container}>
-      {icon && <View style={styles.iconContainer}>{icon}</View>}
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.message}>{message}</Text>
+      <View style={styles.iconContainer}>
+        <Bot size={48} color={colors.primary} strokeWidth={1.5} />
+      </View>
+      <Text style={styles.title}>Jarva AI Assistant</Text>
+      <Text style={styles.subtitle}>
+        Your intelligent companion for productivity, planning, and getting things done. Ask me anything!
+      </Text>
     </View>
   );
 };
@@ -23,25 +22,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 40,
+    paddingHorizontal: 40,
+    paddingBottom: 60,
   },
   iconContainer: {
-    marginBottom: 32,
-    opacity: 0.6,
+    width: 96,
+    height: 96,
+    borderRadius: 24,
+    backgroundColor: colors.primaryMuted,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '700',
     color: colors.text,
-    marginBottom: 16,
+    marginBottom: 12,
     textAlign: 'center',
   },
-  message: {
+  subtitle: {
     fontSize: 16,
     color: colors.textSecondary,
     textAlign: 'center',
-    maxWidth: '90%',
     lineHeight: 24,
-    fontWeight: '400',
+    maxWidth: 280,
   },
 });

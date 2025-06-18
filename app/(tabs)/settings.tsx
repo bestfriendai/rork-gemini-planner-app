@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Alert, Platform, Switch } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Alert, Platform } from 'react-native';
 import { User, Bell, Trash2, Info, Volume2, Wifi, Globe, Smartphone, Monitor, Mic, Speaker, Zap, Brain, Clock, Calendar } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useChatStore } from '@/store/chatStore';
@@ -22,7 +22,6 @@ export default function SettingsScreen() {
   const [smartSuggestions, setSmartSuggestions] = useState(true);
   const [autoTaskExtraction, setAutoTaskExtraction] = useState(true);
   
-  // Check speech support on mount
   useEffect(() => {
     checkSupport();
   }, []);
@@ -123,7 +122,7 @@ export default function SettingsScreen() {
             <SettingsItem
               title="Your Name"
               subtitle={username || "Set your name"}
-              icon={<User size={18} color={colors.primary} />}
+              icon={<User size={16} color={colors.primary} strokeWidth={2} />}
               onPress={() => setEditingName(true)}
             />
           )}
@@ -135,7 +134,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Text-to-Speech"
             subtitle="Allow assistant to speak responses"
-            icon={<Speaker size={18} color={colors.primary} />}
+            icon={<Speaker size={16} color={colors.primary} strokeWidth={2} />}
             isSwitch
             switchValue={textToSpeech}
             onSwitchChange={toggleTextToSpeech}
@@ -144,7 +143,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Voice Input"
             subtitle={getSpeechRecognitionStatus()}
-            icon={<Mic size={18} color={Platform.OS === 'web' && isSupported ? colors.primary : colors.warning} />}
+            icon={<Mic size={16} color={Platform.OS === 'web' && isSupported ? colors.primary : colors.warning} strokeWidth={2} />}
             isSwitch
             switchValue={voiceInput}
             onSwitchChange={setVoiceInput}
@@ -153,7 +152,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Web Search"
             subtitle="Enable internet search for current information"
-            icon={<Globe size={18} color={colors.primary} />}
+            icon={<Globe size={16} color={colors.primary} strokeWidth={2} />}
             isSwitch
             switchValue={webSearch}
             onSwitchChange={setWebSearch}
@@ -162,7 +161,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Smart Suggestions"
             subtitle="Get intelligent quick action suggestions"
-            icon={<Brain size={18} color={colors.primary} />}
+            icon={<Brain size={16} color={colors.primary} strokeWidth={2} />}
             isSwitch
             switchValue={smartSuggestions}
             onSwitchChange={setSmartSuggestions}
@@ -171,7 +170,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Auto Task Extraction"
             subtitle="Automatically detect and suggest tasks from conversations"
-            icon={<Zap size={18} color={colors.primary} />}
+            icon={<Zap size={16} color={colors.primary} strokeWidth={2} />}
             isSwitch
             switchValue={autoTaskExtraction}
             onSwitchChange={setAutoTaskExtraction}
@@ -180,7 +179,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Notifications"
             subtitle="Receive reminders for scheduled tasks"
-            icon={<Bell size={18} color={colors.primary} />}
+            icon={<Bell size={16} color={colors.primary} strokeWidth={2} />}
             isSwitch
             switchValue={notifications}
             onSwitchChange={toggleNotifications}
@@ -194,33 +193,33 @@ export default function SettingsScreen() {
             title="Speech Recognition"
             subtitle={getSpeechRecognitionStatus()}
             icon={Platform.OS === 'web' ? 
-              (isSupported ? <Monitor size={18} color={colors.primary} /> : <Monitor size={18} color={colors.error} />) : 
-              <Smartphone size={18} color={colors.warning} />
+              (isSupported ? <Monitor size={16} color={colors.primary} strokeWidth={2} /> : <Monitor size={16} color={colors.error} strokeWidth={2} />) : 
+              <Smartphone size={16} color={colors.warning} strokeWidth={2} />
             }
           />
           
           <SettingsItem
             title="Voice Output"
             subtitle="Text-to-speech available on all platforms"
-            icon={<Volume2 size={18} color={colors.primary} />}
+            icon={<Volume2 size={16} color={colors.primary} strokeWidth={2} />}
           />
           
           <SettingsItem
             title="Web Search"
             subtitle="Real-time internet search via Perplexity AI"
-            icon={<Wifi size={18} color={colors.primary} />}
+            icon={<Wifi size={16} color={colors.primary} strokeWidth={2} />}
           />
           
           <SettingsItem
             title="Task Management"
             subtitle="Create, organize, and track your tasks"
-            icon={<Bell size={18} color={colors.primary} />}
+            icon={<Bell size={16} color={colors.primary} strokeWidth={2} />}
           />
           
           <SettingsItem
             title="Real-time Data"
             subtitle="Access to current time, date, and device information"
-            icon={<Clock size={18} color={colors.primary} />}
+            icon={<Clock size={16} color={colors.primary} strokeWidth={2} />}
           />
         </View>
         
@@ -230,7 +229,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Clear Chat History"
             subtitle="Delete all conversations with the assistant"
-            icon={<Trash2 size={18} color={colors.error} />}
+            icon={<Trash2 size={16} color={colors.error} strokeWidth={2} />}
             onPress={handleClearHistory}
           />
         </View>
@@ -241,25 +240,25 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Current Date"
             subtitle={dateTime.date}
-            icon={<Calendar size={18} color={colors.primary} />}
+            icon={<Calendar size={16} color={colors.primary} strokeWidth={2} />}
           />
           
           <SettingsItem
             title="Current Time"
             subtitle={`${dateTime.time} (${dateTime.timezone})`}
-            icon={<Clock size={18} color={colors.primary} />}
+            icon={<Clock size={16} color={colors.primary} strokeWidth={2} />}
           />
           
           <SettingsItem
             title="Platform"
             subtitle={Platform.OS === 'web' ? 'Web Browser' : `${Platform.OS} App (v${Platform.Version})`}
-            icon={<Info size={18} color={colors.primary} />}
+            icon={<Info size={16} color={colors.primary} strokeWidth={2} />}
           />
           
           <SettingsItem
             title="App Version"
-            subtitle="3.0.0 - Modern 2030 Design & Enhanced AI"
-            icon={<Info size={18} color={colors.primary} />}
+            subtitle="4.0.0 - Modern 2025 Design & Enhanced AI"
+            icon={<Info size={16} color={colors.primary} strokeWidth={2} />}
           />
         </View>
         
@@ -325,22 +324,24 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 20,
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: 12,
     overflow: 'hidden',
-    marginHorizontal: 16,
+    marginHorizontal: 20,
     marginTop: 12,
     borderWidth: 1,
     borderColor: colors.border,
   },
   sectionTitle: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
     color: colors.textSecondary,
     marginBottom: 8,
     paddingHorizontal: 16,
     paddingTop: 16,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   editNameContainer: {
     padding: 16,
@@ -364,14 +365,14 @@ const styles = StyleSheet.create({
   cancelButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-    borderRadius: 12,
+    borderRadius: 8,
     marginRight: 8,
     backgroundColor: colors.surfaceSecondary,
   },
   saveButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-    borderRadius: 12,
+    borderRadius: 8,
     backgroundColor: colors.primary,
   },
   cancelButtonText: {
@@ -385,15 +386,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   statsContainer: {
-    margin: 16,
+    margin: 20,
     padding: 20,
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border,
   },
   statsTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '700',
     color: colors.text,
     marginBottom: 16,
@@ -405,41 +406,43 @@ const styles = StyleSheet.create({
   statItem: {
     flex: 1,
     alignItems: 'center',
-    padding: 16,
+    padding: 12,
     backgroundColor: colors.surfaceSecondary,
-    borderRadius: 12,
+    borderRadius: 8,
     marginHorizontal: 4,
     borderWidth: 1,
     borderColor: colors.border,
   },
   statValue: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
     color: colors.primary,
     marginBottom: 4,
   },
   statLabel: {
-    fontSize: 10,
+    fontSize: 9,
     color: colors.textSecondary,
     fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   helpSection: {
-    margin: 16,
+    margin: 20,
     padding: 20,
     backgroundColor: colors.surfaceSecondary,
-    borderRadius: 16,
+    borderRadius: 12,
     marginBottom: 100,
     borderWidth: 1,
     borderColor: colors.border,
   },
   helpTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '700',
     color: colors.text,
     marginBottom: 12,
   },
   helpText: {
-    fontSize: 12,
+    fontSize: 11,
     color: colors.textSecondary,
     lineHeight: 16,
     marginBottom: 8,

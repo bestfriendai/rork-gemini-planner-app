@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, Text } from 'react-native';
-import { Plus, Calendar, CalendarClock } from 'lucide-react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { Plus } from 'lucide-react-native';
 import { useTaskStore } from '@/store/taskStore';
 import { TaskItem } from '@/components/TaskItem';
 import { EmptyState } from '@/components/EmptyState';
@@ -18,23 +18,19 @@ export default function PlannerScreen() {
   const { tasks } = useTaskStore();
   const router = useRouter();
   
-  // Initialize week dates
   useEffect(() => {
     const dates = getDaysOfWeek(new Date());
     setWeekDates(dates);
   }, []);
   
-  // Filter tasks for the selected date
   const tasksForSelectedDate = tasks.filter(task => task.date === selectedDate)
     .sort((a, b) => {
-      // Sort by time (if available)
       if (a.time && b.time) {
         return a.time.localeCompare(b.time);
       }
       if (a.time) return -1;
       if (b.time) return 1;
       
-      // Then by priority
       const priorityOrder = { high: 0, medium: 1, low: 2 };
       return priorityOrder[a.priority] - priorityOrder[b.priority];
     });
@@ -53,11 +49,7 @@ export default function PlannerScreen() {
       
       <View style={styles.content}>
         {tasksForSelectedDate.length === 0 ? (
-          <EmptyState
-            title="No Tasks Scheduled"
-            message="Add tasks to your planner to stay organized and productive."
-            icon={<CalendarClock size={56} color={colors.primary} />}
-          />
+          <EmptyState />
         ) : (
           <FlatList
             data={tasksForSelectedDate}
@@ -78,7 +70,7 @@ export default function PlannerScreen() {
         style={styles.addButton}
         onPress={() => setIsAddModalVisible(true)}
       >
-        <Plus size={24} color={colors.text} />
+        <Plus size={20} color={colors.text} strokeWidth={2.5} />
       </TouchableOpacity>
       
       <AddTaskModal
@@ -97,7 +89,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 16,
+    padding: 20,
   },
   taskList: {
     paddingBottom: 100,
@@ -105,12 +97,17 @@ const styles = StyleSheet.create({
   addButton: {
     position: 'absolute',
     bottom: 100,
-    right: 16,
-    width: 56,
-    height: 56,
-    borderRadius: 16,
+    right: 20,
+    width: 48,
+    height: 48,
+    borderRadius: 12,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
 });

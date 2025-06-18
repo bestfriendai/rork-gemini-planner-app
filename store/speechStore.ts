@@ -35,23 +35,23 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
   
   checkSupport: () => {
     if (Platform.OS === 'web') {
-      const supported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+      const supported = !!(
+        (window as any).SpeechRecognition || 
+        (window as any).webkitSpeechRecognition
+      );
       set({ isSupported: supported });
       return supported;
     } else {
-      // On mobile, we support voice recording with manual transcription
       set({ isSupported: true });
       return true;
     }
   },
   
   speak: async (text, messageId) => {
-    // Stop any current speech
     get().stopSpeaking();
     
     try {
       if (Platform.OS === 'web') {
-        // Web: Use Speech Synthesis API
         if (!window.speechSynthesis) {
           console.warn('Speech synthesis not supported in this browser');
           return;
@@ -62,7 +62,6 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
         utterance.pitch = 1.0;
         utterance.volume = 1.0;
         
-        // Set voice (optional)
         const voices = window.speechSynthesis.getVoices();
         const preferredVoice = voices.find(voice => 
           voice.lang.includes('en') && (voice.name.includes('Google') || voice.name.includes('Microsoft'))
@@ -71,7 +70,6 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
           utterance.voice = preferredVoice;
         }
         
-        // Handle speech end
         utterance.onend = () => {
           set({ isSpeaking: false, currentMessageId: null });
         };
@@ -81,11 +79,9 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
           set({ isSpeaking: false, currentMessageId: null });
         };
         
-        // Start speaking
         window.speechSynthesis.speak(utterance);
         set({ isSpeaking: true, currentMessageId: messageId });
       } else {
-        // Mobile: Use expo-speech
         await Speech.speak(text, {
           language: 'en-US',
           pitch: 1.0,
@@ -128,19 +124,19 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
       return;
     }
     
-    // Check if browser supports speech recognition
-    const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognitionClass = 
+      (window as any).SpeechRecognition || 
+      (window as any).webkitSpeechRecognition;
+    
     if (!SpeechRecognitionClass) {
       console.error('Speech recognition not supported in this browser');
       return;
     }
     
     try {
-      // Stop any existing recognition
       get().stopListening();
 
-      // Create recognition instance
-      const recognition = new SpeechRecognitionClass();
+      const recognition = new SpeechRecognitionClass() as SpeechRecognition;
       recognition.continuous = false;
       recognition.interimResults = false;
       recognition.lang = 'en-US';
@@ -148,7 +144,6 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
       
       let hasResult = false;
       
-      // Handle results
       recognition.onresult = (event: SpeechRecognitionEvent) => {
         if (event.results.length > 0) {
           const transcript = event.results[0][0].transcript;
@@ -159,7 +154,6 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
         }
       };
       
-      // Handle end
       recognition.onend = () => {
         set({ isListening: false });
         if (!hasResult) {
@@ -167,17 +161,14 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
         }
       };
       
-      // Handle errors
       recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error('Speech recognition error:', event.error);
         set({ isListening: false });
       };
       
-      // Start listening
       recognition.start();
       set({ isListening: true });
       
-      // Auto-stop after 10 seconds
       setTimeout(() => {
         if (get().isListening) {
           recognition.stop();
@@ -194,7 +185,6 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
     if (Platform.OS !== 'web') return;
     
     try {
-      // Stop any active recognition
       if (window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
@@ -206,8 +196,6 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
   },
 
   startRecording: () => {
-    // For mobile, we'll use a simple recording indicator
-    // User can manually type what they said
     set({ isRecording: true, recordedText: '' });
   },
 

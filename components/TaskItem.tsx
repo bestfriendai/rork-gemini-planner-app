@@ -15,8 +15,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
 
   const priorityColors = {
     low: colors.surfaceSecondary,
-    medium: colors.warning + '20',
-    high: colors.error + '20',
+    medium: colors.warning + '15',
+    high: colors.error + '15',
   };
 
   const priorityTextColors = {
@@ -36,9 +36,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
         onPress={() => toggleTaskCompletion(task.id)}
       >
         {task.completed ? (
-          <View style={styles.checkboxCheckedContent}>
-            <Check size={14} color={colors.text} />
-          </View>
+          <Check size={12} color={colors.text} strokeWidth={2.5} />
         ) : (
           <View style={styles.checkboxEmpty} />
         )}
@@ -64,7 +62,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
         <View style={styles.details}>
           {task.time ? (
             <View style={styles.detailItem}>
-              <Clock size={12} color={colors.textSecondary} />
+              <Clock size={10} color={colors.textSecondary} strokeWidth={2} />
               <Text style={styles.detailText}>{task.time}</Text>
             </View>
           ) : null}
@@ -73,7 +71,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
             styles.priority, 
             { backgroundColor: priorityColors[task.priority] }
           ]}>
-            <Flag size={10} color={priorityTextColors[task.priority]} />
+            <Flag size={8} color={priorityTextColors[task.priority]} strokeWidth={2} />
             <Text style={[
               styles.priorityText, 
               { color: priorityTextColors[task.priority] }
@@ -93,14 +91,14 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: colors.surface,
     borderRadius: 12,
-    marginBottom: 12,
+    marginBottom: 8,
     borderWidth: 1,
     borderColor: colors.border,
   },
   checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 6,
+    width: 18,
+    height: 18,
+    borderRadius: 5,
     marginRight: 12,
     justifyContent: 'center',
     alignItems: 'center',
@@ -110,17 +108,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.success,
     borderWidth: 0,
   },
-  checkboxCheckedContent: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   checkboxEmpty: {
     width: '100%',
     height: '100%',
-    borderRadius: 6,
-    borderWidth: 2,
+    borderRadius: 5,
+    borderWidth: 1.5,
     borderColor: colors.primary,
   },
   content: {
@@ -152,7 +144,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   detailText: {
-    fontSize: 11,
+    fontSize: 10,
     color: colors.textSecondary,
     marginLeft: 4,
     fontWeight: '600',
@@ -160,13 +152,13 @@ const styles = StyleSheet.create({
   priority: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
   },
   priorityText: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '700',
-    marginLeft: 4,
+    marginLeft: 3,
   },
 });

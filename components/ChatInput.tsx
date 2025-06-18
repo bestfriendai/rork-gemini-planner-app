@@ -27,7 +27,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
     checkSupport
   } = useSpeechStore();
 
-  // Check speech support on component mount
   useEffect(() => {
     checkSupport();
   }, []);
@@ -60,7 +59,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
         });
       }
     } else {
-      // For mobile, show recording modal
       setShowRecordModal(true);
       startRecording();
     }
@@ -90,9 +88,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
 
   const getMicIcon = () => {
     if (Platform.OS === 'web') {
-      return isListening ? <MicOff size={20} color={colors.error} /> : <Mic size={20} color={colors.textSecondary} />;
+      return isListening ? <MicOff size={18} color={colors.error} strokeWidth={2} /> : <Mic size={18} color={colors.textSecondary} strokeWidth={2} />;
     } else {
-      return <Mic size={20} color={colors.textSecondary} />;
+      return <Mic size={18} color={colors.textSecondary} strokeWidth={2} />;
     }
   };
 
@@ -128,13 +126,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
             {isLoading ? (
               <ActivityIndicator size="small" color={colors.textSecondary} />
             ) : (
-              <Send size={20} color={message.trim() ? colors.primary : colors.textTertiary} />
+              <Send size={18} color={message.trim() ? colors.text : colors.textTertiary} strokeWidth={2} />
             )}
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Mobile Recording Modal */}
       <Modal
         visible={showRecordModal}
         transparent
@@ -147,7 +144,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Voice Input</Text>
                 <TouchableOpacity onPress={handleCancelRecording} style={styles.closeButton}>
-                  <X size={20} color={colors.text} />
+                  <X size={18} color={colors.text} strokeWidth={2} />
                 </TouchableOpacity>
               </View>
               
@@ -159,7 +156,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
               </View>
               
               <View style={styles.instructionContainer}>
-                <Volume2 size={20} color={colors.primary} />
+                <Volume2 size={16} color={colors.primary} strokeWidth={2} />
                 <Text style={styles.instructionText}>
                   Speak your message clearly, then type what you said in the text field below and tap "Use Text".
                 </Text>
@@ -182,7 +179,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
                   onPress={isRecording ? handleStopRecording : startRecording}
                 >
                   <View style={styles.modalButtonContent}>
-                    {isRecording ? <Square size={16} color={colors.text} /> : <Mic size={16} color={colors.text} />}
+                    {isRecording ? <Square size={14} color={colors.text} strokeWidth={2} /> : <Mic size={14} color={colors.text} strokeWidth={2} />}
                     <Text style={styles.recordButtonText}>
                       {isRecording ? 'Stop' : 'Record'}
                     </Text>
@@ -195,7 +192,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
                   disabled={!recordedText.trim()}
                 >
                   <View style={styles.modalButtonContent}>
-                    <Check size={16} color={colors.text} />
+                    <Check size={14} color={colors.text} strokeWidth={2} />
                     <Text style={styles.useButtonText}>Use Text</Text>
                   </View>
                 </TouchableOpacity>
@@ -216,42 +213,37 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: Platform.OS === 'ios' ? 100 : 84,
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingBottom: Platform.OS === 'ios' ? 90 : 74,
+    paddingHorizontal: 20,
+    paddingTop: 12,
     backgroundColor: colors.background,
-    borderTopWidth: 0.5,
-    borderTopColor: colors.borderLight,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     backgroundColor: colors.surface,
-    borderRadius: 24,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderWidth: 1,
     borderColor: colors.border,
-    shadowColor: colors.text,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 15,
     color: colors.text,
-    maxHeight: 120,
+    maxHeight: 100,
     marginRight: 12,
     paddingVertical: 0,
     fontWeight: '400',
-    lineHeight: 22,
+    lineHeight: 20,
   },
   micButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     marginRight: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -261,9 +253,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.error + '20',
   },
   sendButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.primary,
@@ -295,7 +287,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
     color: colors.text,
   },
@@ -309,9 +301,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   recordingDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: colors.textTertiary,
     marginRight: 8,
   },
@@ -319,7 +311,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.error,
   },
   recordingText: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.text,
     fontWeight: '600',
   },
@@ -382,11 +374,13 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontWeight: '700',
     marginLeft: 8,
+    fontSize: 13,
   },
   useButtonText: {
     color: colors.text,
     fontWeight: '700',
     marginLeft: 8,
+    fontSize: 13,
   },
   helpContainer: {
     backgroundColor: colors.surfaceTertiary,

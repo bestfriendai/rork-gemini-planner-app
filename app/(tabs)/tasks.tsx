@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity, Text } from 'react-native';
-import { Plus, CheckSquare, Filter } from 'lucide-react-native';
+import { Plus } from 'lucide-react-native';
 import { useTaskStore } from '@/store/taskStore';
 import { TaskItem } from '@/components/TaskItem';
 import { EmptyState } from '@/components/EmptyState';
@@ -18,7 +18,6 @@ export default function TasksScreen() {
   
   const today = getCurrentDate();
   
-  // Filter and sort tasks
   const filteredTasks = tasks.filter(task => {
     if (filter === 'all') return true;
     if (filter === 'today') return task.date === today;
@@ -26,19 +25,16 @@ export default function TasksScreen() {
     if (filter === 'completed') return task.completed;
     return true;
   }).sort((a, b) => {
-    // Sort by date first
     if (a.date !== b.date) {
       return a.date.localeCompare(b.date);
     }
     
-    // Then by time (if available)
     if (a.time && b.time) {
       return a.time.localeCompare(b.time);
     }
     if (a.time) return -1;
     if (b.time) return 1;
     
-    // Then by priority
     const priorityOrder = { high: 0, medium: 1, low: 2 };
     return priorityOrder[a.priority] - priorityOrder[b.priority];
   });
@@ -75,11 +71,7 @@ export default function TasksScreen() {
       
       <View style={styles.content}>
         {filteredTasks.length === 0 ? (
-          <EmptyState
-            title="No Tasks Found"
-            message={`You don't have any ${filter} tasks. Add some to stay organized.`}
-            icon={<CheckSquare size={56} color={colors.primary} />}
-          />
+          <EmptyState />
         ) : (
           <FlatList
             data={filteredTasks}
@@ -100,7 +92,7 @@ export default function TasksScreen() {
         style={styles.addButton}
         onPress={() => setIsAddModalVisible(true)}
       >
-        <Plus size={24} color={colors.text} />
+        <Plus size={20} color={colors.text} strokeWidth={2.5} />
       </TouchableOpacity>
       
       <AddTaskModal
@@ -119,7 +111,7 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     flexDirection: 'row',
-    padding: 12,
+    padding: 16,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
@@ -127,7 +119,7 @@ const styles = StyleSheet.create({
   filterButton: {
     flex: 1,
     marginHorizontal: 4,
-    borderRadius: 12,
+    borderRadius: 8,
     backgroundColor: colors.surfaceSecondary,
     paddingVertical: 8,
     alignItems: 'center',
@@ -146,7 +138,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 16,
+    padding: 20,
   },
   taskList: {
     paddingBottom: 100,
@@ -154,12 +146,17 @@ const styles = StyleSheet.create({
   addButton: {
     position: 'absolute',
     bottom: 100,
-    right: 16,
-    width: 56,
-    height: 56,
-    borderRadius: 16,
+    right: 20,
+    width: 48,
+    height: 48,
+    borderRadius: 12,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
 });

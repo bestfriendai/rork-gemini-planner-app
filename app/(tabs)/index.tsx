@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, FlatList, Text, KeyboardAvoidingView, Platform, TouchableOpacity, Alert } from 'react-native';
-import { MessageSquare, ListPlus, Sparkles, Zap } from 'lucide-react-native';
+import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, TouchableOpacity, Alert } from 'react-native';
+import { ListPlus } from 'lucide-react-native';
 import { useChatStore } from '@/store/chatStore';
 import { useTaskStore } from '@/store/taskStore';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -23,7 +23,6 @@ export default function AssistantScreen() {
   const [streamingMessage, setStreamingMessage] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
 
-  // Send welcome message when app first loads
   useEffect(() => {
     if (messages.length === 0 && !initialMessageSent) {
       setInitialMessageSent(true);
@@ -53,38 +52,31 @@ export default function AssistantScreen() {
   }, [messages, username, initialMessageSent]);
 
   const handleSendMessage = async (content: string) => {
-    // Reset task prompt
     setShowTaskPrompt(false);
     setExtractedTasks([]);
     
-    // Add user message to chat
     addMessage({
       role: 'user',
       content,
     });
     
-    // Set loading state
     setLoading(true);
     setIsStreaming(true);
     setStreamingMessage('');
     
     try {
-      // Prepare messages for API
       const apiMessages = formatMessagesForAPI();
       
-      // Call AI API with streaming
       const response = await callAI(apiMessages, (chunk: string) => {
         setStreamingMessage(prev => prev + chunk);
       });
       
-      // Add final AI response to chat
       const finalResponse = response || streamingMessage;
       addMessage({
         role: 'assistant',
         content: finalResponse,
       });
       
-      // Check if the response contains tasks that should be added
       const tasks = extractTasksFromAIResponse(finalResponse);
       
       if (tasks.length > 0) {
@@ -94,7 +86,6 @@ export default function AssistantScreen() {
     } catch (error) {
       console.error('Error sending message:', error);
       
-      // Add error message with more helpful information
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       
       addMessage({
@@ -151,7 +142,6 @@ export default function AssistantScreen() {
     }
   };
 
-  // Scroll to bottom when new messages arrive
   useEffect(() => {
     if (messages.length > 0 || streamingMessage) {
       setTimeout(() => {
@@ -160,7 +150,6 @@ export default function AssistantScreen() {
     }
   }, [messages, streamingMessage]);
 
-  // Prepare messages for display including streaming
   const displayMessages = [...messages];
   if (isStreaming && streamingMessage) {
     displayMessages.push({
@@ -180,11 +169,7 @@ export default function AssistantScreen() {
       >
         {displayMessages.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <EmptyState
-              title="Jarva AI Assistant"
-              message="Your intelligent companion for productivity, planning, and getting things done. Ask me anything!"
-              icon={<Zap size={72} color={colors.primary} />}
-            />
+            <EmptyState />
             <QuickActions onAction={handleQuickAction} />
           </View>
         ) : (
@@ -209,10 +194,10 @@ export default function AssistantScreen() {
             onPress={handleAddExtractedTasks}
           >
             <View style={styles.taskPromptContent}>
-              <ListPlus size={20} color={colors.primary} />
-              <Text style={styles.taskPromptText}>
-                Add {extractedTasks.length} task{extractedTasks.length > 1 ? 's' : ''} to your planner
-              </Text>
+              <ListPlus size={18} color={colors.primary} />
+              <View style={styles.taskPromptText}>
+                <View style={styles.taskPromptTitle}>Add {extractedTasks.length} task{extractedTasks.length > 1 ? 's' : ''} to planner</View>
+              </View>
             </View>
           </TouchableOpacity>
         )}
@@ -235,26 +220,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messageList: {
-    padding: 16,
+    padding: 20,
     paddingBottom: 120,
   },
   taskPrompt: {
-    margin: 16,
+    marginHorizontal: 20,
+    marginBottom: 12,
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border,
   },
   taskPromptContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
-    justifyContent: 'center',
+    padding: 16,
   },
   taskPromptText: {
+    marginLeft: 12,
+  },
+  taskPromptTitle: {
     color: colors.text,
     fontWeight: '600',
-    marginLeft: 12,
-    fontSize: 16,
+    fontSize: 14,
   },
 });

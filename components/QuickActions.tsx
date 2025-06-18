@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { 
   Clock, Calendar, Cloud, Newspaper, CheckSquare, Bell, Calculator, MapPin, 
-  TrendingUp, DollarSign, Coffee, Plane, Music, Book, Heart, Zap
+  TrendingUp, DollarSign, Coffee, Plane
 } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
 
@@ -15,62 +15,62 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAction }) => {
     {
       id: 'current_time',
       title: 'Current Time',
-      icon: <Clock size={24} color={colors.primary} />,
+      icon: <Clock size={20} color={colors.primary} strokeWidth={2} />,
     },
     {
       id: 'today_date',
       title: "Today's Date",
-      icon: <Calendar size={24} color={colors.primary} />,
+      icon: <Calendar size={20} color={colors.primary} strokeWidth={2} />,
     },
     {
       id: 'weather',
       title: 'Weather',
-      icon: <Cloud size={24} color={colors.primary} />,
+      icon: <Cloud size={20} color={colors.primary} strokeWidth={2} />,
     },
     {
       id: 'news',
       title: 'Latest News',
-      icon: <Newspaper size={24} color={colors.primary} />,
+      icon: <Newspaper size={20} color={colors.primary} strokeWidth={2} />,
     },
     {
       id: 'stocks',
       title: 'Stock Market',
-      icon: <TrendingUp size={24} color={colors.primary} />,
+      icon: <TrendingUp size={20} color={colors.primary} strokeWidth={2} />,
     },
     {
       id: 'crypto',
       title: 'Crypto Prices',
-      icon: <DollarSign size={24} color={colors.primary} />,
+      icon: <DollarSign size={20} color={colors.primary} strokeWidth={2} />,
     },
     {
       id: 'calculate',
       title: 'Calculator',
-      icon: <Calculator size={24} color={colors.primary} />,
+      icon: <Calculator size={20} color={colors.primary} strokeWidth={2} />,
     },
     {
       id: 'location',
       title: 'My Location',
-      icon: <MapPin size={24} color={colors.primary} />,
+      icon: <MapPin size={20} color={colors.primary} strokeWidth={2} />,
     },
     {
       id: 'schedule',
       title: 'Plan My Day',
-      icon: <CheckSquare size={24} color={colors.primary} />,
+      icon: <CheckSquare size={20} color={colors.primary} strokeWidth={2} />,
     },
     {
       id: 'reminder',
       title: 'Set Reminder',
-      icon: <Bell size={24} color={colors.primary} />,
+      icon: <Bell size={20} color={colors.primary} strokeWidth={2} />,
     },
     {
       id: 'recipe',
       title: 'Recipe Ideas',
-      icon: <Coffee size={24} color={colors.primary} />,
+      icon: <Coffee size={20} color={colors.primary} strokeWidth={2} />,
     },
     {
       id: 'travel',
       title: 'Travel Info',
-      icon: <Plane size={24} color={colors.primary} />,
+      icon: <Plane size={20} color={colors.primary} strokeWidth={2} />,
     },
   ];
 
@@ -101,44 +101,44 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAction }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 24,
+    padding: 20,
     backgroundColor: colors.surface,
-    marginHorizontal: 16,
+    marginHorizontal: 20,
     marginBottom: 32,
-    borderRadius: 20,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: colors.border,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
     color: colors.text,
-    marginBottom: 20,
+    marginBottom: 16,
   },
   scrollContent: {
     paddingRight: 16,
   },
   actionButton: {
     alignItems: 'center',
-    marginRight: 20,
-    minWidth: 80,
+    marginRight: 16,
+    minWidth: 72,
   },
   iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
+    width: 48,
+    height: 48,
+    borderRadius: 12,
     backgroundColor: colors.surfaceSecondary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 8,
     borderWidth: 1,
     borderColor: colors.border,
   },
   actionText: {
-    fontSize: 12,
+    fontSize: 11,
     color: colors.textSecondary,
     textAlign: 'center',
     fontWeight: '600',
-    lineHeight: 16,
+    lineHeight: 14,
   },
 });

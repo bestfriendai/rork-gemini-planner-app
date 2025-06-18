@@ -44,7 +44,6 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
         priority,
       });
       
-      // Reset form and close modal
       resetForm();
       onClose();
     }
@@ -93,7 +92,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                   <View style={styles.header}>
                     <Text style={styles.headerTitle}>Add New Task</Text>
                     <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                      <X size={20} color={colors.text} />
+                      <X size={18} color={colors.text} strokeWidth={2} />
                     </TouchableOpacity>
                   </View>
                   
@@ -173,8 +172,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalBlur: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     overflow: 'hidden',
   },
   modalContent: {

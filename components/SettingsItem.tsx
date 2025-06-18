@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   chevron: {
-    fontSize: 20,
+    fontSize: 18,
     color: colors.textTertiary,
     fontWeight: '300',
   },
