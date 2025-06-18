@@ -456,11 +456,11 @@ Use web search to provide current, accurate information. Always cite your source
     perplexityMessages.push(lastUserMessage);
 
     const requestBody: any = {
-      model: config.model,
+      model: PERPLEXITY_MODEL,
       messages: perplexityMessages,
       max_tokens: 2000,
       temperature: 0.7,
-      stream: false,
+      stream: false
     };
 
     // Add search-specific parameters if available
@@ -488,7 +488,7 @@ Use web search to provide current, accurate information. Always cite your source
         status: response.status,
         statusText: response.statusText,
         error: errorText,
-        model: config.model,
+        model: PERPLEXITY_MODEL,
         url: response.url
       });
       
