@@ -7,7 +7,7 @@ export const EmptyState: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <Bot size={40} color={colors.primary} strokeWidth={1.5} />
+        <Bot size={48} color={colors.primary} strokeWidth={1.5} />
       </View>
       <Text style={styles.title}>Jarva AI Assistant</Text>
       <Text style={styles.subtitle}>
@@ -22,30 +22,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 32,
-    paddingBottom: 60,
+    paddingHorizontal: 40,
+    paddingBottom: 80,
   },
   iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 16,
+    width: 96,
+    height: 96,
+    borderRadius: 20,
     backgroundColor: colors.primaryMuted,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 8,
+    marginBottom: 12,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 16,
     color: colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 20,
-    maxWidth: 260,
+    lineHeight: 24,
+    maxWidth: 280,
   },
 });

@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { 
-  Clock, Calendar, Cloud, Newspaper, CheckSquare, Bell, Calculator, MapPin, 
-  TrendingUp, DollarSign, Coffee, Plane
+  Clock, Calendar, Cloud, Newspaper, CheckSquare2, Bell, Calculator, MapPin, 
+  TrendingUp, DollarSign
 } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
 
@@ -15,62 +15,52 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAction }) => {
     {
       id: 'current_time',
       title: 'Current Time',
-      icon: <Clock size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <Clock size={20} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'today_date',
       title: "Today's Date",
-      icon: <Calendar size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <Calendar size={20} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'weather',
       title: 'Weather',
-      icon: <Cloud size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <Cloud size={20} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'news',
       title: 'Latest News',
-      icon: <Newspaper size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <Newspaper size={20} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'stocks',
       title: 'Stock Market',
-      icon: <TrendingUp size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <TrendingUp size={20} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'crypto',
       title: 'Crypto Prices',
-      icon: <DollarSign size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <DollarSign size={20} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'calculate',
       title: 'Calculator',
-      icon: <Calculator size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <Calculator size={20} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'location',
       title: 'My Location',
-      icon: <MapPin size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <MapPin size={20} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'schedule',
       title: 'Plan My Day',
-      icon: <CheckSquare size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <CheckSquare2 size={20} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'reminder',
       title: 'Set Reminder',
-      icon: <Bell size={18} color={colors.primary} strokeWidth={1.5} />,
-    },
-    {
-      id: 'recipe',
-      title: 'Recipe Ideas',
-      icon: <Coffee size={18} color={colors.primary} strokeWidth={1.5} />,
-    },
-    {
-      id: 'travel',
-      title: 'Travel Info',
-      icon: <Plane size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <Bell size={20} color={colors.primary} strokeWidth={1.5} />,
     },
   ];
 
@@ -101,44 +91,44 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAction }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 20,
     backgroundColor: colors.surface,
-    marginHorizontal: 16,
-    marginBottom: 24,
-    borderRadius: 12,
-    borderWidth: 0.5,
+    marginHorizontal: 20,
+    marginBottom: 32,
+    borderRadius: 16,
+    borderWidth: 1,
     borderColor: colors.border,
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 12,
+    marginBottom: 16,
   },
   scrollContent: {
-    paddingRight: 12,
+    paddingRight: 16,
   },
   actionButton: {
     alignItems: 'center',
-    marginRight: 12,
-    minWidth: 64,
+    marginRight: 16,
+    minWidth: 72,
   },
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
+    width: 48,
+    height: 48,
+    borderRadius: 12,
     backgroundColor: colors.surfaceSecondary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 6,
-    borderWidth: 0.5,
+    marginBottom: 8,
+    borderWidth: 1,
     borderColor: colors.border,
   },
   actionText: {
-    fontSize: 10,
+    fontSize: 11,
     color: colors.textSecondary,
     textAlign: 'center',
     fontWeight: '500',
-    lineHeight: 12,
+    lineHeight: 14,
   },
 });

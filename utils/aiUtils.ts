@@ -2,8 +2,8 @@ import { CoreMessage, Task } from '@/types';
 
 const OPENROUTER_API_KEY = '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';
 const PERPLEXITY_API_KEY = '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';
-const GEMINI_MODEL = 'google/gemini-2.5-flash-lite-preview-06-17';
-const PERPLEXITY_MODEL = 'sonar';
+const GEMINI_MODEL = 'google/gemini-2.0-flash-thinking-exp';
+const PERPLEXITY_MODEL = 'sonar-large-online';
 
 // Get current date and time for context
 const getCurrentDateTime = () => {
@@ -26,14 +26,14 @@ const getCurrentDateTime = () => {
   };
 };
 
-// Check if query needs web search
+// Enhanced query classification
 const needsWebSearch = (query: string): boolean => {
   const webSearchKeywords = [
     'current', 'latest', 'recent', 'today', 'news', 'weather', 'stock', 'price',
     'what is happening', 'what happened', 'search for', 'find information',
-    'look up', 'google', 'internet', 'online', 'website', 'url', 'link',
-    'trending', 'popular', 'viral', 'breaking', 'update', 'live', 'now',
-    'cryptocurrency', 'crypto', 'bitcoin', 'ethereum', 'market', 'exchange rate'
+    'look up', 'trending', 'popular', 'viral', 'breaking', 'update', 'live', 'now',
+    'cryptocurrency', 'crypto', 'bitcoin', 'ethereum', 'market', 'exchange rate',
+    'real-time', 'current events', 'happening now'
   ];
   
   return webSearchKeywords.some(keyword => 
@@ -62,7 +62,7 @@ export const callAI = async (
     console.error('Error calling AI:', error);
     
     // Return a helpful error message instead of throwing
-    return "I apologize, but I'm having trouble connecting to my AI services right now. This could be due to network issues or temporary service unavailability. Please check your internet connection and try again in a moment. You can also try rephrasing your question or asking something else.";
+    return "I apologize, but I'm having trouble connecting to my AI services right now. This could be due to network issues or temporary service unavailability. Please check your internet connection and try again in a moment.";
   }
 };
 
@@ -102,7 +102,7 @@ When users ask about "today", "now", "current time", etc., use this information.
       body: JSON.stringify({
         model: GEMINI_MODEL,
         messages: enhancedMessages,
-        max_tokens: 1000,
+        max_tokens: 2000,
         temperature: 0.7,
         stream: !!onStream,
       }),
@@ -162,7 +162,7 @@ Use web search to provide current, accurate information.`
     const requestBody = {
       model: PERPLEXITY_MODEL,
       messages: perplexityMessages,
-      max_tokens: 1000,
+      max_tokens: 2000,
       temperature: 0.7,
       stream: !!onStream,
     };

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Switch } from 'react-native';
+import { ChevronRight } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
 
 interface SettingsItemProps {
@@ -42,7 +43,7 @@ export const SettingsItem: React.FC<SettingsItemProps> = ({
           thumbColor={colors.text}
         />
       ) : onPress ? (
-        <Text style={styles.chevron}>›</Text>
+        <ChevronRight size={16} color={colors.textTertiary} strokeWidth={1.5} />
       ) : null}
     </TouchableOpacity>
   );
@@ -52,31 +53,26 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
+    padding: 16,
     backgroundColor: colors.surface,
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   iconContainer: {
-    marginRight: 12,
+    marginRight: 16,
   },
   content: {
     flex: 1,
   },
   title: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: '500',
     color: colors.text,
   },
   subtitle: {
-    fontSize: 11,
+    fontSize: 13,
     color: colors.textSecondary,
-    marginTop: 1,
+    marginTop: 2,
     fontWeight: '400',
-  },
-  chevron: {
-    fontSize: 16,
-    color: colors.textTertiary,
-    fontWeight: '300',
   },
 });

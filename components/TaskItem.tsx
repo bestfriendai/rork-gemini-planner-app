@@ -15,8 +15,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
 
   const priorityColors = {
     low: colors.surfaceSecondary,
-    medium: colors.warning + '15',
-    high: colors.error + '15',
+    medium: colors.warning + '20',
+    high: colors.error + '20',
   };
 
   const priorityTextColors = {
@@ -36,7 +36,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
         onPress={() => toggleTaskCompletion(task.id)}
       >
         {task.completed ? (
-          <Check size={10} color={colors.text} strokeWidth={2} />
+          <Check size={12} color={colors.text} strokeWidth={2} />
         ) : (
           <View style={styles.checkboxEmpty} />
         )}
@@ -62,7 +62,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
         <View style={styles.details}>
           {task.time ? (
             <View style={styles.detailItem}>
-              <Clock size={8} color={colors.textSecondary} strokeWidth={1.5} />
+              <Clock size={10} color={colors.textSecondary} strokeWidth={1.5} />
               <Text style={styles.detailText}>{task.time}</Text>
             </View>
           ) : null}
@@ -71,7 +71,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
             styles.priority, 
             { backgroundColor: priorityColors[task.priority] }
           ]}>
-            <Flag size={6} color={priorityTextColors[task.priority]} strokeWidth={1.5} />
+            <Flag size={8} color={priorityTextColors[task.priority]} strokeWidth={1.5} />
             <Text style={[
               styles.priorityText, 
               { color: priorityTextColors[task.priority] }
@@ -88,21 +88,21 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    padding: 12,
+    padding: 16,
     backgroundColor: colors.surface,
-    borderRadius: 8,
-    marginBottom: 6,
-    borderWidth: 0.5,
+    borderRadius: 12,
+    marginBottom: 8,
+    borderWidth: 1,
     borderColor: colors.border,
   },
   checkbox: {
-    width: 16,
-    height: 16,
-    borderRadius: 4,
-    marginRight: 10,
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    marginRight: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 1,
+    marginTop: 2,
   },
   checkboxChecked: {
     backgroundColor: colors.success,
@@ -111,27 +111,27 @@ const styles = StyleSheet.create({
   checkboxEmpty: {
     width: '100%',
     height: '100%',
-    borderRadius: 4,
-    borderWidth: 1,
+    borderRadius: 6,
+    borderWidth: 1.5,
     borderColor: colors.primary,
   },
   content: {
     flex: 1,
   },
   title: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: '500',
     color: colors.text,
-    marginBottom: 2,
+    marginBottom: 4,
   },
   completedTitle: {
     textDecorationLine: 'line-through',
     color: colors.textSecondary,
   },
   description: {
-    fontSize: 11,
+    fontSize: 13,
     color: colors.textSecondary,
-    marginBottom: 6,
+    marginBottom: 8,
     fontWeight: '400',
   },
   details: {
@@ -141,24 +141,24 @@ const styles = StyleSheet.create({
   detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 8,
+    marginRight: 12,
   },
   detailText: {
-    fontSize: 9,
+    fontSize: 11,
     color: colors.textSecondary,
-    marginLeft: 3,
+    marginLeft: 4,
     fontWeight: '500',
   },
   priority: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-    borderRadius: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
   },
   priorityText: {
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: '600',
-    marginLeft: 2,
+    marginLeft: 3,
   },
 });

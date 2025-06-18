@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Volume2, VolumeX, User, Bot } from 'lucide-react-native';
 import { Message } from '@/types';
-import { useSpeechStore } from '@/store/speechStore';
 import { colors } from '@/constants/colors';
 
 interface ChatMessageProps {
@@ -12,25 +11,14 @@ interface ChatMessageProps {
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming = false }) => {
   const isUser = message.role === 'user';
-  const { speak, stopSpeaking, isSpeaking, currentMessageId } = useSpeechStore();
-  
-  const isThisMessageSpeaking = isSpeaking && currentMessageId === message.id;
-
-  const handleToggleSpeech = () => {
-    if (isThisMessageSpeaking) {
-      stopSpeaking();
-    } else {
-      speak(message.content, message.id);
-    }
-  };
 
   return (
     <View style={[styles.container, isUser ? styles.userContainer : styles.assistantContainer]}>
       <View style={[styles.avatar, isUser ? styles.userAvatar : styles.assistantAvatar]}>
         {isUser ? (
-          <User size={12} color={colors.text} strokeWidth={1.5} />
+          <User size={14} color={colors.text} strokeWidth={1.5} />
         ) : (
-          <Bot size={12} color={colors.primary} strokeWidth={1.5} />
+          <Bot size={14} color={colors.primary} strokeWidth={1.5} />
         )}
       </View>
 
@@ -47,15 +35,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
         )}
         
         {!isStreaming && !isUser && (
-          <TouchableOpacity 
-            style={styles.speakButton} 
-            onPress={handleToggleSpeech}
-          >
-            {isThisMessageSpeaking ? (
-              <VolumeX size={10} color={colors.textTertiary} strokeWidth={1.5} />
-            ) : (
-              <Volume2 size={10} color={colors.textTertiary} strokeWidth={1.5} />
-            )}
+          <TouchableOpacity style={styles.speakButton}>
+            <Volume2 size={12} color={colors.textTertiary} strokeWidth={1.5} />
           </TouchableOpacity>
         )}
       </View>
@@ -71,7 +52,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 8,
+    marginVertical: 12,
     maxWidth: '85%',
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -84,12 +65,12 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   avatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
+    width: 28,
+    height: 28,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 8,
+    marginHorizontal: 12,
     marginTop: 2,
   },
   userAvatar: {
@@ -99,25 +80,25 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primaryMuted,
   },
   bubble: {
-    borderRadius: 8,
+    borderRadius: 12,
     flex: 1,
     position: 'relative',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   userBubble: {
     backgroundColor: colors.primary,
-    marginLeft: 32,
+    marginLeft: 40,
   },
   assistantBubble: {
     backgroundColor: colors.surface,
-    marginRight: 32,
-    borderWidth: 0.5,
+    marginRight: 40,
+    borderWidth: 1,
     borderColor: colors.border,
   },
   messageText: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 15,
+    lineHeight: 22,
     fontWeight: '400',
   },
   userText: {
@@ -127,42 +108,42 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   timestamp: {
-    fontSize: 9,
-    marginTop: 4,
+    fontSize: 10,
+    marginTop: 6,
     fontWeight: '400',
     position: 'absolute',
-    bottom: -12,
+    bottom: -16,
   },
   userTimestamp: {
     color: colors.textTertiary,
-    right: 8,
+    right: 12,
   },
   assistantTimestamp: {
     color: colors.textTertiary,
-    left: 8,
+    left: 12,
   },
   speakButton: {
     position: 'absolute',
-    bottom: 4,
-    right: 6,
-    padding: 2,
-    borderRadius: 4,
+    bottom: 6,
+    right: 8,
+    padding: 4,
+    borderRadius: 6,
     backgroundColor: colors.surfaceSecondary,
   },
   streamingIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
+    marginTop: 6,
   },
   streamingDot: {
-    width: 3,
-    height: 3,
-    borderRadius: 1.5,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
     backgroundColor: colors.primary,
-    marginRight: 4,
+    marginRight: 6,
   },
   streamingText: {
-    fontSize: 10,
+    fontSize: 11,
     color: colors.textSecondary,
     fontStyle: 'italic',
     fontWeight: '400',

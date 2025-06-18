@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, TouchableOpacity, Alert } from 'react-native';
-import { ListPlus } from 'lucide-react-native';
+import { Plus } from 'lucide-react-native';
 import { useChatStore } from '@/store/chatStore';
 import { useTaskStore } from '@/store/taskStore';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -41,8 +41,8 @@ export default function AssistantScreen() {
       });
       
       const greeting = username 
-        ? `Hello ${username}! I'm Jarva, your intelligent personal assistant. Today is ${currentDate} and it's currently ${currentTime}. I can help you plan your day, create tasks, search the web for current information, answer questions, calculate math problems, and much more. Try asking me to schedule something for you or search for recent news!` 
-        : `Hello! I'm Jarva, your intelligent personal assistant. Today is ${currentDate} and it's currently ${currentTime}. I can help you plan your day, create tasks, search the web for current information, answer questions, calculate math problems, and much more. Try asking me to schedule something for you or search for recent news!`;
+        ? `Hello ${username}! I'm Jarva, your AI assistant. Today is ${currentDate} and it's ${currentTime}. I can help you plan your day, create tasks, search the web for current information, answer questions, and much more. What would you like to do?` 
+        : `Hello! I'm Jarva, your AI assistant. Today is ${currentDate} and it's ${currentTime}. I can help you plan your day, create tasks, search the web for current information, answer questions, and much more. What would you like to do?`;
       
       addMessage({
         role: 'assistant',
@@ -90,7 +90,7 @@ export default function AssistantScreen() {
       
       addMessage({
         role: 'assistant',
-        content: `I apologize, but I encountered a connection issue: ${errorMessage}. Please check your internet connection and try again. If the problem persists, try rephrasing your question or asking something else. I'm here to help with planning, current information, calculations, and more!`,
+        content: `I apologize, but I encountered an issue: ${errorMessage}. Please check your connection and try again.`,
       });
     } finally {
       setLoading(false);
@@ -103,20 +103,14 @@ export default function AssistantScreen() {
     const quickActions: { [key: string]: string } = {
       'current_time': 'What time is it right now?',
       'today_date': 'What is today\'s date?',
-      'weather': 'What is the current weather in my location?',
-      'news': 'What are the latest news headlines today?',
+      'weather': 'What is the current weather?',
+      'news': 'What are the latest news headlines?',
       'stocks': 'What are the current stock market trends?',
-      'crypto': 'What are the current cryptocurrency prices for Bitcoin and Ethereum?',
+      'crypto': 'What are the current cryptocurrency prices?',
       'schedule': 'Help me plan my day',
       'reminder': 'Set a reminder for me',
-      'calculate': 'Help me calculate 15% tip on $45.50',
+      'calculate': 'Help me calculate something',
       'location': 'What is my current location?',
-      'recipe': 'Give me some healthy recipe ideas for dinner',
-      'travel': 'What are some popular travel destinations right now?',
-      'music': 'What are the trending songs and artists this week?',
-      'books': 'Recommend some popular books to read',
-      'health': 'Give me some daily health and wellness tips',
-      'productivity': 'Share some productivity tips for better focus',
     };
     
     const message = quickActions[action];
@@ -165,7 +159,7 @@ export default function AssistantScreen() {
       <KeyboardAvoidingView
         style={styles.keyboardContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
       >
         {displayMessages.length === 0 ? (
           <View style={styles.emptyContainer}>
@@ -194,7 +188,7 @@ export default function AssistantScreen() {
             onPress={handleAddExtractedTasks}
           >
             <View style={styles.taskPromptContent}>
-              <ListPlus size={16} color={colors.primary} strokeWidth={1.5} />
+              <Plus size={16} color={colors.primary} strokeWidth={2} />
               <View style={styles.taskPromptText}>
                 <View style={styles.taskPromptTitle}>Add {extractedTasks.length} task{extractedTasks.length > 1 ? 's' : ''} to planner</View>
               </View>
@@ -220,28 +214,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messageList: {
-    padding: 16,
-    paddingBottom: 140, // Increased to account for tab bar
+    padding: 20,
+    paddingBottom: Platform.OS === 'ios' ? 140 : 120,
   },
   taskPrompt: {
-    marginHorizontal: 16,
-    marginBottom: 8,
+    marginHorizontal: 20,
+    marginBottom: 12,
     backgroundColor: colors.surface,
-    borderRadius: 8,
-    borderWidth: 0.5,
+    borderRadius: 12,
+    borderWidth: 1,
     borderColor: colors.border,
   },
   taskPromptContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
+    padding: 16,
   },
   taskPromptText: {
-    marginLeft: 8,
+    marginLeft: 12,
   },
   taskPromptTitle: {
     color: colors.text,
     fontWeight: '500',
-    fontSize: 13,
+    fontSize: 14,
   },
 });

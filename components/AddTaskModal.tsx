@@ -92,7 +92,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                   <View style={styles.header}>
                     <Text style={styles.headerTitle}>Add New Task</Text>
                     <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                      <X size={16} color={colors.text} strokeWidth={1.5} />
+                      <X size={18} color={colors.text} strokeWidth={1.5} />
                     </TouchableOpacity>
                   </View>
                   
@@ -172,24 +172,24 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalBlur: {
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     overflow: 'hidden',
   },
   modalContent: {
     backgroundColor: colors.glass,
-    paddingBottom: Platform.OS === 'ios' ? 32 : 16,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 20,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 0.5,
+    padding: 20,
+    borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   headerTitle: {
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: '600',
     color: colors.text,
   },
@@ -197,29 +197,29 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   form: {
-    padding: 16,
+    padding: 20,
   },
   formGroup: {
-    marginBottom: 12,
+    marginBottom: 16,
   },
   label: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: '500',
     color: colors.text,
-    marginBottom: 6,
+    marginBottom: 8,
   },
   input: {
     backgroundColor: colors.surface,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 13,
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 15,
     color: colors.text,
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: colors.border,
     fontWeight: '400',
   },
   textArea: {
-    minHeight: 64,
+    minHeight: 80,
   },
   priorityButtons: {
     flexDirection: 'row',
@@ -227,12 +227,12 @@ const styles = StyleSheet.create({
   },
   priorityButton: {
     flex: 1,
-    marginHorizontal: 3,
-    borderRadius: 8,
+    marginHorizontal: 4,
+    borderRadius: 12,
     backgroundColor: colors.surfaceSecondary,
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: colors.border,
-    paddingVertical: 8,
+    paddingVertical: 12,
     alignItems: 'center',
   },
   priorityButtonSelected: {
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   priorityButtonText: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: '500',
     color: colors.textSecondary,
   },
@@ -250,17 +250,17 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: colors.primary,
-    borderRadius: 8,
-    padding: 12,
+    borderRadius: 12,
+    padding: 16,
     alignItems: 'center',
-    marginTop: 6,
+    marginTop: 8,
   },
   addButtonDisabled: {
     opacity: 0.5,
   },
   addButtonText: {
     color: colors.text,
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: '600',
   },
 });

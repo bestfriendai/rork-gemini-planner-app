@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Alert, Platform } from 'react-native';
 import { User, Bell, Trash2, Info, Volume2, Wifi, Globe, Smartphone, Monitor, Mic, Speaker, Zap, Brain, Clock, Calendar } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useChatStore } from '@/store/chatStore';
 import { useTaskStore } from '@/store/taskStore';
-import { useSpeechStore } from '@/store/speechStore';
 import { SettingsItem } from '@/components/SettingsItem';
 import { colors } from '@/constants/colors';
 
@@ -12,19 +11,9 @@ export default function SettingsScreen() {
   const { username, setUsername, notifications, toggleNotifications } = useSettingsStore();
   const { clearMessages } = useChatStore();
   const { tasks } = useTaskStore();
-  const { stopSpeaking, checkSupport, isSupported } = useSpeechStore();
   
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(username);
-  const [textToSpeech, setTextToSpeech] = useState(true);
-  const [webSearch, setWebSearch] = useState(true);
-  const [voiceInput, setVoiceInput] = useState(true);
-  const [smartSuggestions, setSmartSuggestions] = useState(true);
-  const [autoTaskExtraction, setAutoTaskExtraction] = useState(true);
-  
-  useEffect(() => {
-    checkSupport();
-  }, []);
   
   const handleSaveName = () => {
     setUsername(nameInput.trim());
@@ -41,19 +30,11 @@ export default function SettingsScreen() {
           text: "Clear", 
           style: "destructive",
           onPress: () => {
-            stopSpeaking();
             clearMessages();
           }
         }
       ]
     );
-  };
-
-  const toggleTextToSpeech = () => {
-    if (textToSpeech) {
-      stopSpeaking();
-    }
-    setTextToSpeech(!textToSpeech);
   };
   
   const getCurrentDateTime = () => {
@@ -75,14 +56,6 @@ export default function SettingsScreen() {
   };
 
   const dateTime = getCurrentDateTime();
-  
-  const getSpeechRecognitionStatus = () => {
-    if (Platform.OS === 'web') {
-      return isSupported ? "Full speech-to-text available" : "Not supported in this browser";
-    } else {
-      return "Voice recording with manual transcription";
-    }
-  };
   
   return (
     <View style={styles.container}>
@@ -122,7 +95,7 @@ export default function SettingsScreen() {
             <SettingsItem
               title="Your Name"
               subtitle={username || "Set your name"}
-              icon={<User size={14} color={colors.primary} strokeWidth={1.5} />}
+              icon={<User size={16} color={colors.primary} strokeWidth={1.5} />}
               onPress={() => setEditingName(true)}
             />
           )}
@@ -134,92 +107,55 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Text-to-Speech"
             subtitle="Allow assistant to speak responses"
-            icon={<Speaker size={14} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Speaker size={16} color={colors.primary} strokeWidth={1.5} />}
             isSwitch
-            switchValue={textToSpeech}
-            onSwitchChange={toggleTextToSpeech}
+            switchValue={true}
+            onSwitchChange={() => {}}
           />
           
           <SettingsItem
             title="Voice Input"
-            subtitle={getSpeechRecognitionStatus()}
-            icon={<Mic size={14} color={Platform.OS === 'web' && isSupported ? colors.primary : colors.warning} strokeWidth={1.5} />}
+            subtitle="Speech recognition for voice commands"
+            icon={<Mic size={16} color={colors.primary} strokeWidth={1.5} />}
             isSwitch
-            switchValue={voiceInput}
-            onSwitchChange={setVoiceInput}
+            switchValue={true}
+            onSwitchChange={() => {}}
           />
           
           <SettingsItem
             title="Web Search"
             subtitle="Enable internet search for current information"
-            icon={<Globe size={14} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Globe size={16} color={colors.primary} strokeWidth={1.5} />}
             isSwitch
-            switchValue={webSearch}
-            onSwitchChange={setWebSearch}
+            switchValue={true}
+            onSwitchChange={() => {}}
           />
           
           <SettingsItem
             title="Smart Suggestions"
             subtitle="Get intelligent quick action suggestions"
-            icon={<Brain size={14} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Brain size={16} color={colors.primary} strokeWidth={1.5} />}
             isSwitch
-            switchValue={smartSuggestions}
-            onSwitchChange={setSmartSuggestions}
+            switchValue={true}
+            onSwitchChange={() => {}}
           />
           
           <SettingsItem
             title="Auto Task Extraction"
-            subtitle="Automatically detect and suggest tasks from conversations"
-            icon={<Zap size={14} color={colors.primary} strokeWidth={1.5} />}
+            subtitle="Automatically detect and suggest tasks"
+            icon={<Zap size={16} color={colors.primary} strokeWidth={1.5} />}
             isSwitch
-            switchValue={autoTaskExtraction}
-            onSwitchChange={setAutoTaskExtraction}
+            switchValue={true}
+            onSwitchChange={() => {}}
           />
           
           <SettingsItem
             title="Notifications"
             subtitle="Receive reminders for scheduled tasks"
-            icon={<Bell size={14} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Bell size={16} color={colors.primary} strokeWidth={1.5} />}
             isSwitch
             switchValue={notifications}
             onSwitchChange={toggleNotifications}
-          />
-        </View>
-        
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Platform Capabilities</Text>
-          
-          <SettingsItem
-            title="Speech Recognition"
-            subtitle={getSpeechRecognitionStatus()}
-            icon={Platform.OS === 'web' ? 
-              (isSupported ? <Monitor size={14} color={colors.primary} strokeWidth={1.5} /> : <Monitor size={14} color={colors.error} strokeWidth={1.5} />) : 
-              <Smartphone size={14} color={colors.warning} strokeWidth={1.5} />
-            }
-          />
-          
-          <SettingsItem
-            title="Voice Output"
-            subtitle="Text-to-speech available on all platforms"
-            icon={<Volume2 size={14} color={colors.primary} strokeWidth={1.5} />}
-          />
-          
-          <SettingsItem
-            title="Web Search"
-            subtitle="Real-time internet search via Perplexity AI"
-            icon={<Wifi size={14} color={colors.primary} strokeWidth={1.5} />}
-          />
-          
-          <SettingsItem
-            title="Task Management"
-            subtitle="Create, organize, and track your tasks"
-            icon={<Bell size={14} color={colors.primary} strokeWidth={1.5} />}
-          />
-          
-          <SettingsItem
-            title="Real-time Data"
-            subtitle="Access to current time, date, and device information"
-            icon={<Clock size={14} color={colors.primary} strokeWidth={1.5} />}
           />
         </View>
         
@@ -229,7 +165,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Clear Chat History"
             subtitle="Delete all conversations with the assistant"
-            icon={<Trash2 size={14} color={colors.error} strokeWidth={1.5} />}
+            icon={<Trash2 size={16} color={colors.error} strokeWidth={1.5} />}
             onPress={handleClearHistory}
           />
         </View>
@@ -240,25 +176,25 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Current Date"
             subtitle={dateTime.date}
-            icon={<Calendar size={14} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Calendar size={16} color={colors.primary} strokeWidth={1.5} />}
           />
           
           <SettingsItem
             title="Current Time"
             subtitle={`${dateTime.time} (${dateTime.timezone})`}
-            icon={<Clock size={14} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Clock size={16} color={colors.primary} strokeWidth={1.5} />}
           />
           
           <SettingsItem
             title="Platform"
-            subtitle={Platform.OS === 'web' ? 'Web Browser' : `${Platform.OS} App (v${Platform.Version})`}
-            icon={<Info size={14} color={colors.primary} strokeWidth={1.5} />}
+            subtitle={Platform.OS === 'web' ? 'Web Browser' : `${Platform.OS} App`}
+            icon={<Info size={16} color={colors.primary} strokeWidth={1.5} />}
           />
           
           <SettingsItem
             title="App Version"
-            subtitle="5.0.0 - Modern 2025 Design & Enhanced AI"
-            icon={<Info size={14} color={colors.primary} strokeWidth={1.5} />}
+            subtitle="5.0.0 - Modern 2025 Design"
+            icon={<Info size={16} color={colors.primary} strokeWidth={1.5} />}
           />
         </View>
         
@@ -278,37 +214,6 @@ export default function SettingsScreen() {
               <Text style={styles.statLabel}>Pending</Text>
             </View>
           </View>
-          
-          <View style={styles.statsRow}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{tasks.filter(t => t.priority === 'high').length}</Text>
-              <Text style={styles.statLabel}>High Priority</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{tasks.filter(t => t.date === new Date().toISOString().split('T')[0]).length}</Text>
-              <Text style={styles.statLabel}>Today</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{Math.round((tasks.filter(t => t.completed).length / Math.max(tasks.length, 1)) * 100)}%</Text>
-              <Text style={styles.statLabel}>Completion</Text>
-            </View>
-          </View>
-        </View>
-        
-        <View style={styles.helpSection}>
-          <Text style={styles.helpTitle}>Voice Features Help</Text>
-          <Text style={styles.helpText}>
-            <Text style={styles.helpBold}>Web Browser:</Text> {isSupported ? 'Full speech-to-text recognition available. Click the microphone to start speaking.' : 'Speech recognition not supported in this browser. Please use a modern browser like Chrome or Edge.'}
-          </Text>
-          <Text style={styles.helpText}>
-            <Text style={styles.helpBold}>Mobile:</Text> Voice recording with manual transcription. Speak your message, then type what you said in the text field.
-          </Text>
-          <Text style={styles.helpText}>
-            <Text style={styles.helpBold}>Text-to-Speech:</Text> Available on all platforms. Tap the speaker icon next to assistant messages to hear them spoken aloud.
-          </Text>
-          <Text style={styles.helpText}>
-            <Text style={styles.helpBold}>AI Services:</Text> Uses Gemini AI for general queries and Perplexity AI for web search with automatic fallback for reliability.
-          </Text>
         </View>
       </ScrollView>
     </View>
@@ -324,132 +229,106 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   section: {
-    marginBottom: 16,
+    marginBottom: 20,
     backgroundColor: colors.surface,
-    borderRadius: 8,
+    borderRadius: 16,
     overflow: 'hidden',
-    marginHorizontal: 16,
-    marginTop: 8,
-    borderWidth: 0.5,
+    marginHorizontal: 20,
+    marginTop: 12,
+    borderWidth: 1,
     borderColor: colors.border,
   },
   sectionTitle: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '600',
     color: colors.textSecondary,
-    marginBottom: 6,
-    paddingHorizontal: 12,
-    paddingTop: 12,
+    marginBottom: 8,
+    paddingHorizontal: 16,
+    paddingTop: 16,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   editNameContainer: {
-    padding: 12,
+    padding: 16,
     backgroundColor: colors.surface,
   },
   nameInput: {
     backgroundColor: colors.surfaceSecondary,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 13,
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 15,
     color: colors.text,
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: colors.border,
     fontWeight: '400',
   },
   editNameButtons: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop: 8,
+    marginTop: 12,
   },
   cancelButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    marginRight: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginRight: 8,
     backgroundColor: colors.surfaceSecondary,
   },
   saveButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
     backgroundColor: colors.primary,
   },
   cancelButtonText: {
     color: colors.text,
     fontWeight: '500',
-    fontSize: 11,
+    fontSize: 13,
   },
   saveButtonText: {
     color: colors.text,
     fontWeight: '600',
-    fontSize: 11,
+    fontSize: 13,
   },
   statsContainer: {
-    margin: 16,
-    padding: 16,
+    margin: 20,
+    padding: 20,
     backgroundColor: colors.surface,
-    borderRadius: 8,
-    borderWidth: 0.5,
+    borderRadius: 16,
+    borderWidth: 1,
     borderColor: colors.border,
+    marginBottom: 140,
   },
   statsTitle: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 12,
+    marginBottom: 16,
   },
   statsRow: {
     flexDirection: 'row',
-    marginBottom: 8,
   },
   statItem: {
     flex: 1,
     alignItems: 'center',
-    padding: 8,
+    padding: 12,
     backgroundColor: colors.surfaceSecondary,
-    borderRadius: 6,
-    marginHorizontal: 2,
-    borderWidth: 0.5,
+    borderRadius: 12,
+    marginHorizontal: 4,
+    borderWidth: 1,
     borderColor: colors.border,
   },
   statValue: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '600',
     color: colors.primary,
-    marginBottom: 2,
+    marginBottom: 4,
   },
   statLabel: {
-    fontSize: 8,
+    fontSize: 10,
     color: colors.textSecondary,
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-  },
-  helpSection: {
-    margin: 16,
-    padding: 16,
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: 8,
-    marginBottom: 120,
-    borderWidth: 0.5,
-    borderColor: colors.border,
-  },
-  helpTitle: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 8,
-  },
-  helpText: {
-    fontSize: 10,
-    color: colors.textSecondary,
-    lineHeight: 14,
-    marginBottom: 6,
-    fontWeight: '400',
-  },
-  helpBold: {
-    fontWeight: '600',
-    color: colors.primary,
   },
 });
