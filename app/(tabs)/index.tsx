@@ -98,7 +98,7 @@ export default function AssistantScreen() {
       
       addMessage({
         role: 'assistant',
-        content: `I apologize, but I encountered an error while processing your request: ${errorMessage}. Please check your internet connection and try again. If the problem persists, try rephrasing your question or asking something else.`,
+        content: `I apologize, but I encountered a connection issue: ${errorMessage}. Please check your internet connection and try again. If the problem persists, try rephrasing your question or asking something else. I'm here to help with planning, current information, calculations, and more!`,
       });
     } finally {
       setLoading(false);

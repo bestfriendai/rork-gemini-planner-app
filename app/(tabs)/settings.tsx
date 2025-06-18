@@ -256,7 +256,7 @@ export default function SettingsScreen() {
         
         <SettingsItem
           title="App Version"
-          subtitle="2.2.0 - Enhanced Voice Features & Improved API Reliability"
+          subtitle="2.3.0 - Fixed AI API Issues & Enhanced Voice Features"
           icon={<Info size={22} color="#4A86E8" />}
         />
       </View>
@@ -304,6 +304,9 @@ export default function SettingsScreen() {
         </Text>
         <Text style={styles.helpText}>
           <Text style={styles.helpBold}>Text-to-Speech:</Text> Available on all platforms. Tap the speaker icon next to assistant messages to hear them spoken aloud.
+        </Text>
+        <Text style={styles.helpText}>
+          <Text style={styles.helpBold}>AI Services:</Text> Uses Gemini AI for general queries and Perplexity AI for web search with automatic fallback for reliability.
         </Text>
       </View>
     </ScrollView>

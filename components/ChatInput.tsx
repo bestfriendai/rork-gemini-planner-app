@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Platform, Alert, Modal, Text } from 'react-native';
-import { Send, Mic, MicOff, Square, X, Check } from 'lucide-react-native';
+import { Send, Mic, MicOff, Square, X, Check, Volume2 } from 'lucide-react-native';
 import { useSpeechStore } from '@/store/speechStore';
 
 interface ChatInputProps {
@@ -42,7 +42,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
       if (!isSupported) {
         Alert.alert(
           "Speech Recognition Not Available",
-          "Your browser doesn't support speech recognition. Please type your message instead."
+          "Your browser doesn't support speech recognition. Please use Chrome, Edge, or Safari for voice input."
         );
         return;
       }
@@ -102,9 +102,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
     }
   };
 
-  // Show mic button on all platforms
-  const showMicButton = true;
-
   return (
     <>
       <View style={styles.container}>
@@ -112,7 +109,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
           style={styles.input}
           value={message}
           onChangeText={setMessage}
-          placeholder="Type a message or ask about current events..."
+          placeholder="Type a message or use voice input..."
           placeholderTextColor="#A0A9B8"
           multiline
           maxLength={500}
@@ -120,15 +117,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
           editable={!isLoading}
         />
         
-        {showMicButton && (
-          <TouchableOpacity 
-            style={getMicButtonStyle()} 
-            onPress={toggleListening}
-            disabled={isLoading}
-          >
-            {getMicIcon()}
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity 
+          style={getMicButtonStyle()} 
+          onPress={toggleListening}
+          disabled={isLoading}
+        >
+          {getMicIcon()}
+        </TouchableOpacity>
         
         <TouchableOpacity 
           style={[styles.sendButton, isLoading && styles.sendButtonDisabled]} 
@@ -166,9 +161,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
               </Text>
             </View>
             
-            <Text style={styles.instructionText}>
-              Speak your message clearly, then type what you said in the text field below and tap "Use Text".
-            </Text>
+            <View style={styles.instructionContainer}>
+              <Volume2 size={24} color="#4A86E8" />
+              <Text style={styles.instructionText}>
+                Speak your message clearly, then type what you said in the text field below and tap "Use Text".
+              </Text>
+            </View>
             
             <TextInput
               style={styles.recordedTextInput}
@@ -202,9 +200,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
               </TouchableOpacity>
             </View>
             
-            <Text style={styles.helpText}>
-              💡 Tip: On mobile, voice-to-text requires manual transcription. Speak clearly and then type what you said.
-            </Text>
+            <View style={styles.helpContainer}>
+              <Text style={styles.helpText}>
+                💡 <Text style={styles.helpBold}>Mobile Voice Input:</Text> Record your voice as a reminder, then manually type what you said. This ensures accuracy while we work on automatic speech recognition for mobile.
+              </Text>
+            </View>
           </View>
         </View>
       </Modal>
@@ -300,11 +300,19 @@ const styles = StyleSheet.create({
     color: '#1A1A1A',
     fontWeight: '500',
   },
+  instructionContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F1FF',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
   instructionText: {
     fontSize: 14,
-    color: '#6E7A8A',
-    textAlign: 'center',
-    marginBottom: 16,
+    color: '#1A1A1A',
+    marginLeft: 12,
+    flex: 1,
     lineHeight: 20,
   },
   recordedTextInput: {
@@ -360,10 +368,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 8,
   },
+  helpContainer: {
+    backgroundColor: '#FFF8E8',
+    padding: 12,
+    borderRadius: 8,
+  },
   helpText: {
     fontSize: 12,
-    color: '#6E7A8A',
-    textAlign: 'center',
-    fontStyle: 'italic',
+    color: '#1A1A1A',
+    lineHeight: 16,
+  },
+  helpBold: {
+    fontWeight: '600',
+    color: '#F9A826',
   },
 });

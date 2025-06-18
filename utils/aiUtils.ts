@@ -60,7 +60,9 @@ export const callAI = async (
     }
   } catch (error) {
     console.error('Error calling AI:', error);
-    throw error;
+    
+    // Return a helpful error message instead of throwing
+    return "I apologize, but I'm having trouble connecting to my AI services right now. This could be due to network issues or temporary service unavailability. Please check your internet connection and try again in a moment. You can also try rephrasing your question or asking something else.";
   }
 };
 
@@ -69,12 +71,13 @@ const callGeminiAI = async (
   currentDateTime: any,
   onStream?: (chunk: string) => void
 ): Promise<string> => {
-  // Add current date/time context to system message
-  const enhancedMessages = messages.map((msg, index) => {
-    if (index === 0 && msg.role === 'system') {
-      return {
-        ...msg,
-        content: `${msg.content}
+  try {
+    // Add current date/time context to system message
+    const enhancedMessages = messages.map((msg, index) => {
+      if (index === 0 && msg.role === 'system') {
+        return {
+          ...msg,
+          content: `${msg.content}
 
 CURRENT DATE & TIME CONTEXT:
 - Today is: ${currentDateTime.date}
@@ -83,44 +86,53 @@ CURRENT DATE & TIME CONTEXT:
 - ISO Date: ${currentDateTime.isoDate}
 
 When users ask about "today", "now", "current time", etc., use this information.`
-      };
+        };
+      }
+      return msg;
+    });
+
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'HTTP-Referer': 'https://expo.dev',
+        'X-Title': 'Personal Assistant App',
+      },
+      body: JSON.stringify({
+        model: GEMINI_MODEL,
+        messages: enhancedMessages,
+        max_tokens: 1000,
+        temperature: 0.7,
+        stream: !!onStream,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('OpenRouter API error:', response.status, errorText);
+      throw new Error(`OpenRouter API error: ${response.status}`);
     }
-    return msg;
-  });
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-      'HTTP-Referer': 'https://expo.dev',
-      'X-Title': 'Personal Assistant App',
-    },
-    body: JSON.stringify({
-      model: GEMINI_MODEL,
-      messages: enhancedMessages,
-      max_tokens: 1000,
-      temperature: 0.7,
-      stream: !!onStream,
-    }),
-  });
-
-  if (!response.ok) {
-    let errorData;
-    try {
-      errorData = await response.json();
-    } catch {
-      errorData = { error: 'Unknown error' };
+    if (onStream && response.body) {
+      return await handleStreamResponse(response, onStream);
+    } else {
+      const responseText = await response.text();
+      
+      // Try to parse JSON
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Failed to parse OpenRouter response:', responseText);
+        throw new Error('Invalid response format from OpenRouter API');
+      }
+      
+      return data.choices?.[0]?.message?.content || 'No response received from AI service';
     }
-    console.error('OpenRouter API error:', errorData);
-    throw new Error(`API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
-  }
-
-  if (onStream && response.body) {
-    return await handleStreamResponse(response, onStream);
-  } else {
-    const data = await response.json();
-    return data.choices?.[0]?.message?.content || 'No response received';
+  } catch (error) {
+    console.error('Gemini AI error:', error);
+    throw error;
   }
 };
 
@@ -129,15 +141,16 @@ const callPerplexityAI = async (
   currentDateTime: any,
   onStream?: (chunk: string) => void
 ): Promise<string> => {
-  // Prepare messages for Perplexity with proper formatting
-  const perplexityMessages: CoreMessage[] = [];
-  
-  // Find system message
-  const systemMessage = messages.find(msg => msg.role === 'system');
-  if (systemMessage) {
-    perplexityMessages.push({
-      role: 'system',
-      content: `${systemMessage.content}
+  try {
+    // Prepare messages for Perplexity with proper formatting
+    const perplexityMessages: CoreMessage[] = [];
+    
+    // Find system message and enhance it
+    const systemMessage = messages.find(msg => msg.role === 'system');
+    if (systemMessage) {
+      perplexityMessages.push({
+        role: 'system',
+        content: `${systemMessage.content}
 
 CURRENT DATE & TIME CONTEXT:
 - Today is: ${currentDateTime.date}
@@ -146,73 +159,90 @@ CURRENT DATE & TIME CONTEXT:
 - ISO Date: ${currentDateTime.isoDate}
 
 You have access to current web information. Use it to provide up-to-date answers.`
-    });
-  }
-  
-  // Get conversation messages (excluding system) and ensure proper alternating
-  const conversationMessages = messages.filter(msg => msg.role !== 'system');
-  
-  // Simple approach: just take the last few messages to ensure alternating pattern
-  const recentMessages = conversationMessages.slice(-6); // Last 6 messages
-  
-  // Ensure we have proper alternating pattern
-  const cleanMessages: CoreMessage[] = [];
-  let expectedRole: 'user' | 'assistant' = 'user';
-  
-  for (const msg of recentMessages) {
-    if (msg.role === expectedRole) {
-      cleanMessages.push(msg);
-      expectedRole = expectedRole === 'user' ? 'assistant' : 'user';
+      });
     }
-  }
-  
-  // Ensure we end with a user message
-  if (cleanMessages.length > 0 && cleanMessages[cleanMessages.length - 1].role !== 'user') {
-    // Find the last user message from the original conversation
-    const lastUserMessage = conversationMessages.reverse().find(msg => msg.role === 'user');
-    if (lastUserMessage) {
-      cleanMessages.push(lastUserMessage);
+    
+    // Get conversation messages (excluding system) and ensure proper alternating
+    const conversationMessages = messages.filter(msg => msg.role !== 'system');
+    
+    // Take the last few messages to ensure alternating pattern
+    const recentMessages = conversationMessages.slice(-4); // Last 4 messages
+    
+    // Ensure we have proper alternating pattern
+    const cleanMessages: CoreMessage[] = [];
+    let expectedRole: 'user' | 'assistant' = 'user';
+    
+    for (const msg of recentMessages) {
+      if (msg.role === expectedRole) {
+        cleanMessages.push(msg);
+        expectedRole = expectedRole === 'user' ? 'assistant' : 'user';
+      }
     }
-  }
-  
-  // Add cleaned messages to perplexity messages
-  perplexityMessages.push(...cleanMessages);
+    
+    // Ensure we end with a user message
+    if (cleanMessages.length > 0 && cleanMessages[cleanMessages.length - 1].role !== 'user') {
+      // Find the last user message from the original conversation
+      const lastUserMessage = conversationMessages.reverse().find(msg => msg.role === 'user');
+      if (lastUserMessage) {
+        cleanMessages.push(lastUserMessage);
+      }
+    }
+    
+    // Add cleaned messages to perplexity messages
+    perplexityMessages.push(...cleanMessages);
 
-  const response = await fetch('https://api.perplexity.ai/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
-    },
-    body: JSON.stringify({
+    const requestBody = {
       model: PERPLEXITY_MODEL,
       messages: perplexityMessages,
       max_tokens: 1000,
       temperature: 0.7,
       stream: !!onStream,
-    }),
-  });
+    };
 
-  if (!response.ok) {
-    let errorText;
-    try {
-      const errorData = await response.json();
-      errorText = errorData.error?.message || `HTTP ${response.status}`;
-    } catch {
-      errorText = `HTTP ${response.status}`;
+    console.log('Perplexity request:', JSON.stringify(requestBody, null, 2));
+
+    const response = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Perplexity API error:', response.status, errorText);
+      
+      // Fallback to Gemini if Perplexity fails
+      console.log('Falling back to Gemini AI...');
+      return await callGeminiAI(messages, currentDateTime, onStream);
     }
-    console.error('Perplexity API error:', errorText);
+
+    if (onStream && response.body) {
+      return await handleStreamResponse(response, onStream);
+    } else {
+      const responseText = await response.text();
+      
+      // Try to parse JSON
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Failed to parse Perplexity response:', responseText);
+        // Fallback to Gemini
+        console.log('Falling back to Gemini AI due to parse error...');
+        return await callGeminiAI(messages, currentDateTime, onStream);
+      }
+      
+      return data.choices?.[0]?.message?.content || 'No response received from search service';
+    }
+  } catch (error) {
+    console.error('Perplexity AI error:', error);
     
     // Fallback to Gemini if Perplexity fails
-    console.log('Falling back to Gemini AI...');
+    console.log('Falling back to Gemini AI due to error...');
     return await callGeminiAI(messages, currentDateTime, onStream);
-  }
-
-  if (onStream && response.body) {
-    return await handleStreamResponse(response, onStream);
-  } else {
-    const data = await response.json();
-    return data.choices?.[0]?.message?.content || 'No response received';
   }
 };
 
