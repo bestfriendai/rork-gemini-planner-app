@@ -1,47 +1,51 @@
 export const colors = {
-  // Dark theme colors - Modern 2030 style
-  background: '#0B0B0F',
-  surface: '#1A1A1F',
-  surfaceSecondary: '#252530',
-  surfaceTertiary: '#2F2F3A',
+  // Core dark theme - 2030 modern style
+  background: '#0A0A0B',
+  surface: '#111113',
+  surfaceSecondary: '#1A1A1D',
+  surfaceTertiary: '#242428',
   
-  // Primary colors - Electric blue
+  // Primary brand colors - Electric blue
   primary: '#0066FF',
   primaryLight: '#3385FF',
   primaryDark: '#0052CC',
+  primaryGlow: 'rgba(0, 102, 255, 0.3)',
   
-  // Accent colors - Cyan
+  // Accent colors - Subtle cyan
   accent: '#00D4FF',
   accentLight: '#33DDFF',
   accentDark: '#00B8E6',
+  accentGlow: 'rgba(0, 212, 255, 0.2)',
   
-  // Text colors
+  // Text hierarchy
   text: '#FFFFFF',
-  textSecondary: '#A0A0AB',
-  textTertiary: '#6B6B76',
-  textQuaternary: '#4A4A55',
+  textSecondary: '#B8BCC8',
+  textTertiary: '#8B8D98',
+  textQuaternary: '#5A5C66',
+  textMuted: '#3A3C44',
   
   // Semantic colors
-  success: '#00FF88',
+  success: '#00D26A',
   warning: '#FFB800',
-  error: '#FF3366',
+  error: '#FF4757',
   
-  // Glass/blur colors
-  glass: 'rgba(26, 26, 31, 0.85)',
-  glassLight: 'rgba(47, 47, 58, 0.7)',
-  glassDark: 'rgba(11, 11, 15, 0.95)',
+  // Glass/blur effects
+  glass: 'rgba(17, 17, 19, 0.8)',
+  glassLight: 'rgba(26, 26, 29, 0.6)',
+  glassDark: 'rgba(10, 10, 11, 0.9)',
   
-  // Border colors
-  border: 'rgba(160, 160, 171, 0.15)',
-  borderLight: 'rgba(160, 160, 171, 0.1)',
-  borderHeavy: 'rgba(160, 160, 171, 0.25)',
+  // Borders and dividers
+  border: 'rgba(184, 188, 200, 0.08)',
+  borderLight: 'rgba(184, 188, 200, 0.04)',
+  borderHeavy: 'rgba(184, 188, 200, 0.15)',
   
-  // Shadow colors
-  shadow: 'rgba(0, 0, 0, 0.4)',
-  shadowLight: 'rgba(0, 0, 0, 0.15)',
-  shadowHeavy: 'rgba(0, 0, 0, 0.6)',
+  // Shadows
+  shadow: 'rgba(0, 0, 0, 0.5)',
+  shadowLight: 'rgba(0, 0, 0, 0.2)',
+  shadowHeavy: 'rgba(0, 0, 0, 0.8)',
   
-  // Gradient colors
-  gradientStart: '#0066FF',
-  gradientEnd: '#00D4FF',
+  // Interactive states
+  hover: 'rgba(255, 255, 255, 0.05)',
+  pressed: 'rgba(255, 255, 255, 0.1)',
+  disabled: 'rgba(255, 255, 255, 0.3)',
 };

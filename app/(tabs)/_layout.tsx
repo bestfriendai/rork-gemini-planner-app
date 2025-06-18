@@ -12,12 +12,12 @@ export default function TabLayout() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textTertiary,
         tabBarStyle: {
-          backgroundColor: Platform.OS === 'ios' ? 'transparent' : colors.surface,
+          backgroundColor: Platform.OS === 'ios' ? 'transparent' : colors.glass,
           borderTopColor: colors.border,
           borderTopWidth: 0.5,
-          paddingTop: 12,
-          paddingBottom: 12,
-          height: 88,
+          paddingTop: 16,
+          paddingBottom: 16,
+          height: 92,
           position: 'absolute',
         },
         tabBarBackground: Platform.OS === 'ios' ? () => (
@@ -29,6 +29,7 @@ export default function TabLayout() {
               left: 0,
               bottom: 0,
               right: 0,
+              backgroundColor: colors.glass,
             }}
           />
         ) : undefined,
@@ -40,15 +41,15 @@ export default function TabLayout() {
         headerShadowVisible: false,
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: '600',
-          marginTop: 6,
+          fontWeight: '700',
+          marginTop: 8,
           letterSpacing: 0.5,
         },
         headerTitleStyle: {
-          fontWeight: '700',
-          fontSize: 22,
+          fontWeight: '800',
+          fontSize: 24,
           color: colors.text,
-          letterSpacing: -0.5,
+          letterSpacing: -0.8,
         },
       }}
     >

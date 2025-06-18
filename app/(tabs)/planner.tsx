@@ -62,7 +62,7 @@ export default function PlannerScreen() {
           <EmptyState
             title="No Tasks Scheduled"
             message="Add tasks to your planner to stay organized and productive."
-            icon={<CalendarClock size={60} color={colors.primary} />}
+            icon={<CalendarClock size={72} color={colors.primary} />}
           />
         ) : (
           <FlatList
@@ -88,7 +88,7 @@ export default function PlannerScreen() {
           colors={[colors.primary, colors.primaryLight]}
           style={styles.addButtonGradient}
         >
-          <Plus size={24} color={colors.text} />
+          <Plus size={28} color={colors.text} />
         </LinearGradient>
       </TouchableOpacity>
       
@@ -115,24 +115,24 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 16,
+    padding: 24,
   },
   taskList: {
-    paddingBottom: 100,
+    paddingBottom: 120,
   },
   addButton: {
     position: 'absolute',
-    bottom: 100,
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    bottom: 120,
+    right: 24,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     overflow: 'hidden',
     shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 12,
   },
   addButtonGradient: {
     flex: 1,

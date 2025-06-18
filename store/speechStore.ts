@@ -1,7 +1,12 @@
 import { create } from 'zustand';
 import { Platform } from 'react-native';
 import * as Speech from 'expo-speech';
-import type { SpeechRecognitionEvent, SpeechRecognitionErrorEvent } from '@/types/speech';
+import type { 
+  SpeechRecognitionEvent, 
+  SpeechRecognitionErrorEvent, 
+  SpeechRecognition,
+  SpeechRecognitionClass 
+} from '@/types/speech';
 
 interface SpeechState {
   isSpeaking: boolean;
@@ -125,8 +130,8 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
     }
     
     // Check if browser supports speech recognition
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
+    const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognitionClass) {
       console.error('Speech recognition not supported in this browser');
       return;
     }
@@ -136,7 +141,7 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
       get().stopListening();
 
       // Create recognition instance
-      const recognition = new SpeechRecognition();
+      const recognition = new SpeechRecognitionClass();
       recognition.continuous = false;
       recognition.interimResults = false;
       recognition.lang = 'en-US';

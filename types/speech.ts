@@ -1,42 +1,39 @@
 // TypeScript declarations for Web Speech API
-declare global {
-  interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
-  }
-}
-
-interface SpeechRecognitionEvent extends Event {
+export interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
   resultIndex: number;
 }
 
-interface SpeechRecognitionErrorEvent extends Event {
+export interface SpeechRecognitionErrorEvent extends Event {
   error: string;
   message?: string;
 }
 
-interface SpeechRecognitionResultList {
+export interface SpeechRecognitionResultList {
   readonly length: number;
   item(index: number): SpeechRecognitionResult;
   [index: number]: SpeechRecognitionResult;
 }
 
-interface SpeechRecognitionResult {
+export interface SpeechRecognitionResult {
   readonly length: number;
   item(index: number): SpeechRecognitionAlternative;
   [index: number]: SpeechRecognitionAlternative;
   isFinal: boolean;
 }
 
-interface SpeechRecognitionAlternative {
+export interface SpeechRecognitionAlternative {
   transcript: string;
   confidence: number;
 }
 
-declare class SpeechRecognition extends EventTarget {
+export interface SpeechRecognitionClass {
+  new(): SpeechRecognition;
+}
+
+export interface SpeechRecognition extends EventTarget {
   continuous: boolean;
-  grammars: SpeechGrammarList;
+  grammars: any;
   interimResults: boolean;
   lang: string;
   maxAlternatives: number;
@@ -59,23 +56,9 @@ declare class SpeechRecognition extends EventTarget {
   abort(): void;
 }
 
-interface SpeechGrammarList {
-  readonly length: number;
-  item(index: number): SpeechGrammar;
-  [index: number]: SpeechGrammar;
-  addFromURI(src: string, weight?: number): void;
-  addFromString(string: string, weight?: number): void;
+declare global {
+  interface Window {
+    SpeechRecognition?: SpeechRecognitionClass;
+    webkitSpeechRecognition?: SpeechRecognitionClass;
+  }
 }
-
-interface SpeechGrammar {
-  src: string;
-  weight: number;
-}
-
-export type {
-  SpeechRecognitionEvent,
-  SpeechRecognitionErrorEvent,
-  SpeechRecognitionResult,
-  SpeechRecognitionAlternative,
-  SpeechRecognitionResultList,
-};

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Switch } from 'react-native';
+import { colors } from '@/constants/colors';
 
 interface SettingsItemProps {
   title: string;
@@ -37,8 +38,8 @@ export const SettingsItem: React.FC<SettingsItemProps> = ({
         <Switch
           value={switchValue}
           onValueChange={onSwitchChange}
-          trackColor={{ false: '#E5E9F0', true: '#4A86E8' }}
-          thumbColor="white"
+          trackColor={{ false: colors.surfaceTertiary, true: colors.primary }}
+          thumbColor={colors.text}
         />
       ) : onPress ? (
         <Text style={styles.chevron}>›</Text>
@@ -51,29 +52,32 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E9F0',
+    padding: 24,
+    backgroundColor: colors.surface,
+    borderBottomWidth: 0.5,
+    borderBottomColor: colors.border,
   },
   iconContainer: {
-    marginRight: 16,
+    marginRight: 20,
   },
   content: {
     flex: 1,
   },
   title: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#1A1A1A',
+    fontWeight: '700',
+    color: colors.text,
+    letterSpacing: 0.2,
   },
   subtitle: {
     fontSize: 14,
-    color: '#6E7A8A',
+    color: colors.textSecondary,
     marginTop: 4,
+    fontWeight: '500',
   },
   chevron: {
-    fontSize: 20,
-    color: '#6E7A8A',
+    fontSize: 24,
+    color: colors.textTertiary,
+    fontWeight: '300',
   },
 });

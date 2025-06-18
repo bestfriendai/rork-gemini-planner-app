@@ -12,6 +12,9 @@ import {
 } from 'react-native';
 import { X } from 'lucide-react-native';
 import { useTaskStore } from '@/store/taskStore';
+import { colors } from '@/constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 
 interface AddTaskModalProps {
   visible: boolean;
@@ -60,28 +63,25 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
       style={[
         styles.priorityButton,
         priority === value && styles.priorityButtonSelected,
-        priority === value && { backgroundColor: getPriorityColor(value) }
       ]}
       onPress={() => setPriority(value)}
     >
-      <Text 
-        style={[
-          styles.priorityButtonText,
-          priority === value && styles.priorityButtonTextSelected
-        ]}
-      >
-        {label}
-      </Text>
+      {priority === value ? (
+        <LinearGradient
+          colors={[colors.primary, colors.primaryLight]}
+          style={styles.priorityButtonGradient}
+        >
+          <Text style={styles.priorityButtonTextSelected}>
+            {label}
+          </Text>
+        </LinearGradient>
+      ) : (
+        <Text style={styles.priorityButtonText}>
+          {label}
+        </Text>
+      )}
     </TouchableOpacity>
   );
-
-  const getPriorityColor = (p: 'low' | 'medium' | 'high') => {
-    switch (p) {
-      case 'low': return '#E8F1FF';
-      case 'medium': return '#FFF8E8';
-      case 'high': return '#FFEBEE';
-    }
-  };
 
   return (
     <Modal
@@ -97,70 +97,77 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
             style={styles.keyboardAvoid}
           >
             <TouchableWithoutFeedback onPress={() => {}}>
-              <View style={styles.modalContent}>
-                <View style={styles.header}>
-                  <Text style={styles.headerTitle}>Add New Task</Text>
-                  <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                    <X size={24} color="#1A1A1A" />
-                  </TouchableOpacity>
-                </View>
-                
-                <View style={styles.form}>
-                  <View style={styles.formGroup}>
-                    <Text style={styles.label}>Title</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={title}
-                      onChangeText={setTitle}
-                      placeholder="Task title"
-                      placeholderTextColor="#A0A9B8"
-                    />
+              <BlurView intensity={100} style={styles.modalBlur}>
+                <View style={styles.modalContent}>
+                  <View style={styles.header}>
+                    <Text style={styles.headerTitle}>Add New Task</Text>
+                    <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                      <X size={24} color={colors.text} />
+                    </TouchableOpacity>
                   </View>
                   
-                  <View style={styles.formGroup}>
-                    <Text style={styles.label}>Description (optional)</Text>
-                    <TextInput
-                      style={[styles.input, styles.textArea]}
-                      value={description}
-                      onChangeText={setDescription}
-                      placeholder="Add details about your task"
-                      placeholderTextColor="#A0A9B8"
-                      multiline
-                      numberOfLines={3}
-                      textAlignVertical="top"
-                    />
-                  </View>
-                  
-                  <View style={styles.formGroup}>
-                    <Text style={styles.label}>Time (optional)</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={time}
-                      onChangeText={setTime}
-                      placeholder="e.g. 14:30"
-                      placeholderTextColor="#A0A9B8"
-                      keyboardType="numbers-and-punctuation"
-                    />
-                  </View>
-                  
-                  <View style={styles.formGroup}>
-                    <Text style={styles.label}>Priority</Text>
-                    <View style={styles.priorityButtons}>
-                      <PriorityButton value="low" label="Low" />
-                      <PriorityButton value="medium" label="Medium" />
-                      <PriorityButton value="high" label="High" />
+                  <View style={styles.form}>
+                    <View style={styles.formGroup}>
+                      <Text style={styles.label}>Title</Text>
+                      <TextInput
+                        style={styles.input}
+                        value={title}
+                        onChangeText={setTitle}
+                        placeholder="Task title"
+                        placeholderTextColor={colors.textTertiary}
+                      />
                     </View>
+                    
+                    <View style={styles.formGroup}>
+                      <Text style={styles.label}>Description (optional)</Text>
+                      <TextInput
+                        style={[styles.input, styles.textArea]}
+                        value={description}
+                        onChangeText={setDescription}
+                        placeholder="Add details about your task"
+                        placeholderTextColor={colors.textTertiary}
+                        multiline
+                        numberOfLines={3}
+                        textAlignVertical="top"
+                      />
+                    </View>
+                    
+                    <View style={styles.formGroup}>
+                      <Text style={styles.label}>Time (optional)</Text>
+                      <TextInput
+                        style={styles.input}
+                        value={time}
+                        onChangeText={setTime}
+                        placeholder="e.g. 14:30"
+                        placeholderTextColor={colors.textTertiary}
+                        keyboardType="numbers-and-punctuation"
+                      />
+                    </View>
+                    
+                    <View style={styles.formGroup}>
+                      <Text style={styles.label}>Priority</Text>
+                      <View style={styles.priorityButtons}>
+                        <PriorityButton value="low" label="Low" />
+                        <PriorityButton value="medium" label="Medium" />
+                        <PriorityButton value="high" label="High" />
+                      </View>
+                    </View>
+                    
+                    <TouchableOpacity 
+                      style={styles.addButton}
+                      onPress={handleAddTask}
+                      disabled={!title.trim()}
+                    >
+                      <LinearGradient
+                        colors={!title.trim() ? [colors.textQuaternary, colors.textTertiary] : [colors.primary, colors.primaryLight]}
+                        style={styles.addButtonGradient}
+                      >
+                        <Text style={styles.addButtonText}>Add Task</Text>
+                      </LinearGradient>
+                    </TouchableOpacity>
                   </View>
-                  
-                  <TouchableOpacity 
-                    style={styles.addButton}
-                    onPress={handleAddTask}
-                    disabled={!title.trim()}
-                  >
-                    <Text style={styles.addButtonText}>Add Task</Text>
-                  </TouchableOpacity>
                 </View>
-              </View>
+              </BlurView>
             </TouchableWithoutFeedback>
           </KeyboardAvoidingView>
         </View>
@@ -172,58 +179,64 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
     justifyContent: 'flex-end',
   },
   keyboardAvoid: {
     flex: 1,
     justifyContent: 'flex-end',
   },
+  modalBlur: {
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    overflow: 'hidden',
+  },
   modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingBottom: Platform.OS === 'ios' ? 30 : 20,
+    backgroundColor: colors.glass,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 24,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E9F0',
+    padding: 24,
+    borderBottomWidth: 0.5,
+    borderBottomColor: colors.border,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1A1A1A',
+    fontSize: 20,
+    fontWeight: '800',
+    color: colors.text,
+    letterSpacing: -0.3,
   },
   closeButton: {
     padding: 4,
   },
   form: {
-    padding: 16,
+    padding: 24,
   },
   formGroup: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   label: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#1A1A1A',
-    marginBottom: 8,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 12,
+    letterSpacing: 0.3,
   },
   input: {
-    backgroundColor: '#F9FAFC',
-    borderRadius: 8,
-    padding: 12,
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 20,
     fontSize: 16,
-    color: '#1A1A1A',
-    borderWidth: 1,
-    borderColor: '#E5E9F0',
+    color: colors.text,
+    borderWidth: 0.5,
+    borderColor: colors.border,
+    fontWeight: '500',
   },
   textArea: {
-    minHeight: 80,
+    minHeight: 100,
   },
   priorityButtons: {
     flexDirection: 'row',
@@ -231,36 +244,45 @@ const styles = StyleSheet.create({
   },
   priorityButton: {
     flex: 1,
-    paddingVertical: 10,
-    marginHorizontal: 4,
-    borderRadius: 8,
-    alignItems: 'center',
-    backgroundColor: '#F9FAFC',
-    borderWidth: 1,
-    borderColor: '#E5E9F0',
+    marginHorizontal: 6,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: colors.surfaceSecondary,
+    borderWidth: 0.5,
+    borderColor: colors.border,
   },
   priorityButtonSelected: {
     borderColor: 'transparent',
   },
+  priorityButtonGradient: {
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
   priorityButtonText: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#6E7A8A',
+    fontWeight: '700',
+    color: colors.textSecondary,
+    paddingVertical: 16,
+    textAlign: 'center',
   },
   priorityButtonTextSelected: {
-    color: '#1A1A1A',
-    fontWeight: '600',
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '800',
   },
   addButton: {
-    backgroundColor: '#4A86E8',
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 20,
+    overflow: 'hidden',
+    marginTop: 8,
+  },
+  addButtonGradient: {
+    padding: 20,
     alignItems: 'center',
-    marginTop: 16,
   },
   addButtonText: {
-    color: 'white',
+    color: colors.text,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '800',
+    letterSpacing: 0.3,
   },
 });

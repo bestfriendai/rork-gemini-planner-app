@@ -7,6 +7,8 @@ import { EmptyState } from '@/components/EmptyState';
 import { AddTaskModal } from '@/components/AddTaskModal';
 import { getCurrentDate } from '@/utils/dateUtils';
 import { useRouter } from 'expo-router';
+import { colors } from '@/constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function TasksScreen() {
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
@@ -54,19 +56,30 @@ export default function TasksScreen() {
       ]}
       onPress={() => setFilter(value)}
     >
-      <Text 
-        style={[
-          styles.filterButtonText,
-          filter === value && styles.filterButtonTextActive
-        ]}
-      >
-        {label}
-      </Text>
+      {filter === value ? (
+        <LinearGradient
+          colors={[colors.primary, colors.primaryLight]}
+          style={styles.filterButtonGradient}
+        >
+          <Text style={styles.filterButtonTextActive}>
+            {label}
+          </Text>
+        </LinearGradient>
+      ) : (
+        <Text style={styles.filterButtonText}>
+          {label}
+        </Text>
+      )}
     </TouchableOpacity>
   );
   
   return (
     <View style={styles.container}>
+      <LinearGradient
+        colors={[colors.background, colors.surface]}
+        style={styles.backgroundGradient}
+      />
+      
       <View style={styles.filterContainer}>
         <FilterButton value="all" label="All" />
         <FilterButton value="today" label="Today" />
@@ -79,7 +92,7 @@ export default function TasksScreen() {
           <EmptyState
             title="No Tasks Found"
             message={`You don't have any ${filter} tasks. Add some to stay organized.`}
-            icon={<CheckSquare size={50} color="#4A86E8" />}
+            icon={<CheckSquare size={72} color={colors.primary} />}
           />
         ) : (
           <FlatList
@@ -92,6 +105,7 @@ export default function TasksScreen() {
               />
             )}
             contentContainerStyle={styles.taskList}
+            showsVerticalScrollIndicator={false}
           />
         )}
       </View>
@@ -100,7 +114,12 @@ export default function TasksScreen() {
         style={styles.addButton}
         onPress={() => setIsAddModalVisible(true)}
       >
-        <Plus size={24} color="#fff" />
+        <LinearGradient
+          colors={[colors.primary, colors.primaryLight]}
+          style={styles.addButtonGradient}
+        >
+          <Plus size={28} color={colors.text} />
+        </LinearGradient>
       </TouchableOpacity>
       
       <AddTaskModal
@@ -115,53 +134,72 @@ export default function TasksScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFC',
+    backgroundColor: colors.background,
+  },
+  backgroundGradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
   },
   filterContainer: {
     flexDirection: 'row',
-    padding: 12,
-    backgroundColor: '#FFFFFF',
+    padding: 16,
+    backgroundColor: colors.surface,
+    borderBottomWidth: 0.5,
+    borderBottomColor: colors.border,
   },
   filterButton: {
     flex: 1,
-    paddingVertical: 8,
-    alignItems: 'center',
-    borderRadius: 20,
-    marginHorizontal: 4,
+    marginHorizontal: 6,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: colors.surfaceSecondary,
   },
   filterButtonActive: {
-    backgroundColor: '#E8F1FF',
+    backgroundColor: 'transparent',
+  },
+  filterButtonGradient: {
+    paddingVertical: 12,
+    alignItems: 'center',
   },
   filterButtonText: {
     fontSize: 14,
-    color: '#6E7A8A',
-    fontWeight: '500',
+    color: colors.textSecondary,
+    fontWeight: '700',
+    paddingVertical: 12,
+    textAlign: 'center',
   },
   filterButtonTextActive: {
-    color: '#4A86E8',
-    fontWeight: '600',
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '800',
   },
   content: {
     flex: 1,
-    padding: 16,
+    padding: 24,
   },
   taskList: {
-    paddingBottom: 80,
+    paddingBottom: 120,
   },
   addButton: {
     position: 'absolute',
-    bottom: 20,
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#4A86E8',
+    bottom: 120,
+    right: 24,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    overflow: 'hidden',
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 12,
+  },
+  addButtonGradient: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
 });

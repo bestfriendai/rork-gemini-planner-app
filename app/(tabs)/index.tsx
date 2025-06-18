@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, FlatList, Text, ActivityIndicator, KeyboardAvoidingView, Platform, TouchableOpacity, Alert } from 'react-native';
-import { MessageSquare, ListPlus, Sparkles } from 'lucide-react-native';
+import { View, StyleSheet, FlatList, Text, KeyboardAvoidingView, Platform, TouchableOpacity, Alert } from 'react-native';
+import { MessageSquare, ListPlus, Sparkles, Zap } from 'lucide-react-native';
 import { useChatStore } from '@/store/chatStore';
 import { useTaskStore } from '@/store/taskStore';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -187,9 +187,9 @@ export default function AssistantScreen() {
         {displayMessages.length === 0 ? (
           <View style={styles.emptyContainer}>
             <EmptyState
-              title="Your AI Assistant"
-              message="Ask me anything about planning your day, managing tasks, current events, calculations, or getting things done efficiently. I can search the web for up-to-date information!"
-              icon={<Sparkles size={64} color={colors.primary} />}
+              title="Jarva AI Assistant"
+              message="Your intelligent companion for productivity, planning, and getting things done. Ask me anything!"
+              icon={<Zap size={72} color={colors.primary} />}
             />
             <QuickActions onAction={handleQuickAction} />
           </View>
@@ -251,23 +251,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messageList: {
-    padding: 20,
+    padding: 24,
     paddingBottom: 120,
   },
   taskPrompt: {
-    margin: 20,
-    borderRadius: 20,
+    margin: 24,
+    borderRadius: 24,
     overflow: 'hidden',
     shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 8 },
+    shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 12,
+    shadowRadius: 24,
+    elevation: 16,
   },
   taskPromptGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
+    padding: 24,
     justifyContent: 'center',
   },
   taskPromptText: {
