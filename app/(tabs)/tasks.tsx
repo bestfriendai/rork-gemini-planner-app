@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity, Text, Platform } from 'react-native';
 import { Plus } from 'lucide-react-native';
 import { useTaskStore } from '@/store/taskStore';
 import { TaskItem } from '@/components/TaskItem';
@@ -119,13 +119,16 @@ const styles = StyleSheet.create({
   filterButton: {
     flex: 1,
     marginHorizontal: 4,
-    borderRadius: 6,
+    borderRadius: 8,
     backgroundColor: colors.surfaceSecondary,
-    paddingVertical: 8,
+    paddingVertical: 10,
     alignItems: 'center',
+    borderWidth: 0.5,
+    borderColor: colors.border,
   },
   filterButtonActive: {
     backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   filterButtonText: {
     fontSize: 13,
@@ -141,11 +144,11 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   taskList: {
-    paddingBottom: 100,
+    paddingBottom: 120,
   },
   addButton: {
     position: 'absolute',
-    bottom: 100,
+    bottom: Platform.OS === 'ios' ? 120 : 100,
     right: 16,
     width: 56,
     height: 56,

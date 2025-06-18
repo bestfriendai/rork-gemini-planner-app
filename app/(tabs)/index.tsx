@@ -215,27 +215,32 @@ const styles = StyleSheet.create({
   },
   messageList: {
     padding: 16,
-    paddingBottom: Platform.OS === 'ios' ? 160 : 140,
+    paddingBottom: Platform.OS === 'ios' ? 180 : 160,
   },
   taskPrompt: {
     marginHorizontal: 16,
     marginBottom: 8,
     backgroundColor: colors.surface,
-    borderRadius: 8,
+    borderRadius: 12,
     borderWidth: 0.5,
     borderColor: colors.border,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
   taskPromptContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
+    padding: 14,
   },
   taskPromptText: {
-    marginLeft: 8,
+    marginLeft: 10,
   },
   taskPromptTitle: {
     color: colors.text,
-    fontWeight: '500',
+    fontWeight: '600',
     fontSize: 14,
   },
 });

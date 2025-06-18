@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { 
-  Clock, Calendar, Cloud, Newspaper, CheckSquare, Bell, Calculator, MapPin, 
+  Clock, Calendar, CloudSun, Newspaper, CheckSquare, Bell, Calculator, MapPin, 
   TrendingUp, DollarSign
 } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
@@ -15,52 +15,52 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAction }) => {
     {
       id: 'current_time',
       title: 'Time',
-      icon: <Clock size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <Clock size={18} color={colors.primary} strokeWidth={1.8} />,
     },
     {
       id: 'today_date',
       title: 'Date',
-      icon: <Calendar size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <Calendar size={18} color={colors.primary} strokeWidth={1.8} />,
     },
     {
       id: 'weather',
       title: 'Weather',
-      icon: <Cloud size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <CloudSun size={18} color={colors.primary} strokeWidth={1.8} />,
     },
     {
       id: 'news',
       title: 'News',
-      icon: <Newspaper size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <Newspaper size={18} color={colors.primary} strokeWidth={1.8} />,
     },
     {
       id: 'stocks',
       title: 'Stocks',
-      icon: <TrendingUp size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <TrendingUp size={18} color={colors.primary} strokeWidth={1.8} />,
     },
     {
       id: 'crypto',
       title: 'Crypto',
-      icon: <DollarSign size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <DollarSign size={18} color={colors.primary} strokeWidth={1.8} />,
     },
     {
       id: 'calculate',
       title: 'Calculate',
-      icon: <Calculator size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <Calculator size={18} color={colors.primary} strokeWidth={1.8} />,
     },
     {
       id: 'location',
       title: 'Location',
-      icon: <MapPin size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <MapPin size={18} color={colors.primary} strokeWidth={1.8} />,
     },
     {
       id: 'schedule',
       title: 'Plan Day',
-      icon: <CheckSquare size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <CheckSquare size={18} color={colors.primary} strokeWidth={1.8} />,
     },
     {
       id: 'reminder',
       title: 'Reminder',
-      icon: <Bell size={18} color={colors.primary} strokeWidth={1.5} />,
+      icon: <Bell size={18} color={colors.primary} strokeWidth={1.8} />,
     },
   ];
 
@@ -94,10 +94,15 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: colors.surface,
     marginHorizontal: 16,
-    marginBottom: 24,
+    marginBottom: 140,
     borderRadius: 12,
     borderWidth: 0.5,
     borderColor: colors.border,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
   title: {
     fontSize: 16,
@@ -114,13 +119,13 @@ const styles = StyleSheet.create({
     minWidth: 64,
   },
   iconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: colors.surfaceSecondary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: 8,
     borderWidth: 0.5,
     borderColor: colors.border,
   },

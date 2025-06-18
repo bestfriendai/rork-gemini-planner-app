@@ -92,11 +92,11 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   taskList: {
-    paddingBottom: 100,
+    paddingBottom: 120,
   },
   addButton: {
     position: 'absolute',
-    bottom: 100,
+    bottom: Platform.OS === 'ios' ? 120 : 100,
     right: 16,
     width: 56,
     height: 56,

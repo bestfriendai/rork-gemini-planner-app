@@ -1,6 +1,6 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { MessageCircle, Calendar, CheckSquare, Settings } from "lucide-react-native";
+import { MessageSquare, CalendarDays, ListTodo, Settings } from "lucide-react-native";
 import { colors } from "@/constants/colors";
 import { Platform } from "react-native";
 
@@ -15,12 +15,17 @@ export default function TabLayout() {
           borderTopColor: colors.border,
           borderTopWidth: 0.5,
           paddingTop: 8,
-          paddingBottom: Platform.OS === 'ios' ? 24 : 8,
-          height: Platform.OS === 'ios' ? 80 : 60,
+          paddingBottom: Platform.OS === 'ios' ? 28 : 12,
+          height: Platform.OS === 'ios' ? 88 : 68,
           position: 'absolute',
           bottom: 0,
           left: 0,
           right: 0,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
+          elevation: 8,
         },
         headerStyle: {
           backgroundColor: colors.background,
@@ -30,9 +35,10 @@ export default function TabLayout() {
         },
         headerShadowVisible: false,
         tabBarLabelStyle: {
-          fontSize: 10,
-          fontWeight: '500',
-          marginTop: 2,
+          fontSize: 11,
+          fontWeight: '600',
+          marginTop: 4,
+          letterSpacing: 0.3,
         },
         headerTitleStyle: {
           fontWeight: '600',
@@ -40,19 +46,20 @@ export default function TabLayout() {
           color: colors.text,
         },
         tabBarItemStyle: {
-          paddingTop: 4,
+          paddingTop: 6,
+          paddingBottom: 4,
         },
         tabBarIconStyle: {
-          marginBottom: 0,
+          marginBottom: 2,
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Chat",
-          tabBarLabel: "Chat",
-          tabBarIcon: ({ color, size }) => <MessageCircle size={22} color={color} strokeWidth={1.5} />,
+          title: "Assistant",
+          tabBarLabel: "Assistant",
+          tabBarIcon: ({ color, size }) => <MessageSquare size={24} color={color} strokeWidth={1.8} />,
           headerTitle: "Jarva",
         }}
       />
@@ -61,7 +68,7 @@ export default function TabLayout() {
         options={{
           title: "Planner",
           tabBarLabel: "Planner",
-          tabBarIcon: ({ color, size }) => <Calendar size={22} color={color} strokeWidth={1.5} />,
+          tabBarIcon: ({ color, size }) => <CalendarDays size={24} color={color} strokeWidth={1.8} />,
         }}
       />
       <Tabs.Screen
@@ -69,7 +76,7 @@ export default function TabLayout() {
         options={{
           title: "Tasks",
           tabBarLabel: "Tasks",
-          tabBarIcon: ({ color, size }) => <CheckSquare size={22} color={color} strokeWidth={1.5} />,
+          tabBarIcon: ({ color, size }) => <ListTodo size={24} color={color} strokeWidth={1.8} />,
         }}
       />
       <Tabs.Screen
@@ -77,7 +84,7 @@ export default function TabLayout() {
         options={{
           title: "Settings",
           tabBarLabel: "Settings",
-          tabBarIcon: ({ color, size }) => <Settings size={22} color={color} strokeWidth={1.5} />,
+          tabBarIcon: ({ color, size }) => <Settings size={24} color={color} strokeWidth={1.8} />,
         }}
       />
     </Tabs>

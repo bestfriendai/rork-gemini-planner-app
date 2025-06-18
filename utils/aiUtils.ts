@@ -1,15 +1,6 @@
 import { CoreMessage, Task } from '@/types';
 import Constants from 'expo-constants';
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-const OPENROUTER_API_KEY = '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';
-const PERPLEXITY_API_KEY = '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';
-const GEMINI_MODEL = 'google/gemini-2.0-flash-thinking-exp';
-const PERPLEXITY_MODEL = 'sonar-large-online';
-=======
-=======
->>>>>>> Stashed changes
 // Use environment variables for API keys (fallback to hardcoded for development)
 const OPENROUTER_API_KEY = Constants.expoConfig?.extra?.OPENROUTER_API_KEY || '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';
 const PERPLEXITY_API_KEY = Constants.expoConfig?.extra?.PERPLEXITY_API_KEY || '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';
@@ -30,10 +21,6 @@ const validateApiKeys = () => {
 
 // Initialize validation
 validateApiKeys();
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
 // Get current date and time for context
 const getCurrentDateTime = () => {
@@ -257,8 +244,6 @@ Use web search to provide current, accurate information.`
     return await callGeminiAI(messages, currentDateTime, onStream);
   }
 };
-
-
 
 export const extractTasksFromAIResponse = (text: string): Task[] => {
   const tasks: Task[] = [];
