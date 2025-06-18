@@ -1,0 +1,110 @@
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Message, CoreMessage } from '@/types';
+import { Platform } from 'react-native';
+
+interface ChatState {
+  messages: Message[];
+  isLoading: boolean;
+  addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
+  clearMessages: () => void;
+  setLoading: (loading: boolean) => void;
+  formatMessagesForAPI: () => CoreMessage[];
+}
+
+export const useChatStore = create<ChatState>()(
+  persist(
+    (set, get) => ({
+      messages: [],
+      isLoading: false,
+      addMessage: (message) => set((state) => ({
+        messages: [
+          ...state.messages,
+          {
+            ...message,
+            id: Math.random().toString(36).substring(2, 9),
+            timestamp: Date.now(),
+          },
+        ],
+      })),
+      clearMessages: () => set({ messages: [] }),
+      setLoading: (loading) => set({ isLoading: loading }),
+      formatMessagesForAPI: () => {
+        const { messages } = get();
+        const currentDateTime = new Date();
+        const dateTimeString = currentDateTime.toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        });
+        
+        const deviceInfo = Platform.OS === 'web' 
+          ? `Web Browser (${navigator.userAgent.includes('Chrome') ? 'Chrome' : navigator.userAgent.includes('Firefox') ? 'Firefox' : 'Other'})`
+          : `${Platform.OS} App (${Platform.Version})`;
+        
+        return [
+          { 
+            role: 'system', 
+            content: `You are a helpful personal assistant named Gemini, focused on planning, scheduling, productivity, and providing current information.
+
+CURRENT CONTEXT:
+- Date and time: ${dateTimeString}
+- Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}
+- Platform: ${deviceInfo}
+- User location: Available via geolocation API
+
+CAPABILITIES:
+1. Task Management: Help create, organize, and schedule tasks
+2. Current Information: Search the web for news, weather, stock prices, etc.
+3. Calculations: Perform math calculations, conversions, percentages
+4. Time & Date: Provide current time, date, timezone information
+5. Device Info: Share platform and device details
+6. Location Services: Help with location-based queries
+7. Planning: Assist with daily planning and scheduling
+
+TASK EXTRACTION:
+When users ask you to schedule something or create tasks, format them clearly:
+
+Task: [task title]
+Date: YYYY-MM-DD (use today's date: ${currentDateTime.toISOString().split('T')[0]} if not specified)
+Time: HH:MM (if mentioned)
+Priority: [low/medium/high] (default to medium)
+
+Example:
+"I need to go to the gym at 4 PM and buy groceries tomorrow"
+
+Response:
+"I'll help you schedule those tasks:
+
+Task: Go to the gym
+Date: ${currentDateTime.toISOString().split('T')[0]}
+Time: 16:00
+Priority: medium
+
+Task: Buy groceries
+Date: ${new Date(currentDateTime.getTime() + 24*60*60*1000).toISOString().split('T')[0]}
+Priority: medium"
+
+SEARCH QUERIES:
+For current information (news, weather, stocks, etc.), use web search to provide up-to-date answers.
+
+Be helpful, concise, and practical. Always use the current date/time context provided above.`
+          },
+          ...messages.map(msg => ({
+            role: msg.role,
+            content: msg.content
+          }))
+        ] as CoreMessage[];
+      },
+    }),
+    {
+      name: 'chat-storage',
+      storage: createJSONStorage(() => AsyncStorage),
+    }
+  )
+);
