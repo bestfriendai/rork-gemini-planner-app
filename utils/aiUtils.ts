@@ -1,9 +1,33 @@
 import { CoreMessage, Task } from '@/types';
+import Constants from 'expo-constants';
 
+<<<<<<< Updated upstream
 const OPENROUTER_API_KEY = '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';
 const PERPLEXITY_API_KEY = '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';
 const GEMINI_MODEL = 'google/gemini-2.0-flash-thinking-exp';
 const PERPLEXITY_MODEL = 'sonar-large-online';
+=======
+// Use environment variables for API keys (fallback to hardcoded for development)
+const OPENROUTER_API_KEY = Constants.expoConfig?.extra?.OPENROUTER_API_KEY || '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';
+const PERPLEXITY_API_KEY = Constants.expoConfig?.extra?.PERPLEXITY_API_KEY || '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';
+
+// Updated models for 2025 - using available models
+const GEMINI_MODEL = 'google/gemini-2.5-flash-lite-preview-06-17';
+const PERPLEXITY_MODEL = 'llama-3.1-sonar-small-128k-online';
+
+// Validate API keys
+const validateApiKeys = () => {
+  if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY === 'your-openrouter-key-here') {
+    console.warn('OpenRouter API key not configured properly');
+  }
+  if (!PERPLEXITY_API_KEY || PERPLEXITY_API_KEY === 'your-perplexity-key-here') {
+    console.warn('Perplexity API key not configured properly');
+  }
+};
+
+// Initialize validation
+validateApiKeys();
+>>>>>>> Stashed changes
 
 // Get current date and time for context
 const getCurrentDateTime = () => {
@@ -104,21 +128,35 @@ When users ask about "today", "now", "current time", etc., use this information.
         messages: enhancedMessages,
         max_tokens: 2000,
         temperature: 0.7,
-        stream: !!onStream,
+        stream: false,
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenRouter API error:', response.status, errorText);
-      throw new Error(`OpenRouter API error: ${response.status}`);
+      console.error('OpenRouter API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText,
+        model: GEMINI_MODEL,
+        url: response.url
+      });
+      throw new Error(`OpenRouter API error: ${response.status} - ${response.statusText}`);
     }
 
-    if (onStream && response.body) {
-      return await handleStreamResponse(response, onStream);
-    } else {
-      const data = await response.json();
+    // Read response text first to avoid "Already read" error
+    const responseText = await response.text();
+    try {
+      const data = JSON.parse(responseText);
       return data.choices?.[0]?.message?.content || 'No response received from AI service';
+    } catch (jsonError) {
+      console.error('Failed to parse JSON response:', { 
+        error: jsonError, 
+        responseText: responseText.substring(0, 200),
+        status: response.status,
+        headers: Object.fromEntries(response.headers.entries())
+      });
+      throw new Error(`Invalid JSON response: ${jsonError}`);
     }
   } catch (error) {
     console.error('Gemini AI error:', error);
@@ -164,7 +202,7 @@ Use web search to provide current, accurate information.`
       messages: perplexityMessages,
       max_tokens: 2000,
       temperature: 0.7,
-      stream: !!onStream,
+      stream: false,
     };
 
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -178,18 +216,32 @@ Use web search to provide current, accurate information.`
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Perplexity API error:', response.status, errorText);
+      console.error('Perplexity API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText,
+        model: PERPLEXITY_MODEL,
+        url: response.url
+      });
       
       // Fallback to Gemini if Perplexity fails
-      console.log('Falling back to Gemini AI...');
+      console.log('Falling back to Gemini AI due to Perplexity error...');
       return await callGeminiAI(messages, currentDateTime, onStream);
     }
 
-    if (onStream && response.body) {
-      return await handleStreamResponse(response, onStream);
-    } else {
-      const data = await response.json();
+    // Read response text first to avoid "Already read" error
+    const responseText = await response.text();
+    try {
+      const data = JSON.parse(responseText);
       return data.choices?.[0]?.message?.content || 'No response received from search service';
+    } catch (jsonError) {
+      console.error('Failed to parse Perplexity JSON response:', { 
+        error: jsonError, 
+        responseText: responseText.substring(0, 200),
+        status: response.status,
+        headers: Object.fromEntries(response.headers.entries())
+      });
+      throw new Error(`Invalid JSON response from Perplexity: ${jsonError}`);
     }
   } catch (error) {
     console.error('Perplexity AI error:', error);
@@ -200,60 +252,7 @@ Use web search to provide current, accurate information.`
   }
 };
 
-const handleStreamResponse = async (
-  response: Response, 
-  onStream: (chunk: string) => void
-): Promise<string> => {
-  const reader = response.body?.getReader();
-  if (!reader) throw new Error('No response body');
 
-  let fullResponse = '';
-  const decoder = new TextDecoder();
-
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split('\n');
-
-      for (const line of lines) {
-        const trimmedLine = line.trim();
-        
-        // Skip empty lines
-        if (!trimmedLine) continue;
-        
-        // Handle data lines
-        if (trimmedLine.startsWith('data: ')) {
-          const data = trimmedLine.slice(6).trim();
-          
-          // Skip [DONE] marker
-          if (data === '[DONE]') continue;
-          
-          // Skip empty data
-          if (!data) continue;
-
-          try {
-            const parsed = JSON.parse(data);
-            const content = parsed.choices?.[0]?.delta?.content;
-            if (content) {
-              fullResponse += content;
-              onStream(content);
-            }
-          } catch (e) {
-            // Skip invalid JSON lines - this is normal for streaming
-            continue;
-          }
-        }
-      }
-    }
-  } finally {
-    reader.releaseLock();
-  }
-
-  return fullResponse;
-};
 
 export const extractTasksFromAIResponse = (text: string): Task[] => {
   const tasks: Task[] = [];
