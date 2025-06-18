@@ -92,7 +92,7 @@ export default function TasksScreen() {
         style={styles.addButton}
         onPress={() => setIsAddModalVisible(true)}
       >
-        <Plus size={20} color={colors.text} strokeWidth={2.5} />
+        <Plus size={18} color={colors.text} strokeWidth={1.5} />
       </TouchableOpacity>
       
       <AddTaskModal
@@ -111,34 +111,34 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     flexDirection: 'row',
-    padding: 16,
+    padding: 12,
     backgroundColor: colors.surface,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5,
     borderBottomColor: colors.border,
   },
   filterButton: {
     flex: 1,
-    marginHorizontal: 4,
-    borderRadius: 8,
+    marginHorizontal: 2,
+    borderRadius: 6,
     backgroundColor: colors.surfaceSecondary,
-    paddingVertical: 8,
+    paddingVertical: 6,
     alignItems: 'center',
   },
   filterButtonActive: {
     backgroundColor: colors.primary,
   },
   filterButtonText: {
-    fontSize: 12,
+    fontSize: 11,
     color: colors.textSecondary,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   filterButtonTextActive: {
     color: colors.text,
-    fontWeight: '700',
+    fontWeight: '600',
   },
   content: {
     flex: 1,
-    padding: 20,
+    padding: 16,
   },
   taskList: {
     paddingBottom: 100,
@@ -146,17 +146,17 @@ const styles = StyleSheet.create({
   addButton: {
     position: 'absolute',
     bottom: 100,
-    right: 20,
-    width: 48,
-    height: 48,
-    borderRadius: 12,
+    right: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 8,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
 });

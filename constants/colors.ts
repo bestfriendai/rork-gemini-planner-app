@@ -1,43 +1,43 @@
 export const colors = {
   // Modern minimal palette - 2025 design
   background: '#000000',
-  surface: '#0F0F0F',
+  surface: '#111111',
   surfaceSecondary: '#1A1A1A',
-  surfaceTertiary: '#262626',
+  surfaceTertiary: '#222222',
   
   // Primary - Clean blue
-  primary: '#0066FF',
-  primaryLight: '#3385FF',
-  primaryDark: '#0052CC',
-  primaryMuted: 'rgba(0, 102, 255, 0.08)',
+  primary: '#007AFF',
+  primaryLight: '#4DA3FF',
+  primaryDark: '#0056CC',
+  primaryMuted: 'rgba(0, 122, 255, 0.1)',
   
   // Accent - Subtle purple
-  accent: '#8B5CF6',
-  accentMuted: 'rgba(139, 92, 246, 0.08)',
+  accent: '#5856D6',
+  accentMuted: 'rgba(88, 86, 214, 0.1)',
   
   // Text hierarchy - Better contrast
   text: '#FFFFFF',
-  textSecondary: '#A1A1A1',
-  textTertiary: '#737373',
-  textQuaternary: '#525252',
-  textMuted: '#404040',
+  textSecondary: '#8E8E93',
+  textTertiary: '#636366',
+  textQuaternary: '#48484A',
+  textMuted: '#3A3A3C',
   
   // Semantic colors
-  success: '#10B981',
-  warning: '#F59E0B',
-  error: '#EF4444',
+  success: '#34C759',
+  warning: '#FF9500',
+  error: '#FF3B30',
   
   // Borders - Subtle
-  border: 'rgba(255, 255, 255, 0.06)',
-  borderLight: 'rgba(255, 255, 255, 0.03)',
-  borderHeavy: 'rgba(255, 255, 255, 0.12)',
+  border: 'rgba(255, 255, 255, 0.1)',
+  borderLight: 'rgba(255, 255, 255, 0.05)',
+  borderHeavy: 'rgba(255, 255, 255, 0.2)',
   
   // Interactive states
-  hover: 'rgba(255, 255, 255, 0.04)',
-  pressed: 'rgba(255, 255, 255, 0.08)',
+  hover: 'rgba(255, 255, 255, 0.05)',
+  pressed: 'rgba(255, 255, 255, 0.1)',
   disabled: 'rgba(255, 255, 255, 0.3)',
   
   // Glass effects
-  glass: 'rgba(15, 15, 15, 0.95)',
+  glass: 'rgba(17, 17, 17, 0.95)',
   glassLight: 'rgba(26, 26, 26, 0.9)',
 };

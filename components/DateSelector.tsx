@@ -66,45 +66,45 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.surface,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
+    paddingVertical: 16,
+    borderBottomWidth: 0.5,
     borderBottomColor: colors.border,
   },
   currentDate: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 15,
+    fontWeight: '600',
     color: colors.text,
-    marginBottom: 16,
-    paddingHorizontal: 20,
-  },
-  scrollContent: {
+    marginBottom: 12,
     paddingHorizontal: 16,
   },
+  scrollContent: {
+    paddingHorizontal: 12,
+  },
   dateItem: {
-    width: 48,
-    height: 64,
+    width: 40,
+    height: 56,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
-    marginHorizontal: 4,
+    borderRadius: 8,
+    marginHorizontal: 3,
     backgroundColor: colors.surfaceSecondary,
   },
   selectedDateItem: {
     backgroundColor: colors.primary,
   },
   todayDateItem: {
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: colors.primary,
   },
   dayName: {
-    fontSize: 10,
+    fontSize: 9,
     color: colors.textSecondary,
-    marginBottom: 4,
-    fontWeight: '600',
+    marginBottom: 2,
+    fontWeight: '500',
   },
   dayNumber: {
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '600',
     color: colors.text,
   },
   selectedText: {

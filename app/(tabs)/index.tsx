@@ -194,7 +194,7 @@ export default function AssistantScreen() {
             onPress={handleAddExtractedTasks}
           >
             <View style={styles.taskPromptContent}>
-              <ListPlus size={18} color={colors.primary} />
+              <ListPlus size={16} color={colors.primary} strokeWidth={1.5} />
               <View style={styles.taskPromptText}>
                 <View style={styles.taskPromptTitle}>Add {extractedTasks.length} task{extractedTasks.length > 1 ? 's' : ''} to planner</View>
               </View>
@@ -220,28 +220,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messageList: {
-    padding: 20,
-    paddingBottom: 120,
+    padding: 16,
+    paddingBottom: 140, // Increased to account for tab bar
   },
   taskPrompt: {
-    marginHorizontal: 20,
-    marginBottom: 12,
+    marginHorizontal: 16,
+    marginBottom: 8,
     backgroundColor: colors.surface,
-    borderRadius: 12,
-    borderWidth: 1,
+    borderRadius: 8,
+    borderWidth: 0.5,
     borderColor: colors.border,
   },
   taskPromptContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    padding: 12,
   },
   taskPromptText: {
-    marginLeft: 12,
+    marginLeft: 8,
   },
   taskPromptTitle: {
     color: colors.text,
-    fontWeight: '600',
-    fontSize: 14,
+    fontWeight: '500',
+    fontSize: 13,
   },
 });

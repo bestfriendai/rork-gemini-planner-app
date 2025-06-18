@@ -28,9 +28,9 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
     <View style={[styles.container, isUser ? styles.userContainer : styles.assistantContainer]}>
       <View style={[styles.avatar, isUser ? styles.userAvatar : styles.assistantAvatar]}>
         {isUser ? (
-          <User size={14} color={colors.text} strokeWidth={2} />
+          <User size={12} color={colors.text} strokeWidth={1.5} />
         ) : (
-          <Bot size={14} color={colors.primary} strokeWidth={2} />
+          <Bot size={12} color={colors.primary} strokeWidth={1.5} />
         )}
       </View>
 
@@ -52,9 +52,9 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
             onPress={handleToggleSpeech}
           >
             {isThisMessageSpeaking ? (
-              <VolumeX size={12} color={colors.textTertiary} strokeWidth={2} />
+              <VolumeX size={10} color={colors.textTertiary} strokeWidth={1.5} />
             ) : (
-              <Volume2 size={12} color={colors.textTertiary} strokeWidth={2} />
+              <Volume2 size={10} color={colors.textTertiary} strokeWidth={1.5} />
             )}
           </TouchableOpacity>
         )}
@@ -71,7 +71,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 12,
+    marginVertical: 8,
     maxWidth: '85%',
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -84,12 +84,12 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   avatar: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 24,
+    height: 24,
+    borderRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 10,
+    marginHorizontal: 8,
     marginTop: 2,
   },
   userAvatar: {
@@ -99,25 +99,25 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primaryMuted,
   },
   bubble: {
-    borderRadius: 16,
+    borderRadius: 8,
     flex: 1,
     position: 'relative',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   userBubble: {
     backgroundColor: colors.primary,
-    marginLeft: 40,
+    marginLeft: 32,
   },
   assistantBubble: {
     backgroundColor: colors.surface,
-    marginRight: 40,
-    borderWidth: 1,
+    marginRight: 32,
+    borderWidth: 0.5,
     borderColor: colors.border,
   },
   messageText: {
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 14,
+    lineHeight: 20,
     fontWeight: '400',
   },
   userText: {
@@ -127,44 +127,44 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   timestamp: {
-    fontSize: 10,
-    marginTop: 6,
-    fontWeight: '500',
+    fontSize: 9,
+    marginTop: 4,
+    fontWeight: '400',
     position: 'absolute',
-    bottom: -16,
+    bottom: -12,
   },
   userTimestamp: {
     color: colors.textTertiary,
-    right: 10,
+    right: 8,
   },
   assistantTimestamp: {
     color: colors.textTertiary,
-    left: 10,
+    left: 8,
   },
   speakButton: {
     position: 'absolute',
-    bottom: 6,
-    right: 10,
-    padding: 4,
-    borderRadius: 6,
+    bottom: 4,
+    right: 6,
+    padding: 2,
+    borderRadius: 4,
     backgroundColor: colors.surfaceSecondary,
   },
   streamingIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 4,
   },
   streamingDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
     backgroundColor: colors.primary,
-    marginRight: 6,
+    marginRight: 4,
   },
   streamingText: {
-    fontSize: 11,
+    fontSize: 10,
     color: colors.textSecondary,
     fontStyle: 'italic',
-    fontWeight: '500',
+    fontWeight: '400',
   },
 });

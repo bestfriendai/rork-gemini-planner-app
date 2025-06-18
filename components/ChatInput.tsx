@@ -88,9 +88,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
 
   const getMicIcon = () => {
     if (Platform.OS === 'web') {
-      return isListening ? <MicOff size={18} color={colors.error} strokeWidth={2} /> : <Mic size={18} color={colors.textSecondary} strokeWidth={2} />;
+      return isListening ? <MicOff size={16} color={colors.error} strokeWidth={1.5} /> : <Mic size={16} color={colors.textSecondary} strokeWidth={1.5} />;
     } else {
-      return <Mic size={18} color={colors.textSecondary} strokeWidth={2} />;
+      return <Mic size={16} color={colors.textSecondary} strokeWidth={1.5} />;
     }
   };
 
@@ -126,7 +126,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
             {isLoading ? (
               <ActivityIndicator size="small" color={colors.textSecondary} />
             ) : (
-              <Send size={18} color={message.trim() ? colors.text : colors.textTertiary} strokeWidth={2} />
+              <Send size={16} color={message.trim() ? colors.text : colors.textTertiary} strokeWidth={1.5} />
             )}
           </TouchableOpacity>
         </View>
@@ -144,7 +144,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Voice Input</Text>
                 <TouchableOpacity onPress={handleCancelRecording} style={styles.closeButton}>
-                  <X size={18} color={colors.text} strokeWidth={2} />
+                  <X size={16} color={colors.text} strokeWidth={1.5} />
                 </TouchableOpacity>
               </View>
               
@@ -156,7 +156,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
               </View>
               
               <View style={styles.instructionContainer}>
-                <Volume2 size={16} color={colors.primary} strokeWidth={2} />
+                <Volume2 size={14} color={colors.primary} strokeWidth={1.5} />
                 <Text style={styles.instructionText}>
                   Speak your message clearly, then type what you said in the text field below and tap "Use Text".
                 </Text>
@@ -179,7 +179,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
                   onPress={isRecording ? handleStopRecording : startRecording}
                 >
                   <View style={styles.modalButtonContent}>
-                    {isRecording ? <Square size={14} color={colors.text} strokeWidth={2} /> : <Mic size={14} color={colors.text} strokeWidth={2} />}
+                    {isRecording ? <Square size={12} color={colors.text} strokeWidth={1.5} /> : <Mic size={12} color={colors.text} strokeWidth={1.5} />}
                     <Text style={styles.recordButtonText}>
                       {isRecording ? 'Stop' : 'Record'}
                     </Text>
@@ -192,7 +192,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
                   disabled={!recordedText.trim()}
                 >
                   <View style={styles.modalButtonContent}>
-                    <Check size={14} color={colors.text} strokeWidth={2} />
+                    <Check size={12} color={colors.text} strokeWidth={1.5} />
                     <Text style={styles.useButtonText}>Use Text</Text>
                   </View>
                 </TouchableOpacity>
@@ -213,21 +213,21 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: Platform.OS === 'ios' ? 90 : 74,
-    paddingHorizontal: 20,
-    paddingTop: 12,
+    paddingBottom: Platform.OS === 'ios' ? 100 : 80, // Adjusted for new tab bar
+    paddingHorizontal: 16,
+    paddingTop: 8,
     backgroundColor: colors.background,
-    borderTopWidth: 1,
+    borderTopWidth: 0.5,
     borderTopColor: colors.border,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     backgroundColor: colors.surface,
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderWidth: 0.5,
     borderColor: colors.border,
   },
   input: {
@@ -235,16 +235,16 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.text,
     maxHeight: 100,
-    marginRight: 12,
+    marginRight: 8,
     paddingVertical: 0,
     fontWeight: '400',
     lineHeight: 20,
   },
   micButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    marginRight: 8,
+    width: 28,
+    height: 28,
+    borderRadius: 6,
+    marginRight: 6,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.surfaceSecondary,
@@ -253,9 +253,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.error + '20',
   },
   sendButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 28,
+    height: 28,
+    borderRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.primary,
@@ -273,22 +273,22 @@ const styles = StyleSheet.create({
   modalBlur: {
     width: '100%',
     maxWidth: 400,
-    borderRadius: 16,
+    borderRadius: 12,
     overflow: 'hidden',
   },
   modalContent: {
     backgroundColor: colors.glass,
-    padding: 24,
+    padding: 20,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 20,
   },
   modalTitle: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 15,
+    fontWeight: '600',
     color: colors.text,
   },
   closeButton: {
@@ -298,66 +298,66 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   recordingDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
     backgroundColor: colors.textTertiary,
-    marginRight: 8,
+    marginRight: 6,
   },
   recordingDotActive: {
     backgroundColor: colors.error,
   },
   recordingText: {
-    fontSize: 13,
+    fontSize: 12,
     color: colors.text,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   instructionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surfaceSecondary,
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 20,
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
   },
   instructionText: {
-    fontSize: 12,
+    fontSize: 11,
     color: colors.text,
-    marginLeft: 12,
+    marginLeft: 8,
     flex: 1,
-    lineHeight: 16,
-    fontWeight: '500',
+    lineHeight: 14,
+    fontWeight: '400',
   },
   recordedTextInput: {
     backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 14,
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 13,
     color: colors.text,
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: colors.border,
-    marginBottom: 24,
-    minHeight: 100,
-    fontWeight: '500',
+    marginBottom: 20,
+    minHeight: 80,
+    fontWeight: '400',
   },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   recordButton: {
     flex: 1,
-    marginRight: 8,
-    borderRadius: 12,
+    marginRight: 6,
+    borderRadius: 8,
     backgroundColor: colors.error,
   },
   useButton: {
     flex: 1,
-    marginLeft: 8,
-    borderRadius: 12,
+    marginLeft: 6,
+    borderRadius: 8,
     backgroundColor: colors.primary,
   },
   useButtonDisabled: {
@@ -367,34 +367,34 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
   },
   recordButtonText: {
     color: colors.text,
-    fontWeight: '700',
-    marginLeft: 8,
-    fontSize: 13,
+    fontWeight: '600',
+    marginLeft: 6,
+    fontSize: 12,
   },
   useButtonText: {
     color: colors.text,
-    fontWeight: '700',
-    marginLeft: 8,
-    fontSize: 13,
+    fontWeight: '600',
+    marginLeft: 6,
+    fontSize: 12,
   },
   helpContainer: {
     backgroundColor: colors.surfaceTertiary,
-    padding: 16,
-    borderRadius: 12,
+    padding: 12,
+    borderRadius: 8,
   },
   helpText: {
-    fontSize: 11,
+    fontSize: 10,
     color: colors.textSecondary,
-    lineHeight: 14,
-    fontWeight: '500',
+    lineHeight: 12,
+    fontWeight: '400',
   },
   helpBold: {
-    fontWeight: '700',
+    fontWeight: '600',
     color: colors.accent,
   },
 });
