@@ -190,7 +190,9 @@ export default function AssistantScreen() {
             <View style={styles.taskPromptContent}>
               <Plus size={16} color={colors.primary} strokeWidth={2} />
               <View style={styles.taskPromptText}>
-                <Text style={styles.taskPromptTitle}>Add {extractedTasks.length} task{extractedTasks.length > 1 ? 's' : ''} to planner</Text>
+                <Text style={styles.taskPromptTitle}>
+                  Add {extractedTasks.length} task{extractedTasks.length > 1 ? 's' : ''} to planner
+                </Text>
               </View>
             </View>
           </TouchableOpacity>

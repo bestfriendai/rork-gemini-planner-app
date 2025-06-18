@@ -6,9 +6,8 @@ const OPENROUTER_API_KEY = Constants.expoConfig?.extra?.OPENROUTER_API_KEY || 's
 const PERPLEXITY_API_KEY = Constants.expoConfig?.extra?.PERPLEXITY_API_KEY || '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';
 
 // Updated models for 2025 - using available models
-// Updated to use the requested valid model
 const GEMINI_MODEL = 'google/gemini-2.5-flash';
-const PERPLEXITY_MODEL = 'llama-3.1-sonar-large-128k-online';
+const PERPLEXITY_MODEL = 'sonar';
 
 // Enhanced query classification
 interface QueryClassification {
@@ -57,8 +56,8 @@ const MODEL_CONFIGS: Record<string, ModelConfig> = {
     reasoning: 'thorough'
   },
   'news': {
-    primary: 'llama-3.1-sonar-large-128k-online',
-    fallback: ['llama-3.1-sonar-small-128k-online'],
+    primary: 'sonar',
+    fallback: ['sonar-pro'],
     maxTokens: 2000,
     temperature: 0.7,
     reasoning: 'balanced'
@@ -68,8 +67,8 @@ const MODEL_CONFIGS: Record<string, ModelConfig> = {
 // Perplexity configuration for different query types
 interface PerplexityConfig {
   model: string;
-  searchMode?: 'web' | 'academic' | 'news' | 'social';
-  reasoningEffort?: 'fast' | 'balanced' | 'thorough';
+  searchMode?: 'web' | 'academic';
+  reasoningEffort?: 'low' | 'medium' | 'high';
   maxSources?: number;
 }
 
@@ -158,9 +157,9 @@ const getPerplexityConfig = (query: string): PerplexityConfig => {
   // Academic queries
   if (query.match(/research|study|paper|academic|scientific|journal/i)) {
     return {
-      model: 'llama-3.1-sonar-large-128k-online',
+      model: 'sonar',
       searchMode: 'academic',
-      reasoningEffort: 'thorough',
+      reasoningEffort: 'high',
       maxSources: 8
     };
   }
@@ -168,9 +167,9 @@ const getPerplexityConfig = (query: string): PerplexityConfig => {
   // Breaking news and current events
   if (query.match(/news|breaking|latest|current|today|happening|live/i)) {
     return {
-      model: 'llama-3.1-sonar-small-128k-online',
-      searchMode: 'news',
-      reasoningEffort: 'fast',
+      model: 'sonar',
+      searchMode: 'web',
+      reasoningEffort: 'medium',
       maxSources: 6
     };
   }
@@ -178,18 +177,18 @@ const getPerplexityConfig = (query: string): PerplexityConfig => {
   // Social media and trending topics
   if (query.match(/trending|viral|social|twitter|reddit|discussion/i)) {
     return {
-      model: 'llama-3.1-sonar-large-128k-online',
-      searchMode: 'social',
-      reasoningEffort: 'balanced',
+      model: 'sonar',
+      searchMode: 'web',
+      reasoningEffort: 'medium',
       maxSources: 8
     };
   }
   
   // Default configuration for general queries
   return {
-    model: 'llama-3.1-sonar-large-128k-online',
+    model: 'sonar',
     searchMode: 'web',
-    reasoningEffort: 'balanced',
+    reasoningEffort: 'medium',
     maxSources: 6
   };
 };
@@ -367,7 +366,7 @@ When users ask about "today", "now", "current time", etc., use this information.
     });
 
     const requestBody = {
-      model: config.primary,
+      model: GEMINI_MODEL,
       messages: enhancedMessages,
       max_tokens: config.maxTokens,
       temperature: config.temperature,
@@ -393,7 +392,7 @@ When users ask about "today", "now", "current time", etc., use this information.
         status: response.status,
         statusText: response.statusText,
         error: errorText,
-        model: config.primary,
+        model: GEMINI_MODEL,
         url: response.url
       });
       throw handleAIError({ status: response.status, message: errorText }, 'openrouter');

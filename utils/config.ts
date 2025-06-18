@@ -4,12 +4,12 @@ export const API_CONFIG = {
   openrouter: {
     apiKey: Constants.expoConfig?.extra?.OPENROUTER_API_KEY || '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',
     baseUrl: 'https://openrouter.ai/api/v1',
-    defaultModel: 'google/gemini-2.5-flash'  // Updated to a valid model
+    defaultModel: 'google/gemini-2.5-flash'
   },
   perplexity: {
     apiKey: Constants.expoConfig?.extra?.PERPLEXITY_API_KEY || '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',
     baseUrl: 'https://api.perplexity.ai',
-    defaultModel: 'llama-3.1-sonar-large-128k-online'
+    defaultModel: 'sonar'
   }
 };
 
@@ -41,15 +41,15 @@ export const RATE_LIMITS = {
 // Model configurations for different use cases
 export const MODEL_TIERS = {
   economy: {
-    openrouter: 'google/gemini-2.5-flash',  // Updated to a valid model
-    perplexity: 'llama-3.1-sonar-small-128k-online'
+    openrouter: 'google/gemini-2.5-flash',
+    perplexity: 'sonar'
   },
   balanced: {
     openrouter: 'anthropic/claude-3-sonnet',
-    perplexity: 'llama-3.1-sonar-large-128k-online'
+    perplexity: 'sonar-pro'
   },
   premium: {
     openrouter: 'openai/gpt-4o',
-    perplexity: 'llama-3.1-sonar-large-128k-online'
+    perplexity: 'sonar-deep-research'
   }
 };
