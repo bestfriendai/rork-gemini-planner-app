@@ -106,16 +106,21 @@ When users ask about "today", "now", "current time", etc., use this information.
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+    let errorData;
+    try {
+      errorData = await response.json();
+    } catch {
+      errorData = { error: 'Unknown error' };
+    }
     console.error('OpenRouter API error:', errorData);
-    throw new Error(`API error: ${response.status}`);
+    throw new Error(`API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
   }
 
   if (onStream && response.body) {
     return await handleStreamResponse(response, onStream);
   } else {
     const data = await response.json();
-    return data.choices[0].message.content;
+    return data.choices?.[0]?.message?.content || 'No response received';
   }
 };
 
@@ -153,30 +158,35 @@ You have access to current web information. Use it to provide up-to-date answers
   
   for (const msg of conversationMessages) {
     if (msg.role === 'user' || msg.role === 'assistant') {
-      // Only add if it's different from the last role
-      if (lastRole !== msg.role) {
-        processedMessages.push(msg);
-        lastRole = msg.role;
-      } else if (msg.role === 'user') {
-        // If we have consecutive user messages, combine them
+      // If this is the same role as the last message, combine them
+      if (lastRole === msg.role && processedMessages.length > 0) {
         const lastMsg = processedMessages[processedMessages.length - 1];
-        if (lastMsg && lastMsg.role === 'user') {
+        if (lastMsg.role === msg.role) {
+          // Combine messages of the same role
           lastMsg.content = `${lastMsg.content}\n\n${msg.content}`;
-        } else {
-          processedMessages.push(msg);
+          continue;
         }
       }
+      
+      processedMessages.push(msg);
+      lastRole = msg.role;
     }
   }
   
   // Add processed messages to perplexity messages
   perplexityMessages.push(...processedMessages);
   
-  // Ensure we end with a user message
-  if (perplexityMessages.length > 1 && perplexityMessages[perplexityMessages.length - 1].role !== 'user') {
-    const lastUserMessage = conversationMessages.filter(msg => msg.role === 'user').pop();
-    if (lastUserMessage) {
-      perplexityMessages.push(lastUserMessage);
+  // Ensure we end with a user message for Perplexity
+  if (perplexityMessages.length > 1) {
+    const lastMessage = perplexityMessages[perplexityMessages.length - 1];
+    if (lastMessage.role !== 'user') {
+      // Find the last user message and move it to the end
+      const lastUserMessageIndex = perplexityMessages.map(m => m.role).lastIndexOf('user');
+      if (lastUserMessageIndex > 0) {
+        const lastUserMessage = perplexityMessages[lastUserMessageIndex];
+        perplexityMessages.splice(lastUserMessageIndex, 1);
+        perplexityMessages.push(lastUserMessage);
+      }
     }
   }
 
@@ -199,16 +209,22 @@ You have access to current web information. Use it to provide up-to-date answers
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
+    let errorText;
+    try {
+      const errorData = await response.json();
+      errorText = errorData.error?.message || `HTTP ${response.status}`;
+    } catch {
+      errorText = `HTTP ${response.status}`;
+    }
     console.error('Perplexity API error:', errorText);
-    throw new Error(`Perplexity API error: ${response.status}`);
+    throw new Error(`Perplexity API error: ${errorText}`);
   }
 
   if (onStream && response.body) {
     return await handleStreamResponse(response, onStream);
   } else {
     const data = await response.json();
-    return data.choices[0].message.content;
+    return data.choices?.[0]?.message?.content || 'No response received';
   }
 };
 
@@ -232,8 +248,9 @@ const handleStreamResponse = async (
 
       for (const line of lines) {
         if (line.startsWith('data: ')) {
-          const data = line.slice(6);
+          const data = line.slice(6).trim();
           if (data === '[DONE]') continue;
+          if (data === '') continue;
 
           try {
             const parsed = JSON.parse(data);
@@ -243,7 +260,8 @@ const handleStreamResponse = async (
               onStream(content);
             }
           } catch (e) {
-            // Skip invalid JSON
+            // Skip invalid JSON lines
+            console.warn('Failed to parse streaming chunk:', data);
           }
         }
       }

@@ -96,7 +96,7 @@ export default function AssistantScreen() {
       // Add error message
       addMessage({
         role: 'assistant',
-        content: "I'm sorry, I encountered an error. Please check your internet connection and try again.",
+        content: "I'm sorry, I encountered an error while processing your request. Please check your internet connection and try again. If the problem persists, try rephrasing your question.",
       });
     } finally {
       setLoading(false);

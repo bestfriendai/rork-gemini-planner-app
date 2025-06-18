@@ -41,13 +41,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
       }
     } else {
       // For mobile, show recording modal
-      if (isRecording) {
-        stopRecording();
-        setShowRecordModal(false);
-      } else {
-        startRecording();
-        setShowRecordModal(true);
-      }
+      setShowRecordModal(true);
+      startRecording();
     }
   };
 
@@ -66,11 +61,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
     stopRecording();
   };
 
+  const handleStopRecording = () => {
+    stopRecording();
+  };
+
   const getMicIcon = () => {
     if (Platform.OS === 'web') {
       return isListening ? <MicOff size={20} color="#fff" /> : <Mic size={20} color="#fff" />;
     } else {
-      return isRecording ? <Square size={20} color="#fff" /> : <Mic size={20} color="#fff" />;
+      return <Mic size={20} color="#fff" />;
     }
   };
 
@@ -78,7 +77,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
     if (Platform.OS === 'web') {
       return [styles.micButton, isListening && styles.micButtonActive];
     } else {
-      return [styles.micButton, isRecording && styles.micButtonRecording];
+      return styles.micButton;
     }
   };
 
@@ -137,12 +136,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
             <View style={styles.recordingIndicator}>
               <View style={[styles.recordingDot, isRecording && styles.recordingDotActive]} />
               <Text style={styles.recordingText}>
-                {isRecording ? 'Recording... Speak now!' : 'Tap to start recording'}
+                {isRecording ? 'Recording... Speak now!' : 'Ready to record'}
               </Text>
             </View>
             
             <Text style={styles.instructionText}>
-              Speak your message clearly. When finished, type what you said below and tap "Use Text".
+              On mobile, voice-to-text transcription happens manually. Speak your message, then type what you said below and tap "Use Text".
             </Text>
             
             <TextInput
@@ -158,8 +157,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
             
             <View style={styles.modalButtons}>
               <TouchableOpacity 
-                style={styles.recordButton}
-                onPress={toggleListening}
+                style={[styles.recordButton, isRecording && styles.recordButtonActive]}
+                onPress={isRecording ? handleStopRecording : startRecording}
               >
                 {isRecording ? <Square size={20} color="#fff" /> : <Mic size={20} color="#fff" />}
                 <Text style={styles.recordButtonText}>
@@ -223,9 +222,6 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   micButtonActive: {
-    backgroundColor: '#FF3B30',
-  },
-  micButtonRecording: {
     backgroundColor: '#FF3B30',
   },
   modalOverlay: {
@@ -306,6 +302,9 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
     justifyContent: 'center',
+  },
+  recordButtonActive: {
+    backgroundColor: '#FF3B30',
   },
   recordButtonText: {
     color: '#fff',

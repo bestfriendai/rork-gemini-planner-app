@@ -240,7 +240,7 @@ export default function SettingsScreen() {
         
         <SettingsItem
           title="App Version"
-          subtitle="2.0.0 - Enhanced Personal Assistant"
+          subtitle="2.1.0 - Enhanced Personal Assistant with Improved Voice Features"
           icon={<Info size={22} color="#4A86E8" />}
         />
       </View>
@@ -276,6 +276,19 @@ export default function SettingsScreen() {
             <Text style={styles.statLabel}>Completion</Text>
           </View>
         </View>
+      </View>
+      
+      <View style={styles.helpSection}>
+        <Text style={styles.helpTitle}>Voice Features Help</Text>
+        <Text style={styles.helpText}>
+          <Text style={styles.helpBold}>Web Browser:</Text> Full speech-to-text recognition available. Click the microphone to start speaking.
+        </Text>
+        <Text style={styles.helpText}>
+          <Text style={styles.helpBold}>Mobile:</Text> Voice recording with manual transcription. Speak your message, then type what you said in the text field.
+        </Text>
+        <Text style={styles.helpText}>
+          <Text style={styles.helpBold}>Text-to-Speech:</Text> Available on all platforms. Tap the speaker icon next to assistant messages to hear them spoken aloud.
+        </Text>
       </View>
     </ScrollView>
   );
@@ -373,5 +386,28 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: 14,
     color: '#6E7A8A',
+  },
+  helpSection: {
+    margin: 16,
+    padding: 16,
+    backgroundColor: '#E8F1FF',
+    borderRadius: 12,
+    marginBottom: 32,
+  },
+  helpTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1A1A1A',
+    marginBottom: 12,
+  },
+  helpText: {
+    fontSize: 14,
+    color: '#1A1A1A',
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  helpBold: {
+    fontWeight: '600',
+    color: '#4A86E8',
   },
 });
