@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Platform, Alert } from 'react-native';
-import { Send, Mic, MicOff, Square } from 'lucide-react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Platform, Alert, Modal, Text } from 'react-native';
+import { Send, Mic, MicOff, Square, X, Check } from 'lucide-react-native';
 import { useSpeechStore } from '@/store/speechStore';
 
 interface ChatInputProps {
@@ -10,7 +10,18 @@ interface ChatInputProps {
 
 export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
   const [message, setMessage] = useState('');
-  const { isListening, isRecording, startListening, stopListening, startRecording, stopRecording } = useSpeechStore();
+  const [showRecordModal, setShowRecordModal] = useState(false);
+  const { 
+    isListening, 
+    isRecording, 
+    recordedText,
+    startListening, 
+    stopListening, 
+    startRecording, 
+    stopRecording,
+    setRecordedText,
+    clearRecordedText
+  } = useSpeechStore();
 
   const handleSend = () => {
     if (message.trim() && !isLoading) {
@@ -29,26 +40,30 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
         });
       }
     } else {
-      // For mobile, show a simple recording indicator
+      // For mobile, show recording modal
       if (isRecording) {
         stopRecording();
-        Alert.alert(
-          "Voice Input",
-          "Voice-to-text transcription is not available on mobile. You can type your message or use the voice output feature by tapping the speaker icon on assistant messages.",
-          [{ text: "OK" }]
-        );
+        setShowRecordModal(false);
       } else {
         startRecording();
-        Alert.alert(
-          "Recording",
-          "Recording started. Tap the microphone again to stop. Note: Automatic transcription is only available on web browsers.",
-          [
-            { text: "Stop Recording", onPress: () => stopRecording() },
-            { text: "Continue", style: "cancel" }
-          ]
-        );
+        setShowRecordModal(true);
       }
     }
+  };
+
+  const handleUseRecordedText = () => {
+    if (recordedText.trim()) {
+      setMessage(prev => (prev + ' ' + recordedText).trim());
+    }
+    setShowRecordModal(false);
+    clearRecordedText();
+    stopRecording();
+  };
+
+  const handleCancelRecording = () => {
+    setShowRecordModal(false);
+    clearRecordedText();
+    stopRecording();
   };
 
   const getMicIcon = () => {
@@ -68,39 +83,103 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        value={message}
-        onChangeText={setMessage}
-        placeholder="Type a message or ask about current events..."
-        placeholderTextColor="#A0A9B8"
-        multiline
-        maxLength={500}
-        onSubmitEditing={handleSend}
-        editable={!isLoading}
-      />
-      
-      <TouchableOpacity 
-        style={getMicButtonStyle()} 
-        onPress={toggleListening}
-        disabled={isLoading}
+    <>
+      <View style={styles.container}>
+        <TextInput
+          style={styles.input}
+          value={message}
+          onChangeText={setMessage}
+          placeholder="Type a message or ask about current events..."
+          placeholderTextColor="#A0A9B8"
+          multiline
+          maxLength={500}
+          onSubmitEditing={handleSend}
+          editable={!isLoading}
+        />
+        
+        <TouchableOpacity 
+          style={getMicButtonStyle()} 
+          onPress={toggleListening}
+          disabled={isLoading}
+        >
+          {getMicIcon()}
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={[styles.sendButton, isLoading && styles.sendButtonDisabled]} 
+          onPress={handleSend}
+          disabled={isLoading || !message.trim()}
+        >
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Send size={20} color="#fff" />
+          )}
+        </TouchableOpacity>
+      </View>
+
+      {/* Mobile Recording Modal */}
+      <Modal
+        visible={showRecordModal}
+        transparent
+        animationType="slide"
+        onRequestClose={handleCancelRecording}
       >
-        {getMicIcon()}
-      </TouchableOpacity>
-      
-      <TouchableOpacity 
-        style={[styles.sendButton, isLoading && styles.sendButtonDisabled]} 
-        onPress={handleSend}
-        disabled={isLoading || !message.trim()}
-      >
-        {isLoading ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <Send size={20} color="#fff" />
-        )}
-      </TouchableOpacity>
-    </View>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Voice Input</Text>
+              <TouchableOpacity onPress={handleCancelRecording}>
+                <X size={24} color="#1A1A1A" />
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.recordingIndicator}>
+              <View style={[styles.recordingDot, isRecording && styles.recordingDotActive]} />
+              <Text style={styles.recordingText}>
+                {isRecording ? 'Recording... Speak now!' : 'Tap to start recording'}
+              </Text>
+            </View>
+            
+            <Text style={styles.instructionText}>
+              Speak your message clearly. When finished, type what you said below and tap "Use Text".
+            </Text>
+            
+            <TextInput
+              style={styles.recordedTextInput}
+              value={recordedText}
+              onChangeText={setRecordedText}
+              placeholder="Type what you said here..."
+              placeholderTextColor="#A0A9B8"
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+            />
+            
+            <View style={styles.modalButtons}>
+              <TouchableOpacity 
+                style={styles.recordButton}
+                onPress={toggleListening}
+              >
+                {isRecording ? <Square size={20} color="#fff" /> : <Mic size={20} color="#fff" />}
+                <Text style={styles.recordButtonText}>
+                  {isRecording ? 'Stop' : 'Record'}
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.useButton, !recordedText.trim() && styles.useButtonDisabled]}
+                onPress={handleUseRecordedText}
+                disabled={!recordedText.trim()}
+              >
+                <Check size={20} color="#fff" />
+                <Text style={styles.useButtonText}>Use Text</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 };
 
@@ -148,5 +227,107 @@ const styles = StyleSheet.create({
   },
   micButtonRecording: {
     backgroundColor: '#FF3B30',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    width: '100%',
+    maxWidth: 400,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1A1A1A',
+  },
+  recordingIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  recordingDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#6E7A8A',
+    marginRight: 8,
+  },
+  recordingDotActive: {
+    backgroundColor: '#FF3B30',
+  },
+  recordingText: {
+    fontSize: 16,
+    color: '#1A1A1A',
+    fontWeight: '500',
+  },
+  instructionText: {
+    fontSize: 14,
+    color: '#6E7A8A',
+    textAlign: 'center',
+    marginBottom: 16,
+    lineHeight: 20,
+  },
+  recordedTextInput: {
+    backgroundColor: '#F9FAFC',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    color: '#1A1A1A',
+    borderWidth: 1,
+    borderColor: '#E5E9F0',
+    marginBottom: 20,
+    minHeight: 80,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  recordButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F9A826',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    flex: 1,
+    marginRight: 10,
+    justifyContent: 'center',
+  },
+  recordButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  useButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#4A86E8',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  useButtonDisabled: {
+    backgroundColor: '#A0A9B8',
+  },
+  useButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });

@@ -32,7 +32,8 @@ const needsWebSearch = (query: string): boolean => {
     'current', 'latest', 'recent', 'today', 'news', 'weather', 'stock', 'price',
     'what is happening', 'what happened', 'search for', 'find information',
     'look up', 'google', 'internet', 'online', 'website', 'url', 'link',
-    'trending', 'popular', 'viral', 'breaking', 'update', 'live', 'now'
+    'trending', 'popular', 'viral', 'breaking', 'update', 'live', 'now',
+    'cryptocurrency', 'crypto', 'bitcoin', 'ethereum', 'market', 'exchange rate'
   ];
   
   return webSearchKeywords.some(keyword => 
@@ -105,7 +106,7 @@ When users ask about "today", "now", "current time", etc., use this information.
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
+    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
     console.error('OpenRouter API error:', errorData);
     throw new Error(`API error: ${response.status}`);
   }
@@ -147,19 +148,32 @@ You have access to current web information. Use it to provide up-to-date answers
   const conversationMessages = messages.filter(msg => msg.role !== 'system');
   
   // Ensure alternating user/assistant pattern
+  let processedMessages: CoreMessage[] = [];
   let lastRole: 'user' | 'assistant' | null = null;
   
   for (const msg of conversationMessages) {
     if (msg.role === 'user' || msg.role === 'assistant') {
+      // Only add if it's different from the last role
       if (lastRole !== msg.role) {
-        perplexityMessages.push(msg);
+        processedMessages.push(msg);
         lastRole = msg.role;
+      } else if (msg.role === 'user') {
+        // If we have consecutive user messages, combine them
+        const lastMsg = processedMessages[processedMessages.length - 1];
+        if (lastMsg && lastMsg.role === 'user') {
+          lastMsg.content = `${lastMsg.content}\n\n${msg.content}`;
+        } else {
+          processedMessages.push(msg);
+        }
       }
     }
   }
   
+  // Add processed messages to perplexity messages
+  perplexityMessages.push(...processedMessages);
+  
   // Ensure we end with a user message
-  if (perplexityMessages.length > 0 && perplexityMessages[perplexityMessages.length - 1].role !== 'user') {
+  if (perplexityMessages.length > 1 && perplexityMessages[perplexityMessages.length - 1].role !== 'user') {
     const lastUserMessage = conversationMessages.filter(msg => msg.role === 'user').pop();
     if (lastUserMessage) {
       perplexityMessages.push(lastUserMessage);

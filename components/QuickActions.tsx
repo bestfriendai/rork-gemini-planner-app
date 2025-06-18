@@ -4,7 +4,8 @@ import {
   Clock, Calendar, Cloud, Newspaper, CheckSquare, Bell, Calculator, MapPin, 
   Wifi, Smartphone, TrendingUp, DollarSign, Coffee, Plane, Music, Book,
   Heart, Zap, Target, Brain, Camera, Image, FileText, Mail, Phone, 
-  ShoppingCart, Car, Home, Briefcase, Gamepad2, Palette
+  ShoppingCart, Car, Home, Briefcase, Gamepad2, Palette, Globe, Lightbulb,
+  Compass, Thermometer, Activity, Bookmark, Gift, Star, Headphones, Monitor
 } from 'lucide-react-native';
 
 interface QuickActionsProps {
@@ -111,7 +112,7 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAction }) => {
     {
       id: 'workout',
       title: 'Workout Plan',
-      icon: <Heart size={20} color="#4A86E8" />,
+      icon: <Activity size={20} color="#4A86E8" />,
     },
     {
       id: 'meditation',
@@ -132,6 +133,36 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAction }) => {
       id: 'entertainment',
       title: 'Entertainment',
       icon: <Gamepad2 size={20} color="#4A86E8" />,
+    },
+    {
+      id: 'technology',
+      title: 'Tech News',
+      icon: <Monitor size={20} color="#4A86E8" />,
+    },
+    {
+      id: 'science',
+      title: 'Science Facts',
+      icon: <Lightbulb size={20} color="#4A86E8" />,
+    },
+    {
+      id: 'explore',
+      title: 'Explore Topics',
+      icon: <Compass size={20} color="#4A86E8" />,
+    },
+    {
+      id: 'temperature',
+      title: 'Temperature',
+      icon: <Thermometer size={20} color="#4A86E8" />,
+    },
+    {
+      id: 'favorites',
+      title: 'My Favorites',
+      icon: <Star size={20} color="#4A86E8" />,
+    },
+    {
+      id: 'podcast',
+      title: 'Podcasts',
+      icon: <Headphones size={20} color="#4A86E8" />,
     },
     {
       id: 'device_info',

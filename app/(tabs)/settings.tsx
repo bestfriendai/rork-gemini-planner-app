@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Alert, Platform, Switch } from 'react-native';
-import { User, Bell, Trash2, Moon, Info, Volume2, Wifi, Globe, Smartphone, Monitor, Mic, Speaker } from 'lucide-react-native';
+import { User, Bell, Trash2, Moon, Info, Volume2, Wifi, Globe, Smartphone, Monitor, Mic, Speaker, Zap, Brain, Clock, Calendar } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useChatStore } from '@/store/chatStore';
 import { useTaskStore } from '@/store/taskStore';
@@ -18,6 +18,8 @@ export default function SettingsScreen() {
   const [textToSpeech, setTextToSpeech] = useState(true);
   const [webSearch, setWebSearch] = useState(true);
   const [voiceInput, setVoiceInput] = useState(true);
+  const [smartSuggestions, setSmartSuggestions] = useState(true);
+  const [autoTaskExtraction, setAutoTaskExtraction] = useState(true);
   
   const handleSaveName = () => {
     setUsername(nameInput.trim());
@@ -126,7 +128,7 @@ export default function SettingsScreen() {
         
         <SettingsItem
           title="Voice Input"
-          subtitle={Platform.OS === 'web' ? "Speech-to-text available" : "Recording available (manual transcription)"}
+          subtitle={Platform.OS === 'web' ? "Speech-to-text available" : "Voice recording with manual transcription"}
           icon={<Mic size={22} color="#4A86E8" />}
           isSwitch
           switchValue={voiceInput}
@@ -140,6 +142,24 @@ export default function SettingsScreen() {
           isSwitch
           switchValue={webSearch}
           onSwitchChange={setWebSearch}
+        />
+        
+        <SettingsItem
+          title="Smart Suggestions"
+          subtitle="Get intelligent quick action suggestions"
+          icon={<Brain size={22} color="#4A86E8" />}
+          isSwitch
+          switchValue={smartSuggestions}
+          onSwitchChange={setSmartSuggestions}
+        />
+        
+        <SettingsItem
+          title="Auto Task Extraction"
+          subtitle="Automatically detect and suggest tasks from conversations"
+          icon={<Zap size={22} color="#4A86E8" />}
+          isSwitch
+          switchValue={autoTaskExtraction}
+          onSwitchChange={setAutoTaskExtraction}
         />
         
         <SettingsItem
@@ -157,7 +177,7 @@ export default function SettingsScreen() {
         
         <SettingsItem
           title="Speech Recognition"
-          subtitle={Platform.OS === 'web' ? "Full speech-to-text available" : "Recording with manual transcription"}
+          subtitle={Platform.OS === 'web' ? "Full speech-to-text available" : "Voice recording with manual transcription"}
           icon={Platform.OS === 'web' ? <Monitor size={22} color="#4A86E8" /> : <Smartphone size={22} color="#F9A826" />}
         />
         
@@ -178,6 +198,12 @@ export default function SettingsScreen() {
           subtitle="Create, organize, and track your tasks"
           icon={<Bell size={22} color="#4A86E8" />}
         />
+        
+        <SettingsItem
+          title="Real-time Data"
+          subtitle="Access to current time, date, and device information"
+          icon={<Clock size={22} color="#4A86E8" />}
+        />
       </View>
       
       <View style={styles.section}>
@@ -197,13 +223,13 @@ export default function SettingsScreen() {
         <SettingsItem
           title="Current Date"
           subtitle={dateTime.date}
-          icon={<Info size={22} color="#4A86E8" />}
+          icon={<Calendar size={22} color="#4A86E8" />}
         />
         
         <SettingsItem
           title="Current Time"
           subtitle={`${dateTime.time} (${dateTime.timezone})`}
-          icon={<Info size={22} color="#4A86E8" />}
+          icon={<Clock size={22} color="#4A86E8" />}
         />
         
         <SettingsItem
@@ -214,7 +240,7 @@ export default function SettingsScreen() {
         
         <SettingsItem
           title="App Version"
-          subtitle="1.0.0 - Personal Assistant"
+          subtitle="2.0.0 - Enhanced Personal Assistant"
           icon={<Info size={22} color="#4A86E8" />}
         />
       </View>

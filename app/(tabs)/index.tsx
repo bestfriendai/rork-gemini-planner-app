@@ -131,6 +131,12 @@ export default function AssistantScreen() {
       'creative': 'Give me some creative project ideas',
       'business': 'Share some business and entrepreneurship tips',
       'entertainment': 'What are some good movies or shows to watch?',
+      'technology': 'What are the latest technology trends and innovations?',
+      'science': 'Tell me some interesting science facts',
+      'explore': 'Suggest some interesting topics to explore',
+      'temperature': 'What is the current temperature in my area?',
+      'favorites': 'Help me organize my favorite things',
+      'podcast': 'Recommend some popular podcasts to listen to',
       'device_info': 'Tell me about my device and platform',
       'internet_status': 'Check my internet connection status',
     };
