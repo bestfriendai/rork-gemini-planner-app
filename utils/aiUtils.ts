@@ -142,15 +142,20 @@ const callPerplexityAI = async (
   onStream?: (chunk: string) => void
 ): Promise<string> => {
   try {
-    // Prepare messages for Perplexity with proper formatting
+    // Prepare messages for Perplexity - use only the last user message and system message
+    const systemMessage = messages.find(msg => msg.role === 'system');
+    const lastUserMessage = [...messages].reverse().find(msg => msg.role === 'user');
+    
+    if (!lastUserMessage) {
+      throw new Error('No user message found');
+    }
+
     const perplexityMessages: CoreMessage[] = [];
     
-    // Find system message and enhance it
-    const systemMessage = messages.find(msg => msg.role === 'system');
     if (systemMessage) {
       perplexityMessages.push({
         role: 'system',
-        content: `${systemMessage.content}
+        content: `You are a helpful AI assistant with access to current web information. Provide accurate, up-to-date answers based on your search results.
 
 CURRENT DATE & TIME CONTEXT:
 - Today is: ${currentDateTime.date}
@@ -158,38 +163,11 @@ CURRENT DATE & TIME CONTEXT:
 - Timezone: ${currentDateTime.timezone}
 - ISO Date: ${currentDateTime.isoDate}
 
-You have access to current web information. Use it to provide up-to-date answers.`
+Use web search to provide current, accurate information.`
       });
     }
     
-    // Get conversation messages (excluding system) and ensure proper alternating
-    const conversationMessages = messages.filter(msg => msg.role !== 'system');
-    
-    // Take the last few messages to ensure alternating pattern
-    const recentMessages = conversationMessages.slice(-4); // Last 4 messages
-    
-    // Ensure we have proper alternating pattern
-    const cleanMessages: CoreMessage[] = [];
-    let expectedRole: 'user' | 'assistant' = 'user';
-    
-    for (const msg of recentMessages) {
-      if (msg.role === expectedRole) {
-        cleanMessages.push(msg);
-        expectedRole = expectedRole === 'user' ? 'assistant' : 'user';
-      }
-    }
-    
-    // Ensure we end with a user message
-    if (cleanMessages.length > 0 && cleanMessages[cleanMessages.length - 1].role !== 'user') {
-      // Find the last user message from the original conversation
-      const lastUserMessage = conversationMessages.reverse().find(msg => msg.role === 'user');
-      if (lastUserMessage) {
-        cleanMessages.push(lastUserMessage);
-      }
-    }
-    
-    // Add cleaned messages to perplexity messages
-    perplexityMessages.push(...cleanMessages);
+    perplexityMessages.push(lastUserMessage);
 
     const requestBody = {
       model: PERPLEXITY_MODEL,
@@ -261,14 +239,24 @@ const handleStreamResponse = async (
       const { done, value } = await reader.read();
       if (done) break;
 
-      const chunk = decoder.decode(value);
+      const chunk = decoder.decode(value, { stream: true });
       const lines = chunk.split('\n');
 
       for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const data = line.slice(6).trim();
+        const trimmedLine = line.trim();
+        
+        // Skip empty lines
+        if (!trimmedLine) continue;
+        
+        // Handle data lines
+        if (trimmedLine.startsWith('data: ')) {
+          const data = trimmedLine.slice(6).trim();
+          
+          // Skip [DONE] marker
           if (data === '[DONE]') continue;
-          if (data === '') continue;
+          
+          // Skip empty data
+          if (!data) continue;
 
           try {
             const parsed = JSON.parse(data);
@@ -278,8 +266,8 @@ const handleStreamResponse = async (
               onStream(content);
             }
           } catch (e) {
-            // Skip invalid JSON lines
-            console.warn('Failed to parse streaming chunk:', data);
+            // Skip invalid JSON lines - this is normal for streaming
+            console.warn('Skipping invalid JSON chunk:', data.substring(0, 100));
           }
         }
       }
