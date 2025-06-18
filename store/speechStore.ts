@@ -56,6 +56,7 @@ interface SpeechState {
   currentMessageId: string | null;
   isRecording: boolean;
   recordedText: string;
+  isSupported: boolean;
   speak: (text: string, messageId: string) => void;
   stopSpeaking: () => void;
   startListening: (callback: (text: string) => void) => void;
@@ -64,6 +65,7 @@ interface SpeechState {
   stopRecording: () => void;
   setRecordedText: (text: string) => void;
   clearRecordedText: () => void;
+  checkSupport: () => boolean;
 }
 
 export const useSpeechStore = create<SpeechState>((set, get) => ({
@@ -72,6 +74,19 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
   currentMessageId: null,
   isRecording: false,
   recordedText: '',
+  isSupported: false,
+  
+  checkSupport: () => {
+    if (Platform.OS === 'web') {
+      const supported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+      set({ isSupported: supported });
+      return supported;
+    } else {
+      // On mobile, we'll use manual transcription
+      set({ isSupported: true });
+      return true;
+    }
+  },
   
   speak: async (text, messageId) => {
     // Stop any current speech
@@ -79,28 +94,37 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
     
     if (Platform.OS === 'web') {
       // Web: Use Speech Synthesis API
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-      utterance.volume = 1.0;
-      
-      // Set voice (optional)
-      const voices = window.speechSynthesis.getVoices();
-      const preferredVoice = voices.find(voice => 
-        voice.lang.includes('en') && voice.name.includes('Google')
-      );
-      if (preferredVoice) {
-        utterance.voice = preferredVoice;
-      }
-      
-      // Handle speech end
-      utterance.onend = () => {
+      try {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        
+        // Set voice (optional)
+        const voices = window.speechSynthesis.getVoices();
+        const preferredVoice = voices.find(voice => 
+          voice.lang.includes('en') && (voice.name.includes('Google') || voice.name.includes('Microsoft'))
+        );
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
+        }
+        
+        // Handle speech end
+        utterance.onend = () => {
+          set({ isSpeaking: false, currentMessageId: null });
+        };
+        
+        utterance.onerror = () => {
+          set({ isSpeaking: false, currentMessageId: null });
+        };
+        
+        // Start speaking
+        window.speechSynthesis.speak(utterance);
+        set({ isSpeaking: true, currentMessageId: messageId });
+      } catch (error) {
+        console.error('Web speech synthesis error:', error);
         set({ isSpeaking: false, currentMessageId: null });
-      };
-      
-      // Start speaking
-      window.speechSynthesis.speak(utterance);
-      set({ isSpeaking: true, currentMessageId: messageId });
+      }
     } else {
       // Mobile: Use expo-speech
       try {
@@ -118,19 +142,24 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
         
         set({ isSpeaking: true, currentMessageId: messageId });
       } catch (error) {
-        console.error('Speech not available on this platform:', error);
+        console.error('Mobile speech synthesis error:', error);
+        set({ isSpeaking: false, currentMessageId: null });
       }
     }
   },
   
   stopSpeaking: async () => {
     if (Platform.OS === 'web') {
-      window.speechSynthesis.cancel();
+      try {
+        window.speechSynthesis.cancel();
+      } catch (error) {
+        console.error('Error stopping web speech:', error);
+      }
     } else {
       try {
         await Speech.stop();
       } catch (error) {
-        console.error('Speech not available on this platform:', error);
+        console.error('Error stopping mobile speech:', error);
       }
     }
     set({ isSpeaking: false, currentMessageId: null });
@@ -138,7 +167,7 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
   
   startListening: (callback) => {
     if (Platform.OS !== 'web') {
-      console.log('Speech recognition only available on web');
+      console.log('Speech recognition only available on web platform');
       return;
     }
     
@@ -149,63 +178,75 @@ export const useSpeechStore = create<SpeechState>((set, get) => ({
       return;
     }
     
-    // Create recognition instance
-    const recognition = new SpeechRecognitionAPI();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-    
-    // Store recognition instance in window to access it later
-    (window as any).speechRecognition = recognition;
-    
-    // Handle results
-    recognition.onresult = (event: any) => {
-      const results = Array.from({ length: event.results.length }, (_, i) => event.results[i]);
-      const transcript = results
-        .map((result: any) => {
-          const alternative = result[0] as SpeechRecognitionAlternative;
-          return alternative.transcript;
-        })
-        .join('');
-      
-      if (event.results[event.results.length - 1].isFinal) {
-        callback(transcript);
-      }
-    };
-    
-    // Handle end (restart if still listening)
-    recognition.onend = () => {
-      if (get().isListening) {
-        try {
-          recognition.start();
-        } catch (error) {
-          console.error('Failed to restart recognition:', error);
-          set({ isListening: false });
-        }
-      }
-    };
-    
-    // Handle errors
-    recognition.onerror = (event: any) => {
-      console.error('Speech recognition error:', event);
-      set({ isListening: false });
-    };
-    
-    // Start listening
     try {
+      // Create recognition instance
+      const recognition = new SpeechRecognitionAPI();
+      recognition.continuous = false; // Changed to false for better reliability
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+      recognition.maxAlternatives = 1;
+      
+      // Store recognition instance in window to access it later
+      (window as any).speechRecognition = recognition;
+      
+      let finalTranscript = '';
+      
+      // Handle results
+      recognition.onresult = (event: any) => {
+        let interimTranscript = '';
+        
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+        
+        // Call callback with final transcript when available
+        if (finalTranscript) {
+          callback(finalTranscript);
+          finalTranscript = '';
+        }
+      };
+      
+      // Handle end
+      recognition.onend = () => {
+        set({ isListening: false });
+        if ((window as any).speechRecognition) {
+          (window as any).speechRecognition = null;
+        }
+      };
+      
+      // Handle errors
+      recognition.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        set({ isListening: false });
+        if ((window as any).speechRecognition) {
+          (window as any).speechRecognition = null;
+        }
+      };
+      
+      // Start listening
       recognition.start();
       set({ isListening: true });
     } catch (error) {
-      console.error('Failed to start recognition:', error);
+      console.error('Failed to start speech recognition:', error);
+      set({ isListening: false });
     }
   },
   
   stopListening: () => {
     if (Platform.OS !== 'web') return;
     
-    if ((window as any).speechRecognition) {
-      (window as any).speechRecognition.stop();
-      (window as any).speechRecognition = null;
+    try {
+      if ((window as any).speechRecognition) {
+        (window as any).speechRecognition.stop();
+        (window as any).speechRecognition = null;
+      }
+    } catch (error) {
+      console.error('Error stopping speech recognition:', error);
     }
     
     set({ isListening: false });

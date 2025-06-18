@@ -93,10 +93,12 @@ export default function AssistantScreen() {
     } catch (error) {
       console.error('Error sending message:', error);
       
-      // Add error message
+      // Add error message with more helpful information
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      
       addMessage({
         role: 'assistant',
-        content: "I'm sorry, I encountered an error while processing your request. Please check your internet connection and try again. If the problem persists, try rephrasing your question.",
+        content: `I apologize, but I encountered an error while processing your request: ${errorMessage}. Please check your internet connection and try again. If the problem persists, try rephrasing your question or asking something else.`,
       });
     } finally {
       setLoading(false);

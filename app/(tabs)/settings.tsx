@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Alert, Platform, Switch } from 'react-native';
 import { User, Bell, Trash2, Moon, Info, Volume2, Wifi, Globe, Smartphone, Monitor, Mic, Speaker, Zap, Brain, Clock, Calendar } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -11,7 +11,7 @@ export default function SettingsScreen() {
   const { username, setUsername, notifications, toggleNotifications } = useSettingsStore();
   const { clearMessages } = useChatStore();
   const { tasks } = useTaskStore();
-  const { stopSpeaking } = useSpeechStore();
+  const { stopSpeaking, checkSupport, isSupported } = useSpeechStore();
   
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(username);
@@ -20,6 +20,11 @@ export default function SettingsScreen() {
   const [voiceInput, setVoiceInput] = useState(true);
   const [smartSuggestions, setSmartSuggestions] = useState(true);
   const [autoTaskExtraction, setAutoTaskExtraction] = useState(true);
+  
+  // Check speech support on mount
+  useEffect(() => {
+    checkSupport();
+  }, []);
   
   const handleSaveName = () => {
     setUsername(nameInput.trim());
@@ -70,6 +75,14 @@ export default function SettingsScreen() {
   };
 
   const dateTime = getCurrentDateTime();
+  
+  const getSpeechRecognitionStatus = () => {
+    if (Platform.OS === 'web') {
+      return isSupported ? "Full speech-to-text available" : "Not supported in this browser";
+    } else {
+      return "Voice recording with manual transcription";
+    }
+  };
   
   return (
     <ScrollView style={styles.container}>
@@ -128,8 +141,8 @@ export default function SettingsScreen() {
         
         <SettingsItem
           title="Voice Input"
-          subtitle={Platform.OS === 'web' ? "Speech-to-text available" : "Voice recording with manual transcription"}
-          icon={<Mic size={22} color="#4A86E8" />}
+          subtitle={getSpeechRecognitionStatus()}
+          icon={<Mic size={22} color={Platform.OS === 'web' && isSupported ? "#4A86E8" : "#F9A826"} />}
           isSwitch
           switchValue={voiceInput}
           onSwitchChange={setVoiceInput}
@@ -177,8 +190,11 @@ export default function SettingsScreen() {
         
         <SettingsItem
           title="Speech Recognition"
-          subtitle={Platform.OS === 'web' ? "Full speech-to-text available" : "Voice recording with manual transcription"}
-          icon={Platform.OS === 'web' ? <Monitor size={22} color="#4A86E8" /> : <Smartphone size={22} color="#F9A826" />}
+          subtitle={getSpeechRecognitionStatus()}
+          icon={Platform.OS === 'web' ? 
+            (isSupported ? <Monitor size={22} color="#4A86E8" /> : <Monitor size={22} color="#FF3B30" />) : 
+            <Smartphone size={22} color="#F9A826" />
+          }
         />
         
         <SettingsItem
@@ -240,7 +256,7 @@ export default function SettingsScreen() {
         
         <SettingsItem
           title="App Version"
-          subtitle="2.1.0 - Enhanced Personal Assistant with Improved Voice Features"
+          subtitle="2.2.0 - Enhanced Voice Features & Improved API Reliability"
           icon={<Info size={22} color="#4A86E8" />}
         />
       </View>
@@ -281,7 +297,7 @@ export default function SettingsScreen() {
       <View style={styles.helpSection}>
         <Text style={styles.helpTitle}>Voice Features Help</Text>
         <Text style={styles.helpText}>
-          <Text style={styles.helpBold}>Web Browser:</Text> Full speech-to-text recognition available. Click the microphone to start speaking.
+          <Text style={styles.helpBold}>Web Browser:</Text> {isSupported ? 'Full speech-to-text recognition available. Click the microphone to start speaking.' : 'Speech recognition not supported in this browser. Please use a modern browser like Chrome or Edge.'}
         </Text>
         <Text style={styles.helpText}>
           <Text style={styles.helpBold}>Mobile:</Text> Voice recording with manual transcription. Speak your message, then type what you said in the text field.

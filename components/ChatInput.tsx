@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Platform, Alert, Modal, Text } from 'react-native';
 import { Send, Mic, MicOff, Square, X, Check } from 'lucide-react-native';
 import { useSpeechStore } from '@/store/speechStore';
@@ -15,13 +15,20 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
     isListening, 
     isRecording, 
     recordedText,
+    isSupported,
     startListening, 
     stopListening, 
     startRecording, 
     stopRecording,
     setRecordedText,
-    clearRecordedText
+    clearRecordedText,
+    checkSupport
   } = useSpeechStore();
+
+  // Check speech support on component mount
+  useEffect(() => {
+    checkSupport();
+  }, []);
 
   const handleSend = () => {
     if (message.trim() && !isLoading) {
@@ -32,11 +39,22 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
 
   const toggleListening = () => {
     if (Platform.OS === 'web') {
+      if (!isSupported) {
+        Alert.alert(
+          "Speech Recognition Not Available",
+          "Your browser doesn't support speech recognition. Please type your message instead."
+        );
+        return;
+      }
+      
       if (isListening) {
         stopListening();
       } else {
         startListening((text: string) => {
-          setMessage(prev => (prev + ' ' + text).trim());
+          setMessage(prev => {
+            const newText = prev ? `${prev} ${text}` : text;
+            return newText.trim();
+          });
         });
       }
     } else {
@@ -48,7 +66,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
 
   const handleUseRecordedText = () => {
     if (recordedText.trim()) {
-      setMessage(prev => (prev + ' ' + recordedText).trim());
+      setMessage(prev => {
+        const newText = prev ? `${prev} ${recordedText}` : recordedText;
+        return newText.trim();
+      });
     }
     setShowRecordModal(false);
     clearRecordedText();
@@ -81,6 +102,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
     }
   };
 
+  // Show mic button on all platforms
+  const showMicButton = true;
+
   return (
     <>
       <View style={styles.container}>
@@ -96,13 +120,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
           editable={!isLoading}
         />
         
-        <TouchableOpacity 
-          style={getMicButtonStyle()} 
-          onPress={toggleListening}
-          disabled={isLoading}
-        >
-          {getMicIcon()}
-        </TouchableOpacity>
+        {showMicButton && (
+          <TouchableOpacity 
+            style={getMicButtonStyle()} 
+            onPress={toggleListening}
+            disabled={isLoading}
+          >
+            {getMicIcon()}
+          </TouchableOpacity>
+        )}
         
         <TouchableOpacity 
           style={[styles.sendButton, isLoading && styles.sendButtonDisabled]} 
@@ -141,7 +167,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
             </View>
             
             <Text style={styles.instructionText}>
-              On mobile, voice-to-text transcription happens manually. Speak your message, then type what you said below and tap "Use Text".
+              Speak your message clearly, then type what you said in the text field below and tap "Use Text".
             </Text>
             
             <TextInput
@@ -175,6 +201,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
                 <Text style={styles.useButtonText}>Use Text</Text>
               </TouchableOpacity>
             </View>
+            
+            <Text style={styles.helpText}>
+              💡 Tip: On mobile, voice-to-text requires manual transcription. Speak clearly and then type what you said.
+            </Text>
           </View>
         </View>
       </Modal>
@@ -291,6 +321,7 @@ const styles = StyleSheet.create({
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 16,
   },
   recordButton: {
     flexDirection: 'row',
@@ -328,5 +359,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     marginLeft: 8,
+  },
+  helpText: {
+    fontSize: 12,
+    color: '#6E7A8A',
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
 });

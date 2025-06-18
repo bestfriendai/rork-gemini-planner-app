@@ -129,14 +129,14 @@ const callPerplexityAI = async (
   currentDateTime: any,
   onStream?: (chunk: string) => void
 ): Promise<string> => {
-  // Prepare messages for Perplexity - ensure proper alternating pattern
+  // Prepare messages for Perplexity with proper formatting
   const perplexityMessages: CoreMessage[] = [];
   
-  // Add system message first
+  // Find system message
   const systemMessage = messages.find(msg => msg.role === 'system');
   if (systemMessage) {
     perplexityMessages.push({
-      ...systemMessage,
+      role: 'system',
       content: `${systemMessage.content}
 
 CURRENT DATE & TIME CONTEXT:
@@ -149,46 +149,34 @@ You have access to current web information. Use it to provide up-to-date answers
     });
   }
   
-  // Get conversation messages (excluding system)
+  // Get conversation messages (excluding system) and ensure proper alternating
   const conversationMessages = messages.filter(msg => msg.role !== 'system');
   
-  // Ensure alternating user/assistant pattern
-  let processedMessages: CoreMessage[] = [];
-  let lastRole: 'user' | 'assistant' | null = null;
+  // Simple approach: just take the last few messages to ensure alternating pattern
+  const recentMessages = conversationMessages.slice(-6); // Last 6 messages
   
-  for (const msg of conversationMessages) {
-    if (msg.role === 'user' || msg.role === 'assistant') {
-      // If this is the same role as the last message, combine them
-      if (lastRole === msg.role && processedMessages.length > 0) {
-        const lastMsg = processedMessages[processedMessages.length - 1];
-        if (lastMsg.role === msg.role) {
-          // Combine messages of the same role
-          lastMsg.content = `${lastMsg.content}\n\n${msg.content}`;
-          continue;
-        }
-      }
-      
-      processedMessages.push(msg);
-      lastRole = msg.role;
+  // Ensure we have proper alternating pattern
+  const cleanMessages: CoreMessage[] = [];
+  let expectedRole: 'user' | 'assistant' = 'user';
+  
+  for (const msg of recentMessages) {
+    if (msg.role === expectedRole) {
+      cleanMessages.push(msg);
+      expectedRole = expectedRole === 'user' ? 'assistant' : 'user';
     }
   }
   
-  // Add processed messages to perplexity messages
-  perplexityMessages.push(...processedMessages);
-  
-  // Ensure we end with a user message for Perplexity
-  if (perplexityMessages.length > 1) {
-    const lastMessage = perplexityMessages[perplexityMessages.length - 1];
-    if (lastMessage.role !== 'user') {
-      // Find the last user message and move it to the end
-      const lastUserMessageIndex = perplexityMessages.map(m => m.role).lastIndexOf('user');
-      if (lastUserMessageIndex > 0) {
-        const lastUserMessage = perplexityMessages[lastUserMessageIndex];
-        perplexityMessages.splice(lastUserMessageIndex, 1);
-        perplexityMessages.push(lastUserMessage);
-      }
+  // Ensure we end with a user message
+  if (cleanMessages.length > 0 && cleanMessages[cleanMessages.length - 1].role !== 'user') {
+    // Find the last user message from the original conversation
+    const lastUserMessage = conversationMessages.reverse().find(msg => msg.role === 'user');
+    if (lastUserMessage) {
+      cleanMessages.push(lastUserMessage);
     }
   }
+  
+  // Add cleaned messages to perplexity messages
+  perplexityMessages.push(...cleanMessages);
 
   const response = await fetch('https://api.perplexity.ai/chat/completions', {
     method: 'POST',
@@ -201,9 +189,6 @@ You have access to current web information. Use it to provide up-to-date answers
       messages: perplexityMessages,
       max_tokens: 1000,
       temperature: 0.7,
-      search_mode: 'web',
-      return_images: false,
-      return_related_questions: false,
       stream: !!onStream,
     }),
   });
@@ -217,7 +202,10 @@ You have access to current web information. Use it to provide up-to-date answers
       errorText = `HTTP ${response.status}`;
     }
     console.error('Perplexity API error:', errorText);
-    throw new Error(`Perplexity API error: ${errorText}`);
+    
+    // Fallback to Gemini if Perplexity fails
+    console.log('Falling back to Gemini AI...');
+    return await callGeminiAI(messages, currentDateTime, onStream);
   }
 
   if (onStream && response.body) {
