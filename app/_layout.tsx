@@ -4,6 +4,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
+import { colors } from "@/constants/colors";
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",
@@ -40,20 +41,22 @@ export default function RootLayout() {
 function RootLayoutNav() {
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <Stack
         screenOptions={{
           headerBackTitle: "Back",
           headerStyle: {
-            backgroundColor: "#FFFFFF",
+            backgroundColor: colors.surface,
           },
           headerShadowVisible: false,
           headerTitleStyle: {
             fontWeight: '600',
             fontSize: 18,
+            color: colors.text,
           },
+          headerTintColor: colors.primary,
           contentStyle: {
-            backgroundColor: "#F9FAFC",
+            backgroundColor: colors.background,
           },
         }}
       >
@@ -63,7 +66,7 @@ function RootLayoutNav() {
           options={{ 
             title: "Task Details",
             headerStyle: {
-              backgroundColor: "#FFFFFF",
+              backgroundColor: colors.surface,
             },
           }} 
         />

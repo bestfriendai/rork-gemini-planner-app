@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Platform, Alert, Modal, Text } from 'react-native';
 import { Send, Mic, MicOff, Square, X, Check, Volume2 } from 'lucide-react-native';
 import { useSpeechStore } from '@/store/speechStore';
+import { colors } from '@/constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 
 interface ChatInputProps {
   onSend: (message: string) => void;
@@ -88,54 +91,60 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
 
   const getMicIcon = () => {
     if (Platform.OS === 'web') {
-      return isListening ? <MicOff size={20} color="#fff" /> : <Mic size={20} color="#fff" />;
+      return isListening ? <MicOff size={20} color={colors.text} /> : <Mic size={20} color={colors.text} />;
     } else {
-      return <Mic size={20} color="#fff" />;
-    }
-  };
-
-  const getMicButtonStyle = () => {
-    if (Platform.OS === 'web') {
-      return [styles.micButton, isListening && styles.micButtonActive];
-    } else {
-      return styles.micButton;
+      return <Mic size={20} color={colors.text} />;
     }
   };
 
   return (
     <>
       <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          value={message}
-          onChangeText={setMessage}
-          placeholder="Type a message or use voice input..."
-          placeholderTextColor="#A0A9B8"
-          multiline
-          maxLength={500}
-          onSubmitEditing={handleSend}
-          editable={!isLoading}
-        />
-        
-        <TouchableOpacity 
-          style={getMicButtonStyle()} 
-          onPress={toggleListening}
-          disabled={isLoading}
-        >
-          {getMicIcon()}
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={[styles.sendButton, isLoading && styles.sendButtonDisabled]} 
-          onPress={handleSend}
-          disabled={isLoading || !message.trim()}
-        >
-          {isLoading ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Send size={20} color="#fff" />
-          )}
-        </TouchableOpacity>
+        <BlurView intensity={100} style={styles.blurContainer}>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              value={message}
+              onChangeText={setMessage}
+              placeholder="Type a message or use voice input..."
+              placeholderTextColor={colors.textTertiary}
+              multiline
+              maxLength={500}
+              onSubmitEditing={handleSend}
+              editable={!isLoading}
+            />
+            
+            <TouchableOpacity 
+              style={[styles.micButton, isListening && styles.micButtonActive]} 
+              onPress={toggleListening}
+              disabled={isLoading}
+            >
+              <LinearGradient
+                colors={isListening ? [colors.error, '#FF6B6B'] : [colors.accent, colors.accentLight]}
+                style={styles.buttonGradient}
+              >
+                {getMicIcon()}
+              </LinearGradient>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.sendButton, (!message.trim() || isLoading) && styles.sendButtonDisabled]} 
+              onPress={handleSend}
+              disabled={isLoading || !message.trim()}
+            >
+              <LinearGradient
+                colors={(!message.trim() || isLoading) ? [colors.textQuaternary, colors.textTertiary] : [colors.primary, colors.primaryLight]}
+                style={styles.buttonGradient}
+              >
+                {isLoading ? (
+                  <ActivityIndicator size="small" color={colors.text} />
+                ) : (
+                  <Send size={20} color={colors.text} />
+                )}
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </BlurView>
       </View>
 
       {/* Mobile Recording Modal */}
@@ -146,66 +155,78 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
         onRequestClose={handleCancelRecording}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Voice Input</Text>
-              <TouchableOpacity onPress={handleCancelRecording}>
-                <X size={24} color="#1A1A1A" />
-              </TouchableOpacity>
-            </View>
-            
-            <View style={styles.recordingIndicator}>
-              <View style={[styles.recordingDot, isRecording && styles.recordingDotActive]} />
-              <Text style={styles.recordingText}>
-                {isRecording ? 'Recording... Speak now!' : 'Ready to record'}
-              </Text>
-            </View>
-            
-            <View style={styles.instructionContainer}>
-              <Volume2 size={24} color="#4A86E8" />
-              <Text style={styles.instructionText}>
-                Speak your message clearly, then type what you said in the text field below and tap "Use Text".
-              </Text>
-            </View>
-            
-            <TextInput
-              style={styles.recordedTextInput}
-              value={recordedText}
-              onChangeText={setRecordedText}
-              placeholder="Type what you said here..."
-              placeholderTextColor="#A0A9B8"
-              multiline
-              numberOfLines={4}
-              textAlignVertical="top"
-            />
-            
-            <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={[styles.recordButton, isRecording && styles.recordButtonActive]}
-                onPress={isRecording ? handleStopRecording : startRecording}
-              >
-                {isRecording ? <Square size={20} color="#fff" /> : <Mic size={20} color="#fff" />}
-                <Text style={styles.recordButtonText}>
-                  {isRecording ? 'Stop' : 'Record'}
-                </Text>
-              </TouchableOpacity>
+          <BlurView intensity={100} style={styles.modalBlur}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Voice Input</Text>
+                <TouchableOpacity onPress={handleCancelRecording} style={styles.closeButton}>
+                  <X size={24} color={colors.text} />
+                </TouchableOpacity>
+              </View>
               
-              <TouchableOpacity 
-                style={[styles.useButton, !recordedText.trim() && styles.useButtonDisabled]}
-                onPress={handleUseRecordedText}
-                disabled={!recordedText.trim()}
-              >
-                <Check size={20} color="#fff" />
-                <Text style={styles.useButtonText}>Use Text</Text>
-              </TouchableOpacity>
+              <View style={styles.recordingIndicator}>
+                <View style={[styles.recordingDot, isRecording && styles.recordingDotActive]} />
+                <Text style={styles.recordingText}>
+                  {isRecording ? 'Recording... Speak now!' : 'Ready to record'}
+                </Text>
+              </View>
+              
+              <View style={styles.instructionContainer}>
+                <Volume2 size={24} color={colors.primary} />
+                <Text style={styles.instructionText}>
+                  Speak your message clearly, then type what you said in the text field below and tap "Use Text".
+                </Text>
+              </View>
+              
+              <TextInput
+                style={styles.recordedTextInput}
+                value={recordedText}
+                onChangeText={setRecordedText}
+                placeholder="Type what you said here..."
+                placeholderTextColor={colors.textTertiary}
+                multiline
+                numberOfLines={4}
+                textAlignVertical="top"
+              />
+              
+              <View style={styles.modalButtons}>
+                <TouchableOpacity 
+                  style={styles.recordButton}
+                  onPress={isRecording ? handleStopRecording : startRecording}
+                >
+                  <LinearGradient
+                    colors={isRecording ? [colors.error, '#FF6B6B'] : [colors.accent, colors.accentLight]}
+                    style={styles.modalButtonGradient}
+                  >
+                    {isRecording ? <Square size={20} color={colors.text} /> : <Mic size={20} color={colors.text} />}
+                    <Text style={styles.recordButtonText}>
+                      {isRecording ? 'Stop' : 'Record'}
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={[styles.useButton, !recordedText.trim() && styles.useButtonDisabled]}
+                  onPress={handleUseRecordedText}
+                  disabled={!recordedText.trim()}
+                >
+                  <LinearGradient
+                    colors={!recordedText.trim() ? [colors.textQuaternary, colors.textTertiary] : [colors.primary, colors.primaryLight]}
+                    style={styles.modalButtonGradient}
+                  >
+                    <Check size={20} color={colors.text} />
+                    <Text style={styles.useButtonText}>Use Text</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+              
+              <View style={styles.helpContainer}>
+                <Text style={styles.helpText}>
+                  💡 <Text style={styles.helpBold}>Mobile Voice Input:</Text> Record your voice as a reminder, then manually type what you said. This ensures accuracy while we work on automatic speech recognition for mobile.
+                </Text>
+              </View>
             </View>
-            
-            <View style={styles.helpContainer}>
-              <Text style={styles.helpText}>
-                💡 <Text style={styles.helpBold}>Mobile Voice Input:</Text> Record your voice as a reminder, then manually type what you said. This ensures accuracy while we work on automatic speech recognition for mobile.
-              </Text>
-            </View>
-          </View>
+          </BlurView>
         </View>
       </Modal>
     </>
@@ -214,172 +235,185 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
 
 const styles = StyleSheet.create({
   container: {
+    paddingBottom: Platform.OS === 'ios' ? 34 : 16,
+  },
+  blurContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  inputContainer: {
     flexDirection: 'row',
-    padding: 10,
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#E5E9F0',
-    alignItems: 'center',
+    alignItems: 'flex-end',
+    backgroundColor: colors.surface,
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderWidth: 0.5,
+    borderColor: colors.border,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   input: {
     flex: 1,
-    backgroundColor: '#F9FAFC',
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    marginRight: 10,
+    fontSize: 16,
+    color: colors.text,
     maxHeight: 100,
-    color: '#1A1A1A',
-  },
-  sendButton: {
-    backgroundColor: '#4A86E8',
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sendButtonDisabled: {
-    backgroundColor: '#A0A9B8',
+    marginRight: 12,
+    paddingVertical: 4,
   },
   micButton: {
-    backgroundColor: '#F9A826',
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 8,
+    overflow: 'hidden',
   },
   micButtonActive: {
-    backgroundColor: '#FF3B30',
+    transform: [{ scale: 1.1 }],
+  },
+  sendButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  sendButtonDisabled: {
+    opacity: 0.5,
+  },
+  buttonGradient: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
+  modalBlur: {
     width: '100%',
     maxWidth: 400,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  modalContent: {
+    backgroundColor: colors.glass,
+    padding: 24,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1A1A1A',
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  closeButton: {
+    padding: 4,
   },
   recordingIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   recordingDot: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#6E7A8A',
+    backgroundColor: colors.textTertiary,
     marginRight: 8,
   },
   recordingDotActive: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: colors.error,
   },
   recordingText: {
     fontSize: 16,
-    color: '#1A1A1A',
-    fontWeight: '500',
+    color: colors.text,
+    fontWeight: '600',
   },
   instructionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E8F1FF',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 16,
+    backgroundColor: colors.surfaceSecondary,
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 20,
   },
   instructionText: {
     fontSize: 14,
-    color: '#1A1A1A',
+    color: colors.text,
     marginLeft: 12,
     flex: 1,
     lineHeight: 20,
   },
   recordedTextInput: {
-    backgroundColor: '#F9FAFC',
-    borderRadius: 8,
-    padding: 12,
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 16,
     fontSize: 16,
-    color: '#1A1A1A',
-    borderWidth: 1,
-    borderColor: '#E5E9F0',
-    marginBottom: 20,
-    minHeight: 80,
+    color: colors.text,
+    borderWidth: 0.5,
+    borderColor: colors.border,
+    marginBottom: 24,
+    minHeight: 100,
   },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   recordButton: {
+    flex: 1,
+    marginRight: 8,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  useButton: {
+    flex: 1,
+    marginLeft: 8,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  useButtonDisabled: {
+    opacity: 0.5,
+  },
+  modalButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9A826',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    flex: 1,
-    marginRight: 10,
     justifyContent: 'center',
-  },
-  recordButtonActive: {
-    backgroundColor: '#FF3B30',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
   },
   recordButtonText: {
-    color: '#fff',
+    color: colors.text,
     fontWeight: '600',
     marginLeft: 8,
   },
-  useButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#4A86E8',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    flex: 1,
-    justifyContent: 'center',
-  },
-  useButtonDisabled: {
-    backgroundColor: '#A0A9B8',
-  },
   useButtonText: {
-    color: '#fff',
+    color: colors.text,
     fontWeight: '600',
     marginLeft: 8,
   },
   helpContainer: {
-    backgroundColor: '#FFF8E8',
-    padding: 12,
-    borderRadius: 8,
+    backgroundColor: colors.surfaceTertiary,
+    padding: 16,
+    borderRadius: 12,
   },
   helpText: {
     fontSize: 12,
-    color: '#1A1A1A',
+    color: colors.textSecondary,
     lineHeight: 16,
   },
   helpBold: {
     fontWeight: '600',
-    color: '#F9A826',
+    color: colors.accent,
   },
 });

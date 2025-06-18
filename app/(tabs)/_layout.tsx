@@ -1,34 +1,52 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import { MessageSquare, Calendar, CheckSquare, Settings } from "lucide-react-native";
+import { colors } from "@/constants/colors";
+import { BlurView } from "expo-blur";
+import { Platform } from "react-native";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#4A86E8',
-        tabBarInactiveTintColor: '#6E7A8A',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textTertiary,
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
-          borderTopColor: '#E5E9F0',
-          borderTopWidth: 1,
+          backgroundColor: Platform.OS === 'ios' ? 'transparent' : colors.surface,
+          borderTopColor: colors.border,
+          borderTopWidth: 0.5,
           paddingTop: 8,
           paddingBottom: 8,
-          height: 60,
+          height: 84,
+          position: 'absolute',
         },
+        tabBarBackground: Platform.OS === 'ios' ? () => (
+          <BlurView
+            intensity={100}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              bottom: 0,
+              right: 0,
+            }}
+          />
+        ) : undefined,
         headerStyle: {
-          backgroundColor: '#FFFFFF',
-          borderBottomWidth: 1,
-          borderBottomColor: '#E5E9F0',
+          backgroundColor: colors.surface,
+          borderBottomWidth: 0.5,
+          borderBottomColor: colors.border,
         },
         headerShadowVisible: false,
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '500',
+          fontSize: 11,
+          fontWeight: '600',
+          marginTop: 4,
         },
         headerTitleStyle: {
-          fontWeight: '600',
-          fontSize: 18,
+          fontWeight: '700',
+          fontSize: 20,
+          color: colors.text,
         },
       }}
     >
@@ -37,7 +55,7 @@ export default function TabLayout() {
         options={{
           title: "Assistant",
           tabBarLabel: "Assistant",
-          tabBarIcon: ({ color }) => <MessageSquare size={22} color={color} />,
+          tabBarIcon: ({ color, size }) => <MessageSquare size={size} color={color} />,
           headerTitle: "Gemini Assistant",
         }}
       />
@@ -46,7 +64,7 @@ export default function TabLayout() {
         options={{
           title: "Planner",
           tabBarLabel: "Planner",
-          tabBarIcon: ({ color }) => <Calendar size={22} color={color} />,
+          tabBarIcon: ({ color, size }) => <Calendar size={size} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -54,7 +72,7 @@ export default function TabLayout() {
         options={{
           title: "Tasks",
           tabBarLabel: "Tasks",
-          tabBarIcon: ({ color }) => <CheckSquare size={22} color={color} />,
+          tabBarIcon: ({ color, size }) => <CheckSquare size={size} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -62,7 +80,7 @@ export default function TabLayout() {
         options={{
           title: "Settings",
           tabBarLabel: "Settings",
-          tabBarIcon: ({ color }) => <Settings size={22} color={color} />,
+          tabBarIcon: ({ color, size }) => <Settings size={size} color={color} />,
         }}
       />
     </Tabs>

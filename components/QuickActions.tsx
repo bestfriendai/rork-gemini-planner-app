@@ -7,6 +7,8 @@ import {
   ShoppingCart, Car, Home, Briefcase, Gamepad2, Palette, Globe, Lightbulb,
   Compass, Thermometer, Activity, Bookmark, Gift, Star, Headphones, Monitor
 } from 'lucide-react-native';
+import { colors } from '@/constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface QuickActionsProps {
   onAction: (action: string) => void;
@@ -17,162 +19,82 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAction }) => {
     {
       id: 'current_time',
       title: 'Current Time',
-      icon: <Clock size={20} color="#4A86E8" />,
+      icon: <Clock size={22} color={colors.primary} />,
     },
     {
       id: 'today_date',
       title: "Today's Date",
-      icon: <Calendar size={20} color="#4A86E8" />,
+      icon: <Calendar size={22} color={colors.primary} />,
     },
     {
       id: 'weather',
       title: 'Weather',
-      icon: <Cloud size={20} color="#4A86E8" />,
+      icon: <Cloud size={22} color={colors.primary} />,
     },
     {
       id: 'news',
       title: 'Latest News',
-      icon: <Newspaper size={20} color="#4A86E8" />,
+      icon: <Newspaper size={22} color={colors.primary} />,
     },
     {
       id: 'stocks',
       title: 'Stock Market',
-      icon: <TrendingUp size={20} color="#4A86E8" />,
+      icon: <TrendingUp size={22} color={colors.primary} />,
     },
     {
       id: 'crypto',
       title: 'Crypto Prices',
-      icon: <DollarSign size={20} color="#4A86E8" />,
+      icon: <DollarSign size={22} color={colors.primary} />,
     },
     {
       id: 'calculate',
       title: 'Calculator',
-      icon: <Calculator size={20} color="#4A86E8" />,
+      icon: <Calculator size={22} color={colors.primary} />,
     },
     {
       id: 'location',
       title: 'My Location',
-      icon: <MapPin size={20} color="#4A86E8" />,
+      icon: <MapPin size={22} color={colors.primary} />,
     },
     {
       id: 'schedule',
       title: 'Plan My Day',
-      icon: <CheckSquare size={20} color="#4A86E8" />,
+      icon: <CheckSquare size={22} color={colors.primary} />,
     },
     {
       id: 'reminder',
       title: 'Set Reminder',
-      icon: <Bell size={20} color="#4A86E8" />,
+      icon: <Bell size={22} color={colors.primary} />,
     },
     {
       id: 'recipe',
       title: 'Recipe Ideas',
-      icon: <Coffee size={20} color="#4A86E8" />,
+      icon: <Coffee size={22} color={colors.primary} />,
     },
     {
       id: 'travel',
       title: 'Travel Info',
-      icon: <Plane size={20} color="#4A86E8" />,
+      icon: <Plane size={22} color={colors.primary} />,
     },
     {
       id: 'music',
       title: 'Music Trends',
-      icon: <Music size={20} color="#4A86E8" />,
+      icon: <Music size={22} color={colors.primary} />,
     },
     {
       id: 'books',
       title: 'Book Recommendations',
-      icon: <Book size={20} color="#4A86E8" />,
+      icon: <Book size={22} color={colors.primary} />,
     },
     {
       id: 'health',
       title: 'Health Tips',
-      icon: <Heart size={20} color="#4A86E8" />,
+      icon: <Heart size={22} color={colors.primary} />,
     },
     {
       id: 'productivity',
       title: 'Productivity Tips',
-      icon: <Zap size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'goals',
-      title: 'Goal Setting',
-      icon: <Target size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'learning',
-      title: 'Learning Resources',
-      icon: <Brain size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'shopping',
-      title: 'Shopping List',
-      icon: <ShoppingCart size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'workout',
-      title: 'Workout Plan',
-      icon: <Activity size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'meditation',
-      title: 'Meditation Guide',
-      icon: <Brain size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'creative',
-      title: 'Creative Ideas',
-      icon: <Palette size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'business',
-      title: 'Business Tips',
-      icon: <Briefcase size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'entertainment',
-      title: 'Entertainment',
-      icon: <Gamepad2 size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'technology',
-      title: 'Tech News',
-      icon: <Monitor size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'science',
-      title: 'Science Facts',
-      icon: <Lightbulb size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'explore',
-      title: 'Explore Topics',
-      icon: <Compass size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'temperature',
-      title: 'Temperature',
-      icon: <Thermometer size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'favorites',
-      title: 'My Favorites',
-      icon: <Star size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'podcast',
-      title: 'Podcasts',
-      icon: <Headphones size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'device_info',
-      title: 'Device Info',
-      icon: <Smartphone size={20} color="#4A86E8" />,
-    },
-    {
-      id: 'internet_status',
-      title: 'Internet Status',
-      icon: <Wifi size={20} color="#4A86E8" />,
+      icon: <Zap size={22} color={colors.primary} />,
     },
   ];
 
@@ -190,10 +112,15 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAction }) => {
             style={styles.actionButton}
             onPress={() => onAction(action.id)}
           >
-            <View style={styles.iconContainer}>
-              {action.icon}
-            </View>
-            <Text style={styles.actionText}>{action.title}</Text>
+            <LinearGradient
+              colors={[colors.surface, colors.surfaceSecondary]}
+              style={styles.actionGradient}
+            >
+              <View style={styles.iconContainer}>
+                {action.icon}
+              </View>
+              <Text style={styles.actionText}>{action.title}</Text>
+            </LinearGradient>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -203,44 +130,55 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAction }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    backgroundColor: '#FFFFFF',
+    padding: 20,
+    backgroundColor: colors.surface,
     marginHorizontal: 16,
-    marginBottom: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    marginBottom: 20,
+    borderRadius: 20,
+    borderWidth: 0.5,
+    borderColor: colors.border,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   title: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1A1A1A',
-    marginBottom: 12,
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 16,
   },
   scrollContent: {
     paddingRight: 16,
   },
   actionButton: {
-    alignItems: 'center',
     marginRight: 16,
-    minWidth: 80,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  actionGradient: {
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    minWidth: 90,
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#E8F1FF',
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: colors.surfaceTertiary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
+    borderWidth: 0.5,
+    borderColor: colors.border,
   },
   actionText: {
     fontSize: 12,
-    color: '#6E7A8A',
+    color: colors.textSecondary,
     textAlign: 'center',
-    fontWeight: '500',
+    fontWeight: '600',
+    lineHeight: 16,
   },
 });

@@ -8,6 +8,8 @@ import { DateSelector } from '@/components/DateSelector';
 import { AddTaskModal } from '@/components/AddTaskModal';
 import { getCurrentDate, getDaysOfWeek } from '@/utils/dateUtils';
 import { useRouter } from 'expo-router';
+import { colors } from '@/constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function PlannerScreen() {
   const [selectedDate, setSelectedDate] = useState(getCurrentDate());
@@ -44,6 +46,11 @@ export default function PlannerScreen() {
   
   return (
     <View style={styles.container}>
+      <LinearGradient
+        colors={[colors.background, colors.surface]}
+        style={styles.backgroundGradient}
+      />
+      
       <DateSelector
         dates={weekDates}
         selectedDate={selectedDate}
@@ -55,7 +62,7 @@ export default function PlannerScreen() {
           <EmptyState
             title="No Tasks Scheduled"
             message="Add tasks to your planner to stay organized and productive."
-            icon={<CalendarClock size={50} color="#4A86E8" />}
+            icon={<CalendarClock size={60} color={colors.primary} />}
           />
         ) : (
           <FlatList
@@ -68,6 +75,7 @@ export default function PlannerScreen() {
               />
             )}
             contentContainerStyle={styles.taskList}
+            showsVerticalScrollIndicator={false}
           />
         )}
       </View>
@@ -76,7 +84,12 @@ export default function PlannerScreen() {
         style={styles.addButton}
         onPress={() => setIsAddModalVisible(true)}
       >
-        <Plus size={24} color="#fff" />
+        <LinearGradient
+          colors={[colors.primary, colors.primaryLight]}
+          style={styles.addButtonGradient}
+        >
+          <Plus size={24} color={colors.text} />
+        </LinearGradient>
       </TouchableOpacity>
       
       <AddTaskModal
@@ -91,29 +104,39 @@ export default function PlannerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFC',
+    backgroundColor: colors.background,
+  },
+  backgroundGradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
   },
   content: {
     flex: 1,
     padding: 16,
   },
   taskList: {
-    paddingBottom: 80,
+    paddingBottom: 100,
   },
   addButton: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 100,
     right: 20,
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#4A86E8',
+    overflow: 'hidden',
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  addButtonGradient: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
 });

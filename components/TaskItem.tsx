@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Check, Clock, Flag } from 'lucide-react-native';
 import { Task } from '@/types';
 import { useTaskStore } from '@/store/taskStore';
+import { colors } from '@/constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface TaskItemProps {
   task: Task;
@@ -13,15 +15,15 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
   const { toggleTaskCompletion } = useTaskStore();
 
   const priorityColors = {
-    low: '#E8F1FF',
-    medium: '#FFF8E8',
-    high: '#FFEBEE',
+    low: colors.surfaceSecondary,
+    medium: colors.warning + '20',
+    high: colors.error + '20',
   };
 
   const priorityTextColors = {
-    low: '#4A86E8',
-    medium: '#F9A826',
-    high: '#FF3B30',
+    low: colors.primary,
+    medium: colors.warning,
+    high: colors.error,
   };
 
   return (
@@ -30,81 +32,111 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <TouchableOpacity 
-        style={[styles.checkbox, task.completed && styles.checkboxChecked]}
-        onPress={() => toggleTaskCompletion(task.id)}
+      <LinearGradient
+        colors={[colors.surface, colors.surfaceSecondary]}
+        style={styles.gradient}
       >
-        {task.completed && <Check size={16} color="#fff" />}
-      </TouchableOpacity>
-      
-      <View style={styles.content}>
-        <Text 
-          style={[styles.title, task.completed && styles.completedTitle]}
-          numberOfLines={1}
+        <TouchableOpacity 
+          style={[styles.checkbox, task.completed && styles.checkboxChecked]}
+          onPress={() => toggleTaskCompletion(task.id)}
         >
-          {task.title}
-        </Text>
+          {task.completed ? (
+            <LinearGradient
+              colors={[colors.success, '#4AE54A']}
+              style={styles.checkboxGradient}
+            >
+              <Check size={16} color={colors.text} />
+            </LinearGradient>
+          ) : (
+            <View style={styles.checkboxEmpty} />
+          )}
+        </TouchableOpacity>
         
-        {task.description ? (
+        <View style={styles.content}>
           <Text 
-            style={styles.description}
+            style={[styles.title, task.completed && styles.completedTitle]}
             numberOfLines={1}
           >
-            {task.description}
+            {task.title}
           </Text>
-        ) : null}
-        
-        <View style={styles.details}>
-          {task.time ? (
-            <View style={styles.detailItem}>
-              <Clock size={14} color="#6E7A8A" />
-              <Text style={styles.detailText}>{task.time}</Text>
-            </View>
+          
+          {task.description ? (
+            <Text 
+              style={styles.description}
+              numberOfLines={1}
+            >
+              {task.description}
+            </Text>
           ) : null}
           
-          <View style={[
-            styles.priority, 
-            { backgroundColor: priorityColors[task.priority] }
-          ]}>
-            <Flag size={12} color={priorityTextColors[task.priority]} />
-            <Text style={[
-              styles.priorityText, 
-              { color: priorityTextColors[task.priority] }
+          <View style={styles.details}>
+            {task.time ? (
+              <View style={styles.detailItem}>
+                <Clock size={14} color={colors.textSecondary} />
+                <Text style={styles.detailText}>{task.time}</Text>
+              </View>
+            ) : null}
+            
+            <View style={[
+              styles.priority, 
+              { backgroundColor: priorityColors[task.priority] }
             ]}>
-              {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-            </Text>
+              <Flag size={12} color={priorityTextColors[task.priority]} />
+              <Text style={[
+                styles.priorityText, 
+                { color: priorityTextColors[task.priority] }
+              ]}>
+                {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
+      </LinearGradient>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    marginBottom: 12,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  gradient: {
     flexDirection: 'row',
     padding: 16,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    borderWidth: 0.5,
+    borderColor: colors.border,
   },
   checkbox: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#4A86E8',
-    marginRight: 12,
+    marginRight: 16,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
   },
   checkboxChecked: {
-    backgroundColor: '#4A86E8',
+    borderWidth: 0,
+  },
+  checkboxEmpty: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
+  checkboxGradient: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
     flex: 1,
@@ -112,16 +144,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1A1A1A',
+    color: colors.text,
     marginBottom: 4,
   },
   completedTitle: {
     textDecorationLine: 'line-through',
-    color: '#6E7A8A',
+    color: colors.textSecondary,
   },
   description: {
     fontSize: 14,
-    color: '#6E7A8A',
+    color: colors.textSecondary,
     marginBottom: 8,
   },
   details: {
@@ -135,8 +167,9 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 12,
-    color: '#6E7A8A',
+    color: colors.textSecondary,
     marginLeft: 4,
+    fontWeight: '500',
   },
   priority: {
     flexDirection: 'row',
@@ -147,7 +180,7 @@ const styles = StyleSheet.create({
   },
   priorityText: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: '600',
     marginLeft: 4,
   },
 });

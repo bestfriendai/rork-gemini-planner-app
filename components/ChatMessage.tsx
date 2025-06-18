@@ -4,6 +4,8 @@ import { Volume2, VolumeX, Wifi } from 'lucide-react-native';
 import { Message } from '@/types';
 import { useSpeechStore } from '@/store/speechStore';
 import { Platform } from 'react-native';
+import { colors } from '@/constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface ChatMessageProps {
   message: Message;
@@ -27,33 +29,46 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
   return (
     <View style={[styles.container, isUser ? styles.userContainer : styles.assistantContainer]}>
       <View style={[styles.bubble, isUser ? styles.userBubble : styles.assistantBubble]}>
-        <Text style={[styles.text, isUser ? styles.userText : styles.assistantText]}>
-          {message.content}
-        </Text>
-        
-        {isStreaming && (
-          <View style={styles.streamingIndicator}>
-            <ActivityIndicator size="small" color="#6E7A8A" />
-            <Text style={styles.streamingText}>Thinking...</Text>
-          </View>
-        )}
-        
-        {!isUser && !isStreaming && (
-          <TouchableOpacity 
-            style={styles.speakButton} 
-            onPress={handleToggleSpeech}
+        {isUser ? (
+          <LinearGradient
+            colors={[colors.primary, colors.primaryLight]}
+            style={styles.userBubbleGradient}
           >
-            {isThisMessageSpeaking ? (
-              <VolumeX size={16} color="#6E7A8A" />
-            ) : (
-              <Volume2 size={16} color="#6E7A8A" />
+            <Text style={[styles.text, styles.userText]}>
+              {message.content}
+            </Text>
+          </LinearGradient>
+        ) : (
+          <View style={styles.assistantBubbleContent}>
+            <Text style={[styles.text, styles.assistantText]}>
+              {message.content}
+            </Text>
+            
+            {isStreaming && (
+              <View style={styles.streamingIndicator}>
+                <ActivityIndicator size="small" color={colors.primary} />
+                <Text style={styles.streamingText}>Thinking...</Text>
+              </View>
             )}
-          </TouchableOpacity>
+            
+            {!isStreaming && (
+              <TouchableOpacity 
+                style={styles.speakButton} 
+                onPress={handleToggleSpeech}
+              >
+                {isThisMessageSpeaking ? (
+                  <VolumeX size={16} color={colors.primary} />
+                ) : (
+                  <Volume2 size={16} color={colors.textSecondary} />
+                )}
+              </TouchableOpacity>
+            )}
+          </View>
         )}
       </View>
       
       {!isStreaming && (
-        <Text style={styles.timestamp}>
+        <Text style={[styles.timestamp, isUser ? styles.userTimestamp : styles.assistantTimestamp]}>
           {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </Text>
       )}
@@ -63,50 +78,75 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 5,
-    maxWidth: '80%',
+    marginVertical: 8,
+    maxWidth: '85%',
   },
   userContainer: {
     alignSelf: 'flex-end',
-    marginRight: 10,
+    marginRight: 4,
   },
   assistantContainer: {
     alignSelf: 'flex-start',
-    marginLeft: 10,
+    marginLeft: 4,
   },
   bubble: {
-    borderRadius: 18,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   userBubble: {
-    backgroundColor: '#4A86E8',
+    marginLeft: 40,
   },
   assistantBubble: {
-    backgroundColor: '#F9FAFC',
-    borderWidth: 1,
-    borderColor: '#E5E9F0',
+    backgroundColor: colors.surface,
+    marginRight: 40,
+    borderWidth: 0.5,
+    borderColor: colors.border,
+  },
+  userBubbleGradient: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  assistantBubbleContent: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   text: {
     fontSize: 16,
     lineHeight: 22,
   },
   userText: {
-    color: 'white',
+    color: colors.text,
+    fontWeight: '500',
   },
   assistantText: {
-    color: '#1A1A1A',
+    color: colors.text,
   },
   timestamp: {
-    fontSize: 12,
-    color: '#6E7A8A',
-    marginTop: 4,
+    fontSize: 11,
+    marginTop: 6,
+    fontWeight: '500',
+  },
+  userTimestamp: {
+    color: colors.textTertiary,
     alignSelf: 'flex-end',
+    marginRight: 8,
+  },
+  assistantTimestamp: {
+    color: colors.textTertiary,
+    alignSelf: 'flex-start',
+    marginLeft: 8,
   },
   speakButton: {
     marginTop: 8,
     alignSelf: 'flex-end',
-    padding: 4,
+    padding: 6,
+    borderRadius: 12,
+    backgroundColor: colors.surfaceSecondary,
   },
   streamingIndicator: {
     flexDirection: 'row',
@@ -115,8 +155,9 @@ const styles = StyleSheet.create({
   },
   streamingText: {
     fontSize: 12,
-    color: '#6E7A8A',
-    marginLeft: 6,
+    color: colors.textSecondary,
+    marginLeft: 8,
     fontStyle: 'italic',
+    fontWeight: '500',
   },
 });

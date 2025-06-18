@@ -9,6 +9,8 @@ import { ChatInput } from '@/components/ChatInput';
 import { EmptyState } from '@/components/EmptyState';
 import { QuickActions } from '@/components/QuickActions';
 import { callAI, extractTasksFromAIResponse } from '@/utils/aiUtils';
+import { colors } from '@/constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function AssistantScreen() {
   const flatListRef = useRef<FlatList>(null);
@@ -187,76 +189,107 @@ export default function AssistantScreen() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-    >
-      {displayMessages.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <EmptyState
-            title="Your Personal Assistant"
-            message="Ask me anything about planning your day, managing tasks, current events, calculations, or getting things done efficiently. I can search the web for up-to-date information!"
-            icon={<MessageSquare size={50} color="#4A86E8" />}
-          />
-          <QuickActions onAction={handleQuickAction} />
-        </View>
-      ) : (
-        <FlatList
-          ref={flatListRef}
-          data={displayMessages}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <ChatMessage 
-              message={item} 
-              isStreaming={item.id === 'streaming'}
+    <View style={styles.container}>
+      <LinearGradient
+        colors={[colors.background, colors.surface]}
+        style={styles.backgroundGradient}
+      />
+      
+      <KeyboardAvoidingView
+        style={styles.keyboardContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      >
+        {displayMessages.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <EmptyState
+              title="Your AI Assistant"
+              message="Ask me anything about planning your day, managing tasks, current events, calculations, or getting things done efficiently. I can search the web for up-to-date information!"
+              icon={<MessageSquare size={60} color={colors.primary} />}
             />
-          )}
-          contentContainerStyle={styles.messageList}
-        />
-      )}
-      
-      {showTaskPrompt && extractedTasks.length > 0 && (
-        <TouchableOpacity 
-          style={styles.taskPrompt}
-          onPress={handleAddExtractedTasks}
-        >
-          <ListPlus size={20} color="#FFFFFF" />
-          <Text style={styles.taskPromptText}>
-            Add {extractedTasks.length} task{extractedTasks.length > 1 ? 's' : ''} to your planner
-          </Text>
-        </TouchableOpacity>
-      )}
-      
-      <ChatInput onSend={handleSendMessage} isLoading={isLoading} />
-    </KeyboardAvoidingView>
+            <QuickActions onAction={handleQuickAction} />
+          </View>
+        ) : (
+          <FlatList
+            ref={flatListRef}
+            data={displayMessages}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <ChatMessage 
+                message={item} 
+                isStreaming={item.id === 'streaming'}
+              />
+            )}
+            contentContainerStyle={styles.messageList}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+        
+        {showTaskPrompt && extractedTasks.length > 0 && (
+          <TouchableOpacity 
+            style={styles.taskPrompt}
+            onPress={handleAddExtractedTasks}
+          >
+            <LinearGradient
+              colors={[colors.primary, colors.primaryLight]}
+              style={styles.taskPromptGradient}
+            >
+              <ListPlus size={20} color={colors.text} />
+              <Text style={styles.taskPromptText}>
+                Add {extractedTasks.length} task{extractedTasks.length > 1 ? 's' : ''} to your planner
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        )}
+        
+        <ChatInput onSend={handleSendMessage} isLoading={isLoading} />
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFC',
+    backgroundColor: colors.background,
+  },
+  backgroundGradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  keyboardContainer: {
+    flex: 1,
   },
   emptyContainer: {
     flex: 1,
   },
   messageList: {
-    padding: 10,
-    paddingBottom: 20,
+    padding: 16,
+    paddingBottom: 100,
   },
   taskPrompt: {
+    margin: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  taskPromptGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#4A86E8',
-    padding: 12,
-    margin: 10,
-    borderRadius: 12,
+    padding: 16,
     justifyContent: 'center',
   },
   taskPromptText: {
-    color: '#FFFFFF',
+    color: colors.text,
     fontWeight: '600',
     marginLeft: 8,
+    fontSize: 16,
   },
 });
