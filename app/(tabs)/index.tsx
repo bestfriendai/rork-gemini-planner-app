@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, TouchableOpacity, Alert, Text } from 'react-native';
 import { Plus } from 'lucide-react-native';
 import { useChatStore } from '@/store/chatStore';
 import { useTaskStore } from '@/store/taskStore';
@@ -190,7 +190,7 @@ export default function AssistantScreen() {
             <View style={styles.taskPromptContent}>
               <Plus size={16} color={colors.primary} strokeWidth={2} />
               <View style={styles.taskPromptText}>
-                <View style={styles.taskPromptTitle}>Add {extractedTasks.length} task{extractedTasks.length > 1 ? 's' : ''} to planner</View>
+                <Text style={styles.taskPromptTitle}>Add {extractedTasks.length} task{extractedTasks.length > 1 ? 's' : ''} to planner</Text>
               </View>
             </View>
           </TouchableOpacity>

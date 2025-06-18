@@ -368,17 +368,10 @@ When users ask about "today", "now", "current time", etc., use this information.
 
     const requestBody = {
       model: config.primary,
-      models: [config.primary, ...config.fallback],
       messages: enhancedMessages,
       max_tokens: config.maxTokens,
       temperature: config.temperature,
-      stream: false,
-      provider: {
-        allow_fallbacks: true,
-        require_parameters: true,
-        data_collection: 'deny'
-      },
-      route: 'fallback'
+      stream: false
     };
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {

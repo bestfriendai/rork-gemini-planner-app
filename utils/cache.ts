@@ -64,7 +64,7 @@ class ResponseCache {
       response,
       timestamp: Date.now(),
       ttl,
-      metadata
+      metadata: metadata || {}
     });
   }
   
