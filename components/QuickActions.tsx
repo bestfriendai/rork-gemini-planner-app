@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { 
-  Clock, Calendar, Cloud, Newspaper, CheckSquare2, Bell, Calculator, MapPin, 
+  Clock, Calendar, Cloud, Newspaper, CheckSquare, Bell, Calculator, MapPin, 
   TrendingUp, DollarSign
 } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
@@ -14,53 +14,53 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAction }) => {
   const actions = [
     {
       id: 'current_time',
-      title: 'Current Time',
-      icon: <Clock size={20} color={colors.primary} strokeWidth={1.5} />,
+      title: 'Time',
+      icon: <Clock size={18} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'today_date',
-      title: "Today's Date",
-      icon: <Calendar size={20} color={colors.primary} strokeWidth={1.5} />,
+      title: 'Date',
+      icon: <Calendar size={18} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'weather',
       title: 'Weather',
-      icon: <Cloud size={20} color={colors.primary} strokeWidth={1.5} />,
+      icon: <Cloud size={18} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'news',
-      title: 'Latest News',
-      icon: <Newspaper size={20} color={colors.primary} strokeWidth={1.5} />,
+      title: 'News',
+      icon: <Newspaper size={18} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'stocks',
-      title: 'Stock Market',
-      icon: <TrendingUp size={20} color={colors.primary} strokeWidth={1.5} />,
+      title: 'Stocks',
+      icon: <TrendingUp size={18} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'crypto',
-      title: 'Crypto Prices',
-      icon: <DollarSign size={20} color={colors.primary} strokeWidth={1.5} />,
+      title: 'Crypto',
+      icon: <DollarSign size={18} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'calculate',
-      title: 'Calculator',
-      icon: <Calculator size={20} color={colors.primary} strokeWidth={1.5} />,
+      title: 'Calculate',
+      icon: <Calculator size={18} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'location',
-      title: 'My Location',
-      icon: <MapPin size={20} color={colors.primary} strokeWidth={1.5} />,
+      title: 'Location',
+      icon: <MapPin size={18} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'schedule',
-      title: 'Plan My Day',
-      icon: <CheckSquare2 size={20} color={colors.primary} strokeWidth={1.5} />,
+      title: 'Plan Day',
+      icon: <CheckSquare size={18} color={colors.primary} strokeWidth={1.5} />,
     },
     {
       id: 'reminder',
-      title: 'Set Reminder',
-      icon: <Bell size={20} color={colors.primary} strokeWidth={1.5} />,
+      title: 'Reminder',
+      icon: <Bell size={18} color={colors.primary} strokeWidth={1.5} />,
     },
   ];
 
@@ -91,19 +91,19 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAction }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: 16,
     backgroundColor: colors.surface,
-    marginHorizontal: 20,
-    marginBottom: 32,
-    borderRadius: 16,
-    borderWidth: 1,
+    marginHorizontal: 16,
+    marginBottom: 24,
+    borderRadius: 12,
+    borderWidth: 0.5,
     borderColor: colors.border,
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 16,
+    marginBottom: 12,
   },
   scrollContent: {
     paddingRight: 16,
@@ -111,17 +111,17 @@ const styles = StyleSheet.create({
   actionButton: {
     alignItems: 'center',
     marginRight: 16,
-    minWidth: 72,
+    minWidth: 64,
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: colors.surfaceSecondary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
-    borderWidth: 1,
+    marginBottom: 6,
+    borderWidth: 0.5,
     borderColor: colors.border,
   },
   actionText: {
@@ -129,6 +129,6 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     textAlign: 'center',
     fontWeight: '500',
-    lineHeight: 14,
+    lineHeight: 12,
   },
 });

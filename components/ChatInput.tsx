@@ -25,7 +25,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
           style={styles.input}
           value={message}
           onChangeText={setMessage}
-          placeholder="Ask Jarva anything..."
+          placeholder="Message Jarva..."
           placeholderTextColor={colors.textTertiary}
           multiline
           maxLength={500}
@@ -37,7 +37,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
           style={styles.micButton} 
           disabled={isLoading}
         >
-          <Mic size={18} color={colors.textSecondary} strokeWidth={1.5} />
+          <Mic size={20} color={colors.textSecondary} strokeWidth={1.5} />
         </TouchableOpacity>
         
         <TouchableOpacity 
@@ -48,7 +48,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
           {isLoading ? (
             <ActivityIndicator size="small" color={colors.textSecondary} />
           ) : (
-            <Send size={18} color={message.trim() ? colors.text : colors.textTertiary} strokeWidth={1.5} />
+            <Send size={20} color={message.trim() ? colors.text : colors.textTertiary} strokeWidth={1.5} />
           )}
         </TouchableOpacity>
       </View>
@@ -58,21 +58,21 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: Platform.OS === 'ios' ? 120 : 100,
-    paddingHorizontal: 20,
-    paddingTop: 12,
+    paddingBottom: Platform.OS === 'ios' ? 100 : 80,
+    paddingHorizontal: 16,
+    paddingTop: 8,
     backgroundColor: colors.background,
-    borderTopWidth: 1,
+    borderTopWidth: 0.5,
     borderTopColor: colors.border,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     backgroundColor: colors.surface,
-    borderRadius: 12,
+    borderRadius: 20,
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderWidth: 1,
+    paddingVertical: 8,
+    borderWidth: 0.5,
     borderColor: colors.border,
   },
   input: {
@@ -80,24 +80,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.text,
     maxHeight: 100,
-    marginRight: 12,
-    paddingVertical: 0,
+    marginRight: 8,
+    paddingVertical: 4,
     fontWeight: '400',
-    lineHeight: 22,
+    lineHeight: 20,
   },
   micButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    marginRight: 8,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: 4,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.surfaceSecondary,
   },
   sendButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.primary,

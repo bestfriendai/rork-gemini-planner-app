@@ -13,7 +13,6 @@ import {
 import { X } from 'lucide-react-native';
 import { useTaskStore } from '@/store/taskStore';
 import { colors } from '@/constants/colors';
-import { BlurView } from 'expo-blur';
 
 interface AddTaskModalProps {
   visible: boolean;
@@ -87,72 +86,70 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
             style={styles.keyboardAvoid}
           >
             <TouchableWithoutFeedback onPress={() => {}}>
-              <BlurView intensity={100} style={styles.modalBlur}>
-                <View style={styles.modalContent}>
-                  <View style={styles.header}>
-                    <Text style={styles.headerTitle}>Add New Task</Text>
-                    <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                      <X size={18} color={colors.text} strokeWidth={1.5} />
-                    </TouchableOpacity>
+              <View style={styles.modalContent}>
+                <View style={styles.header}>
+                  <Text style={styles.headerTitle}>Add New Task</Text>
+                  <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                    <X size={20} color={colors.text} strokeWidth={1.5} />
+                  </TouchableOpacity>
+                </View>
+                
+                <View style={styles.form}>
+                  <View style={styles.formGroup}>
+                    <Text style={styles.label}>Title</Text>
+                    <TextInput
+                      style={styles.input}
+                      value={title}
+                      onChangeText={setTitle}
+                      placeholder="Task title"
+                      placeholderTextColor={colors.textTertiary}
+                    />
                   </View>
                   
-                  <View style={styles.form}>
-                    <View style={styles.formGroup}>
-                      <Text style={styles.label}>Title</Text>
-                      <TextInput
-                        style={styles.input}
-                        value={title}
-                        onChangeText={setTitle}
-                        placeholder="Task title"
-                        placeholderTextColor={colors.textTertiary}
-                      />
-                    </View>
-                    
-                    <View style={styles.formGroup}>
-                      <Text style={styles.label}>Description (optional)</Text>
-                      <TextInput
-                        style={[styles.input, styles.textArea]}
-                        value={description}
-                        onChangeText={setDescription}
-                        placeholder="Add details about your task"
-                        placeholderTextColor={colors.textTertiary}
-                        multiline
-                        numberOfLines={3}
-                        textAlignVertical="top"
-                      />
-                    </View>
-                    
-                    <View style={styles.formGroup}>
-                      <Text style={styles.label}>Time (optional)</Text>
-                      <TextInput
-                        style={styles.input}
-                        value={time}
-                        onChangeText={setTime}
-                        placeholder="e.g. 14:30"
-                        placeholderTextColor={colors.textTertiary}
-                        keyboardType="numbers-and-punctuation"
-                      />
-                    </View>
-                    
-                    <View style={styles.formGroup}>
-                      <Text style={styles.label}>Priority</Text>
-                      <View style={styles.priorityButtons}>
-                        <PriorityButton value="low" label="Low" />
-                        <PriorityButton value="medium" label="Medium" />
-                        <PriorityButton value="high" label="High" />
-                      </View>
-                    </View>
-                    
-                    <TouchableOpacity 
-                      style={[styles.addButton, !title.trim() && styles.addButtonDisabled]}
-                      onPress={handleAddTask}
-                      disabled={!title.trim()}
-                    >
-                      <Text style={styles.addButtonText}>Add Task</Text>
-                    </TouchableOpacity>
+                  <View style={styles.formGroup}>
+                    <Text style={styles.label}>Description (optional)</Text>
+                    <TextInput
+                      style={[styles.input, styles.textArea]}
+                      value={description}
+                      onChangeText={setDescription}
+                      placeholder="Add details about your task"
+                      placeholderTextColor={colors.textTertiary}
+                      multiline
+                      numberOfLines={3}
+                      textAlignVertical="top"
+                    />
                   </View>
+                  
+                  <View style={styles.formGroup}>
+                    <Text style={styles.label}>Time (optional)</Text>
+                    <TextInput
+                      style={styles.input}
+                      value={time}
+                      onChangeText={setTime}
+                      placeholder="e.g. 14:30"
+                      placeholderTextColor={colors.textTertiary}
+                      keyboardType="numbers-and-punctuation"
+                    />
+                  </View>
+                  
+                  <View style={styles.formGroup}>
+                    <Text style={styles.label}>Priority</Text>
+                    <View style={styles.priorityButtons}>
+                      <PriorityButton value="low" label="Low" />
+                      <PriorityButton value="medium" label="Medium" />
+                      <PriorityButton value="high" label="High" />
+                    </View>
+                  </View>
+                  
+                  <TouchableOpacity 
+                    style={[styles.addButton, !title.trim() && styles.addButtonDisabled]}
+                    onPress={handleAddTask}
+                    disabled={!title.trim()}
+                  >
+                    <Text style={styles.addButtonText}>Add Task</Text>
+                  </TouchableOpacity>
                 </View>
-              </BlurView>
+              </View>
             </TouchableWithoutFeedback>
           </KeyboardAvoidingView>
         </View>
@@ -164,20 +161,17 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'flex-end',
   },
   keyboardAvoid: {
     flex: 1,
     justifyContent: 'flex-end',
   },
-  modalBlur: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    overflow: 'hidden',
-  },
   modalContent: {
-    backgroundColor: colors.glass,
+    backgroundColor: colors.surface,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     paddingBottom: Platform.OS === 'ios' ? 40 : 20,
   },
   header: {
@@ -185,7 +179,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 20,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5,
     borderBottomColor: colors.border,
   },
   headerTitle: {
@@ -209,12 +203,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: colors.surfaceSecondary,
+    borderRadius: 8,
+    padding: 12,
     fontSize: 15,
     color: colors.text,
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: colors.border,
     fontWeight: '400',
   },
@@ -228,11 +222,11 @@ const styles = StyleSheet.create({
   priorityButton: {
     flex: 1,
     marginHorizontal: 4,
-    borderRadius: 12,
+    borderRadius: 8,
     backgroundColor: colors.surfaceSecondary,
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: colors.border,
-    paddingVertical: 12,
+    paddingVertical: 10,
     alignItems: 'center',
   },
   priorityButtonSelected: {
@@ -250,8 +244,8 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: colors.primary,
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 8,
+    padding: 14,
     alignItems: 'center',
     marginTop: 8,
   },

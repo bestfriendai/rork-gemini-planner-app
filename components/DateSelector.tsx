@@ -66,26 +66,26 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.surface,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
+    paddingVertical: 16,
+    borderBottomWidth: 0.5,
     borderBottomColor: colors.border,
   },
   currentDate: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 16,
-    paddingHorizontal: 20,
-  },
-  scrollContent: {
+    marginBottom: 12,
     paddingHorizontal: 16,
   },
+  scrollContent: {
+    paddingHorizontal: 12,
+  },
   dateItem: {
-    width: 48,
-    height: 64,
+    width: 44,
+    height: 56,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 8,
     marginHorizontal: 4,
     backgroundColor: colors.surfaceSecondary,
   },
@@ -99,11 +99,11 @@ const styles = StyleSheet.create({
   dayName: {
     fontSize: 11,
     color: colors.textSecondary,
-    marginBottom: 4,
+    marginBottom: 2,
     fontWeight: '500',
   },
   dayNumber: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '600',
     color: colors.text,
   },

@@ -36,7 +36,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
         onPress={() => toggleTaskCompletion(task.id)}
       >
         {task.completed ? (
-          <Check size={12} color={colors.text} strokeWidth={2} />
+          <Check size={14} color={colors.text} strokeWidth={2} />
         ) : (
           <View style={styles.checkboxEmpty} />
         )}
@@ -62,7 +62,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
         <View style={styles.details}>
           {task.time ? (
             <View style={styles.detailItem}>
-              <Clock size={10} color={colors.textSecondary} strokeWidth={1.5} />
+              <Clock size={12} color={colors.textSecondary} strokeWidth={1.5} />
               <Text style={styles.detailText}>{task.time}</Text>
             </View>
           ) : null}
@@ -71,7 +71,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
             styles.priority, 
             { backgroundColor: priorityColors[task.priority] }
           ]}>
-            <Flag size={8} color={priorityTextColors[task.priority]} strokeWidth={1.5} />
+            <Flag size={10} color={priorityTextColors[task.priority]} strokeWidth={1.5} />
             <Text style={[
               styles.priorityText, 
               { color: priorityTextColors[task.priority] }
@@ -90,15 +90,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 16,
     backgroundColor: colors.surface,
-    borderRadius: 12,
+    borderRadius: 8,
     marginBottom: 8,
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: colors.border,
   },
   checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 6,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     marginRight: 12,
     justifyContent: 'center',
     alignItems: 'center',
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   checkboxEmpty: {
     width: '100%',
     height: '100%',
-    borderRadius: 6,
+    borderRadius: 11,
     borderWidth: 1.5,
     borderColor: colors.primary,
   },
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   detailText: {
-    fontSize: 11,
+    fontSize: 12,
     color: colors.textSecondary,
     marginLeft: 4,
     fontWeight: '500',
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 6,
+    borderRadius: 4,
   },
   priorityText: {
     fontSize: 10,

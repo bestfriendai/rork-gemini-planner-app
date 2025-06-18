@@ -159,7 +159,7 @@ export default function AssistantScreen() {
       <KeyboardAvoidingView
         style={styles.keyboardContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
         {displayMessages.length === 0 ? (
           <View style={styles.emptyContainer}>
@@ -214,24 +214,24 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messageList: {
-    padding: 20,
-    paddingBottom: Platform.OS === 'ios' ? 140 : 120,
+    padding: 16,
+    paddingBottom: Platform.OS === 'ios' ? 160 : 140,
   },
   taskPrompt: {
-    marginHorizontal: 20,
-    marginBottom: 12,
+    marginHorizontal: 16,
+    marginBottom: 8,
     backgroundColor: colors.surface,
-    borderRadius: 12,
-    borderWidth: 1,
+    borderRadius: 8,
+    borderWidth: 0.5,
     borderColor: colors.border,
   },
   taskPromptContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    padding: 12,
   },
   taskPromptText: {
-    marginLeft: 12,
+    marginLeft: 8,
   },
   taskPromptTitle: {
     color: colors.text,

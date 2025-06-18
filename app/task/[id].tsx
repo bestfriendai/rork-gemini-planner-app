@@ -121,7 +121,7 @@ export default function TaskDetailScreen() {
                   onPress={handleSaveEdit}
                   disabled={!editTitle.trim()}
                 >
-                  <Save size={12} color={colors.text} strokeWidth={1.5} />
+                  <Save size={14} color={colors.text} strokeWidth={1.5} />
                   <Text style={styles.saveButtonText}>Save</Text>
                 </TouchableOpacity>
               </View>
@@ -134,7 +134,7 @@ export default function TaskDetailScreen() {
                   style={styles.editIconButton}
                   onPress={() => setIsEditing(true)}
                 >
-                  <Edit2 size={16} color={colors.primary} strokeWidth={1.5} />
+                  <Edit2 size={18} color={colors.primary} strokeWidth={1.5} />
                 </TouchableOpacity>
               </View>
               
@@ -144,7 +144,7 @@ export default function TaskDetailScreen() {
               
               <View style={styles.detailsContainer}>
                 <View style={styles.detailItem}>
-                  <Calendar size={14} color={colors.textSecondary} strokeWidth={1.5} />
+                  <Calendar size={16} color={colors.textSecondary} strokeWidth={1.5} />
                   <Text style={styles.detailText}>
                     {formatDateForDisplay(task.date)}
                   </Text>
@@ -152,7 +152,7 @@ export default function TaskDetailScreen() {
                 
                 {task.time ? (
                   <View style={styles.detailItem}>
-                    <Clock size={14} color={colors.textSecondary} strokeWidth={1.5} />
+                    <Clock size={16} color={colors.textSecondary} strokeWidth={1.5} />
                     <Text style={styles.detailText}>{task.time}</Text>
                   </View>
                 ) : null}
@@ -161,7 +161,7 @@ export default function TaskDetailScreen() {
                   styles.priority, 
                   { backgroundColor: priorityColors[task.priority] }
                 ]}>
-                  <Flag size={10} color={priorityTextColors[task.priority]} strokeWidth={1.5} />
+                  <Flag size={12} color={priorityTextColors[task.priority]} strokeWidth={1.5} />
                   <Text style={[
                     styles.priorityText, 
                     { color: priorityTextColors[task.priority] }
@@ -188,7 +188,7 @@ export default function TaskDetailScreen() {
             style={[styles.actionButton, styles.deleteButton]}
             onPress={handleDelete}
           >
-            <Trash2 size={14} color={colors.text} strokeWidth={1.5} />
+            <Trash2 size={16} color={colors.text} strokeWidth={1.5} />
             <Text style={styles.actionButtonText}>Delete Task</Text>
           </TouchableOpacity>
         </View>
@@ -204,14 +204,14 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    padding: 20,
+    padding: 16,
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: 8,
+    padding: 16,
     marginBottom: 16,
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: colors.border,
   },
   header: {
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.textSecondary,
     marginBottom: 16,
-    lineHeight: 22,
+    lineHeight: 20,
     fontWeight: '400',
   },
   detailsContainer: {
@@ -253,9 +253,9 @@ const styles = StyleSheet.create({
   priority: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: 6,
     alignSelf: 'flex-start',
     marginTop: 4,
   },
@@ -271,8 +271,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 16,
-    borderRadius: 12,
+    padding: 14,
+    borderRadius: 8,
     marginBottom: 12,
   },
   completeButton: {
@@ -305,8 +305,8 @@ const styles = StyleSheet.create({
   },
   backButton: {
     backgroundColor: colors.primary,
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 8,
+    padding: 14,
     alignItems: 'center',
   },
   backButtonText: {
@@ -327,17 +327,17 @@ const styles = StyleSheet.create({
   },
   editInput: {
     backgroundColor: colors.surfaceSecondary,
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 8,
+    padding: 12,
     fontSize: 15,
     color: colors.text,
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: colors.border,
     marginBottom: 16,
     fontWeight: '400',
   },
   editTextArea: {
-    minHeight: 100,
+    minHeight: 80,
   },
   editButtons: {
     flexDirection: 'row',
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-    borderRadius: 8,
+    borderRadius: 6,
     marginRight: 8,
     backgroundColor: colors.surfaceSecondary,
   },
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 16,
-    borderRadius: 8,
+    borderRadius: 6,
     backgroundColor: colors.primary,
   },
   cancelButtonText: {

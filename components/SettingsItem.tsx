@@ -55,11 +55,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     backgroundColor: colors.surface,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5,
     borderBottomColor: colors.border,
   },
   iconContainer: {
-    marginRight: 16,
+    marginRight: 12,
   },
   content: {
     flex: 1,

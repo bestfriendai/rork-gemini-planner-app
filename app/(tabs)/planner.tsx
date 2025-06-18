@@ -70,7 +70,7 @@ export default function PlannerScreen() {
         style={styles.addButton}
         onPress={() => setIsAddModalVisible(true)}
       >
-        <Plus size={20} color={colors.text} strokeWidth={2} />
+        <Plus size={22} color={colors.text} strokeWidth={2} />
       </TouchableOpacity>
       
       <AddTaskModal
@@ -89,18 +89,18 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 20,
+    padding: 16,
   },
   taskList: {
-    paddingBottom: 120,
+    paddingBottom: 100,
   },
   addButton: {
     position: 'absolute',
-    bottom: 120,
-    right: 20,
+    bottom: 100,
+    right: 16,
     width: 56,
     height: 56,
-    borderRadius: 16,
+    borderRadius: 28,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',

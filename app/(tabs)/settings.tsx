@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Alert, Platform } from 'react-native';
-import { User, Bell, Trash2, Info, Volume2, Wifi, Globe, Smartphone, Monitor, Mic, Speaker, Zap, Brain, Clock, Calendar } from 'lucide-react-native';
+import { User, Bell, Trash2, Info, Volume2, Globe, Mic, Speaker, Zap, Brain, Clock, Calendar } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useChatStore } from '@/store/chatStore';
 import { useTaskStore } from '@/store/taskStore';
@@ -95,7 +95,7 @@ export default function SettingsScreen() {
             <SettingsItem
               title="Your Name"
               subtitle={username || "Set your name"}
-              icon={<User size={16} color={colors.primary} strokeWidth={1.5} />}
+              icon={<User size={18} color={colors.primary} strokeWidth={1.5} />}
               onPress={() => setEditingName(true)}
             />
           )}
@@ -107,7 +107,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Text-to-Speech"
             subtitle="Allow assistant to speak responses"
-            icon={<Speaker size={16} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Speaker size={18} color={colors.primary} strokeWidth={1.5} />}
             isSwitch
             switchValue={true}
             onSwitchChange={() => {}}
@@ -116,7 +116,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Voice Input"
             subtitle="Speech recognition for voice commands"
-            icon={<Mic size={16} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Mic size={18} color={colors.primary} strokeWidth={1.5} />}
             isSwitch
             switchValue={true}
             onSwitchChange={() => {}}
@@ -125,7 +125,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Web Search"
             subtitle="Enable internet search for current information"
-            icon={<Globe size={16} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Globe size={18} color={colors.primary} strokeWidth={1.5} />}
             isSwitch
             switchValue={true}
             onSwitchChange={() => {}}
@@ -134,7 +134,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Smart Suggestions"
             subtitle="Get intelligent quick action suggestions"
-            icon={<Brain size={16} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Brain size={18} color={colors.primary} strokeWidth={1.5} />}
             isSwitch
             switchValue={true}
             onSwitchChange={() => {}}
@@ -143,7 +143,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Auto Task Extraction"
             subtitle="Automatically detect and suggest tasks"
-            icon={<Zap size={16} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Zap size={18} color={colors.primary} strokeWidth={1.5} />}
             isSwitch
             switchValue={true}
             onSwitchChange={() => {}}
@@ -152,7 +152,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Notifications"
             subtitle="Receive reminders for scheduled tasks"
-            icon={<Bell size={16} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Bell size={18} color={colors.primary} strokeWidth={1.5} />}
             isSwitch
             switchValue={notifications}
             onSwitchChange={toggleNotifications}
@@ -165,7 +165,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Clear Chat History"
             subtitle="Delete all conversations with the assistant"
-            icon={<Trash2 size={16} color={colors.error} strokeWidth={1.5} />}
+            icon={<Trash2 size={18} color={colors.error} strokeWidth={1.5} />}
             onPress={handleClearHistory}
           />
         </View>
@@ -176,25 +176,25 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Current Date"
             subtitle={dateTime.date}
-            icon={<Calendar size={16} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Calendar size={18} color={colors.primary} strokeWidth={1.5} />}
           />
           
           <SettingsItem
             title="Current Time"
             subtitle={`${dateTime.time} (${dateTime.timezone})`}
-            icon={<Clock size={16} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Clock size={18} color={colors.primary} strokeWidth={1.5} />}
           />
           
           <SettingsItem
             title="Platform"
             subtitle={Platform.OS === 'web' ? 'Web Browser' : `${Platform.OS} App`}
-            icon={<Info size={16} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Info size={18} color={colors.primary} strokeWidth={1.5} />}
           />
           
           <SettingsItem
             title="App Version"
             subtitle="5.0.0 - Modern 2025 Design"
-            icon={<Info size={16} color={colors.primary} strokeWidth={1.5} />}
+            icon={<Info size={18} color={colors.primary} strokeWidth={1.5} />}
           />
         </View>
         
@@ -229,20 +229,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 16,
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: 8,
     overflow: 'hidden',
-    marginHorizontal: 20,
-    marginTop: 12,
-    borderWidth: 1,
+    marginHorizontal: 16,
+    marginTop: 8,
+    borderWidth: 0.5,
     borderColor: colors.border,
   },
   sectionTitle: {
     fontSize: 12,
     fontWeight: '600',
     color: colors.textSecondary,
-    marginBottom: 8,
+    marginBottom: 4,
     paddingHorizontal: 16,
     paddingTop: 16,
     textTransform: 'uppercase',
@@ -254,11 +254,11 @@ const styles = StyleSheet.create({
   },
   nameInput: {
     backgroundColor: colors.surfaceSecondary,
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 8,
+    padding: 12,
     fontSize: 15,
     color: colors.text,
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: colors.border,
     fontWeight: '400',
   },
@@ -270,14 +270,14 @@ const styles = StyleSheet.create({
   cancelButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-    borderRadius: 8,
+    borderRadius: 6,
     marginRight: 8,
     backgroundColor: colors.surfaceSecondary,
   },
   saveButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-    borderRadius: 8,
+    borderRadius: 6,
     backgroundColor: colors.primary,
   },
   cancelButtonText: {
@@ -291,19 +291,19 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   statsContainer: {
-    margin: 20,
-    padding: 20,
+    margin: 16,
+    padding: 16,
     backgroundColor: colors.surface,
-    borderRadius: 16,
-    borderWidth: 1,
+    borderRadius: 8,
+    borderWidth: 0.5,
     borderColor: colors.border,
-    marginBottom: 140,
+    marginBottom: 120,
   },
   statsTitle: {
     fontSize: 15,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 16,
+    marginBottom: 12,
   },
   statsRow: {
     flexDirection: 'row',
@@ -313,13 +313,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 12,
     backgroundColor: colors.surfaceSecondary,
-    borderRadius: 12,
+    borderRadius: 8,
     marginHorizontal: 4,
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: colors.border,
   },
   statValue: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
     color: colors.primary,
     marginBottom: 4,
