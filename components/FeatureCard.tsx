@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { shadows } from '@/utils/shadowUtils';
+import { colors } from '@/constants/colors';
 
 interface FeatureCardProps {
   title: string;
@@ -22,7 +24,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <View style={[styles.iconContainer, { backgroundColor: `${color}15` }]}>
+      <View style={[styles.iconContainer, { backgroundColor: `${color}20` }]}>
         {icon}
       </View>
       
@@ -37,37 +39,37 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    backgroundColor: colors.surfaceSecondary,
+    borderRadius: 16,
     padding: 16,
-    marginBottom: 12,
+    marginBottom: 14,
     borderLeftWidth: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    ...shadows.medium,
+    borderWidth: 0.5,
+    borderColor: colors.border,
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
+    ...shadows.small,
   },
   content: {
     flex: 1,
+    justifyContent: 'center',
   },
   title: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '600',
-    color: '#1A1A1A',
-    marginBottom: 4,
+    color: colors.text,
+    marginBottom: 6,
   },
   description: {
     fontSize: 14,
-    color: '#6E7A8A',
+    color: colors.textSecondary,
     lineHeight: 20,
   },
 });

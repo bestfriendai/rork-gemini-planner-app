@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, TouchableOpacity, Alert, Text } from 'react-native';
-import { Plus } from 'lucide-react-native';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { useChatStore } from '@/store/chatStore';
 import { useTaskStore } from '@/store/taskStore';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -8,14 +7,20 @@ import { ChatMessage } from '@/components/ChatMessage';
 import { ChatInput } from '@/components/ChatInput';
 import { EmptyState } from '@/components/EmptyState';
 import { QuickActions } from '@/components/QuickActions';
-import { callAI, extractTasksFromAIResponse } from '@/utils/aiUtils';
+import { TodaySummary } from '@/components/TodaySummary';
+import { InteractiveTaskPrompt } from '@/components/InteractiveTaskPrompt';
+import { aiService } from '@/services';
+import { getCurrentDate } from '@/utils/dateUtils';
 import { colors } from '@/constants/colors';
 
 export default function AssistantScreen() {
   const flatListRef = useRef<FlatList>(null);
   const { messages, addMessage, clearMessages, isLoading, setLoading, formatMessagesForAPI } = useChatStore();
-  const { addTask } = useTaskStore();
+  const { tasks, addTask } = useTaskStore();
   const { username } = useSettingsStore();
+
+  const today = useMemo(() => getCurrentDate(), []);
+  const todaysTasks = useMemo(() => tasks.filter(t => t.date === today && !t.completed), [tasks, today]);
   
   const [initialMessageSent, setInitialMessageSent] = useState(false);
   const [extractedTasks, setExtractedTasks] = useState<any[]>([]);
@@ -67,7 +72,7 @@ export default function AssistantScreen() {
     try {
       const apiMessages = formatMessagesForAPI();
       
-      const response = await callAI(apiMessages, (chunk: string) => {
+      const response = await aiService.processQuery(apiMessages, (chunk: string) => {
         setStreamingMessage(prev => prev + chunk);
       });
       
@@ -77,7 +82,7 @@ export default function AssistantScreen() {
         content: finalResponse,
       });
       
-      const tasks = extractTasksFromAIResponse(finalResponse);
+      const tasks = aiService.extractTasks(finalResponse);
       
       if (tasks.length > 0) {
         setExtractedTasks(tasks);
@@ -119,21 +124,17 @@ export default function AssistantScreen() {
     }
   };
 
-  const handleAddExtractedTasks = () => {
-    if (extractedTasks.length > 0) {
-      extractedTasks.forEach(task => {
-        addTask(task);
-      });
-      
+  const handleConfirmExtractedTasks = (confirmedTasks: any[]) => {
+    if (confirmedTasks.length > 0) {
+      confirmedTasks.forEach(task => addTask(task));
       Alert.alert(
         "Tasks Added",
-        `${extractedTasks.length} task${extractedTasks.length > 1 ? 's' : ''} added to your planner.`,
+        `${confirmedTasks.length} task${confirmedTasks.length > 1 ? 's' : ''} added to your planner.`,
         [{ text: "OK" }]
       );
-      
-      setShowTaskPrompt(false);
-      setExtractedTasks([]);
     }
+    setShowTaskPrompt(false);
+    setExtractedTasks([]);
   };
 
   useEffect(() => {
@@ -161,41 +162,41 @@ export default function AssistantScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
-        {displayMessages.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <EmptyState />
-            <QuickActions onAction={handleQuickAction} />
-          </View>
-        ) : (
-          <FlatList
-            ref={flatListRef}
-            data={displayMessages}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <ChatMessage 
-                message={item} 
-                isStreaming={item.id === 'streaming'}
-              />
-            )}
-            contentContainerStyle={styles.messageList}
-            showsVerticalScrollIndicator={false}
-          />
-        )}
+        <FlatList
+          ref={flatListRef}
+          data={displayMessages}
+          keyExtractor={(item) => item.id}
+          ListHeaderComponent={
+            <TodaySummary
+              username={username}
+              taskCount={todaysTasks.length}
+            />
+          }
+          ListEmptyComponent={
+             <View style={styles.emptyContainer}>
+                <EmptyState />
+                <QuickActions onAction={handleQuickAction} />
+            </View>
+          }
+          renderItem={({ item }) => (
+            <ChatMessage
+              message={item}
+              isStreaming={item.id === 'streaming'}
+            />
+          )}
+          contentContainerStyle={styles.messageList}
+          showsVerticalScrollIndicator={false}
+        />
         
         {showTaskPrompt && extractedTasks.length > 0 && (
-          <TouchableOpacity 
-            style={styles.taskPrompt}
-            onPress={handleAddExtractedTasks}
-          >
-            <View style={styles.taskPromptContent}>
-              <Plus size={16} color={colors.primary} strokeWidth={2} />
-              <View style={styles.taskPromptText}>
-                <Text style={styles.taskPromptTitle}>
-                  Add {extractedTasks.length} task{extractedTasks.length > 1 ? 's' : ''} to planner
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
+          <InteractiveTaskPrompt
+            tasks={extractedTasks}
+            onConfirm={handleConfirmExtractedTasks}
+            onDismiss={() => {
+              setShowTaskPrompt(false);
+              setExtractedTasks([]);
+            }}
+          />
         )}
         
         <ChatInput onSend={handleSendMessage} isLoading={isLoading} />
@@ -216,33 +217,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messageList: {
-    padding: 16,
+    paddingHorizontal: 16,
     paddingBottom: Platform.OS === 'ios' ? 180 : 160,
-  },
-  taskPrompt: {
-    marginHorizontal: 16,
-    marginBottom: 8,
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    borderWidth: 0.5,
-    borderColor: colors.border,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  taskPromptContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 14,
-  },
-  taskPromptText: {
-    marginLeft: 10,
-  },
-  taskPromptTitle: {
-    color: colors.text,
-    fontWeight: '600',
-    fontSize: 14,
   },
 });

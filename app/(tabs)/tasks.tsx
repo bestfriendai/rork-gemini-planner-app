@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity, Text, Platform } from 'react-native';
-import { Plus } from 'lucide-react-native';
+import { Plus, LayoutGrid, List } from 'lucide-react-native';
+import { shadows } from '@/utils/shadowUtils';
 import { useTaskStore } from '@/store/taskStore';
 import { TaskItem } from '@/components/TaskItem';
 import { EmptyState } from '@/components/EmptyState';
@@ -12,6 +13,7 @@ import { colors } from '@/constants/colors';
 export default function TasksScreen() {
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [filter, setFilter] = useState<'all' | 'today' | 'upcoming' | 'completed'>('all');
+  const [viewMode, setViewMode] = useState<'list' | 'board'>('list');
   
   const { tasks } = useTaskStore();
   const router = useRouter();
@@ -62,29 +64,39 @@ export default function TasksScreen() {
   
   return (
     <View style={styles.container}>
-      <View style={styles.filterContainer}>
-        <FilterButton value="all" label="All" />
-        <FilterButton value="today" label="Today" />
-        <FilterButton value="upcoming" label="Upcoming" />
-        <FilterButton value="completed" label="Completed" />
+      <View style={styles.header}>
+        <View style={styles.filterContainer}>
+          <FilterButton value="all" label="All" />
+          <FilterButton value="today" label="Today" />
+          <FilterButton value="upcoming" label="Upcoming" />
+          <FilterButton value="completed" label="Completed" />
+        </View>
+        <TouchableOpacity style={styles.viewModeButton} onPress={() => setViewMode(viewMode === 'list' ? 'board' : 'list')}>
+          {viewMode === 'list' ? <LayoutGrid size={20} color={colors.primary} /> : <List size={20} color={colors.primary} />}
+        </TouchableOpacity>
       </View>
       
       <View style={styles.content}>
         {filteredTasks.length === 0 ? (
           <EmptyState />
-        ) : (
+        ) : viewMode === 'list' ? (
           <FlatList
             data={filteredTasks}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <TaskItem 
-                task={item} 
+              <TaskItem
+                task={item}
                 onPress={() => handleTaskPress(item.id)}
               />
             )}
             contentContainerStyle={styles.taskList}
             showsVerticalScrollIndicator={false}
           />
+        ) : (
+          <View style={styles.boardPlaceholder}>
+            <Text style={styles.boardPlaceholderText}>Kanban Board View Coming Soon!</Text>
+            <Text style={styles.boardPlaceholderSubtext}>This will show your tasks in columns like To Do, In Progress, and Done.</Text>
+          </View>
         )}
       </View>
       
@@ -109,12 +121,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  filterContainer: {
+  header: {
     flexDirection: 'row',
-    padding: 16,
+    alignItems: 'center',
+    paddingRight: 16,
     backgroundColor: colors.surface,
     borderBottomWidth: 0.5,
     borderBottomColor: colors.border,
+  },
+  filterContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    padding: 16,
+    paddingRight: 8,
   },
   filterButton: {
     flex: 1,
@@ -146,6 +165,30 @@ const styles = StyleSheet.create({
   taskList: {
     paddingBottom: 120,
   },
+  viewModeButton: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: colors.surfaceSecondary,
+  },
+  boardPlaceholder: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+  },
+  boardPlaceholderText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  boardPlaceholderSubtext: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
   addButton: {
     position: 'absolute',
     bottom: Platform.OS === 'ios' ? 120 : 100,
@@ -156,10 +199,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    ...shadows.large,
   },
 });

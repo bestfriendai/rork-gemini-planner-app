@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { colors } from '@/constants/colors';
 
 interface StatusIndicatorProps {
   status: 'online' | 'offline' | 'loading';
@@ -9,10 +10,10 @@ interface StatusIndicatorProps {
 export const StatusIndicator: React.FC<StatusIndicatorProps> = ({ status, text }) => {
   const getStatusColor = () => {
     switch (status) {
-      case 'online': return '#34C759';
-      case 'offline': return '#FF3B30';
-      case 'loading': return '#F9A826';
-      default: return '#6E7A8A';
+      case 'online': return colors.success;
+      case 'offline': return colors.error;
+      case 'loading': return colors.warning;
+      default: return colors.textTertiary;
     }
   };
 
@@ -38,16 +39,26 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    backgroundColor: colors.surfaceTertiary,
+    borderRadius: 16,
+    alignSelf: 'flex-start',
   },
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginRight: 8,
+    marginRight: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 3,
   },
   text: {
-    fontSize: 14,
-    color: '#6E7A8A',
-    fontWeight: '500',
+    fontSize: 13,
+    color: colors.textSecondary,
+    fontWeight: '600',
   },
 });

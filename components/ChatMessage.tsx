@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Volume2, User, Bot } from 'lucide-react-native';
+import { Volume2, User, Bot, ThumbsUp, Copy } from 'lucide-react-native';
 import { Message } from '@/types';
 import { colors } from '@/constants/colors';
+import { shadows } from '@/utils/shadowUtils';
 
 interface ChatMessageProps {
   message: Message;
@@ -16,9 +17,9 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
     <View style={[styles.container, isUser ? styles.userContainer : styles.assistantContainer]}>
       <View style={[styles.avatar, isUser ? styles.userAvatar : styles.assistantAvatar]}>
         {isUser ? (
-          <User size={16} color={colors.text} strokeWidth={1.5} />
+          <User size={18} color={colors.text} strokeWidth={1.5} />
         ) : (
-          <Bot size={16} color={colors.primary} strokeWidth={1.5} />
+          <Bot size={18} color={colors.primary} strokeWidth={1.5} />
         )}
       </View>
 
@@ -30,15 +31,13 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
         {isStreaming && (
           <View style={styles.streamingIndicator}>
             <View style={styles.streamingDot} />
+            <View style={styles.streamingDot2} />
+            <View style={styles.streamingDot3} />
             <Text style={styles.streamingText}>Thinking...</Text>
           </View>
         )}
         
-        {!isStreaming && !isUser && (
-          <TouchableOpacity style={styles.speakButton}>
-            <Volume2 size={14} color={colors.textTertiary} strokeWidth={1.5} />
-          </TouchableOpacity>
-        )}
+        {/* Action buttons removed as requested */}
       </View>
       
       {!isStreaming && (
@@ -52,10 +51,11 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 8,
-    maxWidth: '85%',
+    marginVertical: 16,
+    maxWidth: '92%',
     flexDirection: 'row',
     alignItems: 'flex-start',
+    marginHorizontal: 16,
   },
   userContainer: {
     alignSelf: 'flex-end',
@@ -65,40 +65,46 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 8,
+    marginHorizontal: 10,
     marginTop: 2,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    ...shadows.medium,
   },
   userAvatar: {
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: colors.secondary,
   },
   assistantAvatar: {
     backgroundColor: colors.primaryMuted,
   },
   bubble: {
-    borderRadius: 16,
+    borderRadius: 20,
     flex: 1,
     position: 'relative',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    ...shadows.medium,
   },
   userBubble: {
     backgroundColor: colors.primary,
     marginLeft: 40,
+    borderWidth: 1,
+    borderColor: colors.primaryDark,
   },
   assistantBubble: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceSecondary,
     marginRight: 40,
-    borderWidth: 0.5,
-    borderColor: colors.border,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
   },
   messageText: {
-    fontSize: 15,
-    lineHeight: 20,
+    fontSize: 16,
+    lineHeight: 24,
     fontWeight: '400',
   },
   userText: {
@@ -108,44 +114,70 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   timestamp: {
-    fontSize: 11,
+    fontSize: 12,
     marginTop: 4,
-    fontWeight: '400',
+    fontWeight: '500',
     position: 'absolute',
-    bottom: -16,
+    bottom: -18,
   },
   userTimestamp: {
     color: colors.textTertiary,
-    right: 8,
+    right: 10,
   },
   assistantTimestamp: {
     color: colors.textTertiary,
-    left: 8,
+    left: 10,
   },
-  speakButton: {
-    position: 'absolute',
-    bottom: 8,
-    right: 8,
-    padding: 4,
-    borderRadius: 8,
-    backgroundColor: colors.surfaceSecondary,
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 10,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: colors.borderLight,
+    gap: 8,
+  },
+  actionButton: {
+    padding: 8,
+    borderRadius: 14,
+    backgroundColor: colors.surfaceTertiary,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    ...shadows.small,
   },
   streamingIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
+    marginTop: 6,
   },
   streamingDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: colors.primary,
-    marginRight: 6,
+    marginRight: 4,
+    opacity: 1,
+  },
+  streamingDot2: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.primary,
+    marginRight: 4,
+    opacity: 0.7,
+  },
+  streamingDot3: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.primary,
+    marginRight: 8,
+    opacity: 0.4,
   },
   streamingText: {
-    fontSize: 12,
+    fontSize: 13,
     color: colors.textSecondary,
     fontStyle: 'italic',
-    fontWeight: '400',
+    fontWeight: '500',
   },
 });

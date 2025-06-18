@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { 
-  Clock, Calendar, CloudSun, Newspaper, CheckSquare, Bell, Calculator, MapPin, 
+import {
+  Clock, Calendar, CloudSun, Newspaper, CheckSquare, Bell, Calculator, MapPin,
   TrendingUp, DollarSign
 } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
+import { shadows } from '@/utils/shadowUtils';
 
 interface QuickActionsProps {
   onAction: (action: string) => void;
@@ -92,48 +93,48 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAction }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceSecondary,
     marginHorizontal: 16,
     marginBottom: 140,
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 0.5,
     borderColor: colors.border,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
+    ...shadows.medium,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primary,
   },
   title: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 12,
+    marginBottom: 16,
   },
   scrollContent: {
     paddingRight: 16,
+    paddingBottom: 4,
   },
   actionButton: {
     alignItems: 'center',
-    marginRight: 16,
-    minWidth: 64,
+    marginRight: 18,
+    minWidth: 68,
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.surfaceSecondary,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
     borderWidth: 0.5,
     borderColor: colors.border,
+    ...shadows.small,
   },
   actionText: {
-    fontSize: 11,
+    fontSize: 12,
     color: colors.textSecondary,
     textAlign: 'center',
     fontWeight: '500',
-    lineHeight: 12,
+    lineHeight: 16,
   },
 });

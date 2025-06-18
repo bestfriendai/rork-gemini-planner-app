@@ -1,8 +1,9 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { MessageSquare, CalendarDays, ListTodo, Settings } from "lucide-react-native";
+import { MessageSquare, CalendarDays, ListTodo, Settings, FolderKanban } from "lucide-react-native";
 import { colors } from "@/constants/colors";
 import { Platform } from "react-native";
+import { shadows } from "@/utils/shadowUtils";
 
 export default function TabLayout() {
   return (
@@ -21,11 +22,7 @@ export default function TabLayout() {
           bottom: 0,
           left: 0,
           right: 0,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 8,
-          elevation: 8,
+          ...shadows.tab,
         },
         headerStyle: {
           backgroundColor: colors.background,
@@ -77,6 +74,14 @@ export default function TabLayout() {
           title: "Tasks",
           tabBarLabel: "Tasks",
           tabBarIcon: ({ color, size }) => <ListTodo size={24} color={color} strokeWidth={1.8} />,
+        }}
+      />
+      <Tabs.Screen
+        name="organize"
+        options={{
+          title: "Organize",
+          tabBarLabel: "Organize",
+          tabBarIcon: ({ color, size }) => <FolderKanban size={24} color={color} strokeWidth={1.8} />,
         }}
       />
       <Tabs.Screen

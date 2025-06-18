@@ -2,12 +2,14 @@ import { CoreMessage, Task } from '@/types';
 import Constants from 'expo-constants';
 
 // Use environment variables for API keys (fallback to hardcoded for development)
-const OPENROUTER_API_KEY = Constants.expoConfig?.extra?.OPENROUTER_API_KEY || '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';
-const PERPLEXITY_API_KEY = Constants.expoConfig?.extra?.PERPLEXITY_API_KEY || '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';
+const OPENROUTER_API_KEY = Constants.expoConfig?.extra?.OPENROUTER_API_KEY || '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';
+const PERPLEXITY_API_KEY = Constants.expoConfig?.extra?.PERPLEXITY_API_KEY || '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';
+
+
 
 // Updated models for 2025 - using available models
-const GEMINI_MODEL = 'google/gemini-2.5-flash';
-const PERPLEXITY_MODEL = 'sonar';
+const GEMINI_MODEL = 'google/gemini-flash-1.5';
+const PERPLEXITY_MODEL = 'llama-3.1-sonar-small-128k-online';
 
 // Enhanced query classification
 interface QueryClassification {
@@ -28,7 +30,7 @@ interface ModelConfig {
 
 const MODEL_CONFIGS: Record<string, ModelConfig> = {
   'general': {
-    primary: 'google/gemini-2.5-flash',
+    primary: 'google/gemini-flash-1.5',
     fallback: ['openai/gpt-4o-mini', 'anthropic/claude-3-haiku'],
     maxTokens: 2000,
     temperature: 0.7,
