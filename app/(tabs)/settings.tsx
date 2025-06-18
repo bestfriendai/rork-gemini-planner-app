@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Alert, Platform } from 'react-native';
-import { User, Bell, Trash2, Info, Volume2, Globe, Mic, Speaker, Zap, Brain, Clock, Calendar, BarChart, Cpu } from 'lucide-react-native';
+import { User, Bell, Trash2, Info, Volume2, Globe, Mic, Speaker, Zap, Brain, Clock, Calendar } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useChatStore } from '@/store/chatStore';
 import { useTaskStore } from '@/store/taskStore';
 import { SettingsItem } from '@/components/SettingsItem';
 import { colors } from '@/constants/colors';
-import { aiService } from '@/services';
 
 export default function SettingsScreen() {
   const { username, setUsername, notifications, toggleNotifications } = useSettingsStore();
@@ -15,13 +14,6 @@ export default function SettingsScreen() {
   
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(username);
-  const [aiStats, setAiStats] = useState<any>(null);
-  
-  useEffect(() => {
-    // Get AI performance statistics
-    const stats = aiService.getPerformanceStats();
-    setAiStats(stats);
-  }, []);
   
   const handleSaveName = () => {
     setUsername(nameInput.trim());
@@ -168,61 +160,6 @@ export default function SettingsScreen() {
         </View>
         
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>AI Performance</Text>
-          
-          <SettingsItem
-            title="Response Caching"
-            subtitle="Cache similar queries for faster responses"
-            icon={<Zap size={18} color={colors.primary} strokeWidth={1.5} />}
-            isSwitch
-            switchValue={true}
-            onSwitchChange={() => {}}
-          />
-          
-          <SettingsItem
-            title="Performance Metrics"
-            subtitle="View AI response times and usage statistics"
-            icon={<BarChart size={18} color={colors.primary} strokeWidth={1.5} />}
-            onPress={() => {
-              const stats = aiService.getPerformanceStats();
-              setAiStats(stats);
-              Alert.alert(
-                "AI Performance Metrics",
-                `Average Response Time: ${stats.averageResponseTime}ms\n` +
-                `Cache Hit Rate: ${stats.cacheHitRate}%\n` +
-                `Total Requests: ${stats.totalRequests}\n` +
-                `Error Rate: ${stats.errorRate}%`,
-                [{ text: "OK" }]
-              );
-            }}
-          />
-          
-          <SettingsItem
-            title="Clear AI Cache"
-            subtitle="Delete cached responses and performance data"
-            icon={<Trash2 size={18} color={colors.error} strokeWidth={1.5} />}
-            onPress={() => {
-              Alert.alert(
-                "Clear AI Cache",
-                "Are you sure you want to clear all cached AI responses? This may slow down future responses.",
-                [
-                  { text: "Cancel", style: "cancel" },
-                  { 
-                    text: "Clear", 
-                    style: "destructive",
-                    onPress: () => {
-                      aiService.invalidateCache(['all']);
-                      aiService.clearMetrics();
-                      Alert.alert("Cache Cleared", "All AI cache and performance data has been cleared.");
-                    }
-                  }
-                ]
-              );
-            }}
-          />
-        </View>
-        
-        <View style={styles.section}>
           <Text style={styles.sectionTitle}>Data Management</Text>
           
           <SettingsItem
@@ -278,26 +215,6 @@ export default function SettingsScreen() {
             </View>
           </View>
         </View>
-        
-        {aiStats && (
-          <View style={styles.statsContainer}>
-            <Text style={styles.statsTitle}>AI Performance Stats</Text>
-            <View style={styles.statsRow}>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>{aiStats.totalRequests || 0}</Text>
-                <Text style={styles.statLabel}>Total Requests</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>{aiStats.averageResponseTime ? Math.round(aiStats.averageResponseTime) + 'ms' : '-'}</Text>
-                <Text style={styles.statLabel}>Avg Response</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>{aiStats.cacheHitRate ? Math.round(aiStats.cacheHitRate) + '%' : '-'}</Text>
-                <Text style={styles.statLabel}>Cache Hit Rate</Text>
-              </View>
-            </View>
-          </View>
-        )}
       </ScrollView>
     </View>
   );

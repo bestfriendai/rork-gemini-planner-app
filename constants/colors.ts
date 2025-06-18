@@ -1,56 +1,43 @@
 export const colors = {
-  // Apple Design System - Dark Mode
-  background: '#000000',
+  // Modern dark theme with refined colors - 2025 design
+  background: '#0A0A0B',
   surface: '#1C1C1E',
   surfaceSecondary: '#2C2C2E',
   surfaceTertiary: '#3A3A3C',
-  surfaceElevated: '#48484A',
   
-  // Primary - Apple Blue
-  primary: '#0A84FF',
-  primaryLight: '#5AC8FA',
-  primaryDark: '#0071E3',
-  primaryMuted: 'rgba(10, 132, 255, 0.15)',
-  primaryGradient: ['#0A84FF', '#5AC8FA'],
+  // Primary - Refined blue with better contrast
+  primary: '#007AFF',
+  primaryLight: '#4DA2FF',
+  primaryDark: '#0056CC',
+  primaryMuted: 'rgba(0, 122, 255, 0.12)',
   
-  // Secondary colors - Apple accent colors
-  secondary: '#FF375F',  // Apple Red/Pink
-  secondaryMuted: 'rgba(255, 55, 95, 0.15)',
-  
-  // Text hierarchy - Apple typography
+  // Text hierarchy with better contrast
   text: '#FFFFFF',
-  textSecondary: '#EBEBF5BF', // ~75% white
-  textTertiary: '#EBEBF599', // ~60% white
-  textQuaternary: '#EBEBF566', // ~40% white
+  textSecondary: '#EBEBF5',
+  textTertiary: '#EBEBF599',
+  textQuaternary: '#EBEBF54D',
   
-  // Semantic colors - Apple system colors
-  success: '#30D158', // Apple Green
-  warning: '#FFD60A', // Apple Yellow
-  error: '#FF453A',   // Apple Red
-  info: '#64D2FF',    // Apple Cyan
+  // Semantic colors - more vibrant and modern
+  success: '#30D158',
+  warning: '#FF9F0A',
+  error: '#FF453A',
   
-  // Borders - Apple style
-  border: 'rgba(255, 255, 255, 0.15)',
-  borderLight: 'rgba(255, 255, 255, 0.08)',
+  // Borders with subtle transparency
+  border: 'rgba(255, 255, 255, 0.08)',
+  borderLight: 'rgba(255, 255, 255, 0.04)',
   
-  // Interactive states - Apple style
-  hover: 'rgba(255, 255, 255, 0.1)',
-  pressed: 'rgba(255, 255, 255, 0.15)',
+  // Interactive states
+  hover: 'rgba(255, 255, 255, 0.06)',
+  pressed: 'rgba(255, 255, 255, 0.12)',
   
-  // Glass effects - Apple style
-  glass: 'rgba(28, 28, 30, 0.7)',
+  // Glass effects
+  glass: 'rgba(28, 28, 30, 0.85)',
   
-  // Card backgrounds - Apple style
-  cardBackground: '#2C2C2E',
-  cardBackgroundAlt: '#3A3A3C',
-  
-  // Gradients - Apple style
-  gradientStart: '#0A84FF',
-  gradientEnd: '#5AC8FA',
-  
-  // Additional Apple system colors
-  orange: '#FF9F0A',
-  purple: '#BF5AF2',
-  mint: '#63E6E2',
-  indigo: '#5E5CE6',
+  // Accent colors for variety
+  accent1: '#FF6B6B', // Coral
+  accent2: '#4ECDC4', // Teal
+  accent3: '#45B7D1', // Sky blue
+  accent4: '#96CEB4', // Mint
+  accent5: '#FFEAA7', // Cream
+  accent6: '#DDA0DD', // Plum
 };

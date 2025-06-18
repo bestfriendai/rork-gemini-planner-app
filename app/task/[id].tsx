@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, TextInput, Switch } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, TextInput } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Clock, Calendar, Flag, Trash2, Edit2, Save, MapPin, Tag, Repeat, Timer, Bell } from 'lucide-react-native';
+import { Clock, Calendar, Flag, Trash2, Edit2, Save } from 'lucide-react-native';
 import { useTaskStore } from '@/store/taskStore';
 import { formatDateForDisplay } from '@/utils/dateUtils';
 import { colors } from '@/constants/colors';
@@ -16,20 +16,6 @@ export default function TaskDetailScreen() {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task?.title || '');
   const [editDescription, setEditDescription] = useState(task?.description || '');
-  const [editTime, setEditTime] = useState(task?.time || '');
-  const [editLocation, setEditLocation] = useState(task?.location || '');
-  const [editEstimatedDuration, setEditEstimatedDuration] = useState(task?.estimatedDuration?.toString() || '');
-  const [editCategory, setEditCategory] = useState(task?.category || undefined);
-  
-  // Recurrence settings
-  const [isRecurring, setIsRecurring] = useState(!!task?.recurrence);
-  const [recurrenceFrequency, setRecurrenceFrequency] = useState<'daily' | 'weekly' | 'monthly' | 'yearly'>(task?.recurrence?.frequency || 'daily');
-  const [recurrenceInterval, setRecurrenceInterval] = useState(task?.recurrence?.interval?.toString() || '1');
-  const [recurrenceEndDate, setRecurrenceEndDate] = useState(task?.recurrence?.endDate || '');
-  const [recurrenceOccurrences, setRecurrenceOccurrences] = useState(task?.recurrence?.occurrences?.toString() || '');
-  
-  // Advanced options toggle
-  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
   
   if (!task) {
     return (
@@ -71,31 +57,10 @@ export default function TaskDetailScreen() {
   
   const handleSaveEdit = () => {
     if (editTitle.trim()) {
-      const updatedTask = {
+      updateTask(task.id, {
         title: editTitle.trim(),
         description: editDescription.trim() || undefined,
-        time: editTime.trim() || undefined,
-        location: editLocation.trim() || undefined,
-        estimatedDuration: editEstimatedDuration ? parseInt(editEstimatedDuration) : undefined,
-        category: editCategory,
-      };
-      
-      // Add recurrence information if enabled
-      if (isRecurring) {
-        updatedTask.recurrence = {
-          frequency: recurrenceFrequency,
-          interval: parseInt(recurrenceInterval) || 1,
-          endDate: recurrenceEndDate || undefined,
-          occurrences: recurrenceOccurrences ? parseInt(recurrenceOccurrences) : undefined,
-        };
-      } else {
-        // Remove recurrence if it was previously set but now disabled
-        if (task.recurrence) {
-          updatedTask.recurrence = undefined;
-        }
-      }
-      
-      updateTask(task.id, updatedTask);
+      });
       setIsEditing(false);
     }
   };
@@ -139,178 +104,12 @@ export default function TaskDetailScreen() {
                 textAlignVertical="top"
               />
               
-              <Text style={styles.editLabel}>Time (optional)</Text>
-              <View style={styles.editInputWithIcon}>
-                <Clock size={16} color={colors.textTertiary} style={styles.editInputIcon} />
-                <TextInput
-                  style={styles.editInput}
-                  value={editTime}
-                  onChangeText={setEditTime}
-                  placeholder="e.g. 14:30"
-                  placeholderTextColor={colors.textTertiary}
-                  keyboardType="numbers-and-punctuation"
-                />
-              </View>
-              
-              <Text style={styles.editLabel}>Location (optional)</Text>
-              <View style={styles.editInputWithIcon}>
-                <MapPin size={16} color={colors.textTertiary} style={styles.editInputIcon} />
-                <TextInput
-                  style={styles.editInput}
-                  value={editLocation}
-                  onChangeText={setEditLocation}
-                  placeholder="Add a location"
-                  placeholderTextColor={colors.textTertiary}
-                />
-              </View>
-              
-              <Text style={styles.editLabel}>Estimated Duration (minutes)</Text>
-              <View style={styles.editInputWithIcon}>
-                <Timer size={16} color={colors.textTertiary} style={styles.editInputIcon} />
-                <TextInput
-                  style={styles.editInput}
-                  value={editEstimatedDuration}
-                  onChangeText={setEditEstimatedDuration}
-                  placeholder="e.g. 30"
-                  placeholderTextColor={colors.textTertiary}
-                  keyboardType="number-pad"
-                />
-              </View>
-              
-              <TouchableOpacity 
-                style={styles.advancedOptionsToggle}
-                onPress={() => setShowAdvancedOptions(!showAdvancedOptions)}
-              >
-                <Text style={styles.advancedOptionsToggleText}>
-                  {showAdvancedOptions ? 'Hide Advanced Options' : 'Show Advanced Options'}
-                </Text>
-              </TouchableOpacity>
-              
-              {showAdvancedOptions && (
-                <>
-                  <View style={styles.switchRow}>
-                    <Text style={styles.editLabel}>Recurring Task</Text>
-                    <Switch
-                      value={isRecurring}
-                      onValueChange={setIsRecurring}
-                      trackColor={{ false: colors.border, true: colors.primary + '80' }}
-                      thumbColor={isRecurring ? colors.primary : colors.textTertiary}
-                    />
-                  </View>
-                  
-                  {isRecurring && (
-                    <>
-                      <Text style={styles.editLabel}>Repeat Every</Text>
-                      <View style={styles.recurrenceContainer}>
-                        <TextInput
-                          style={styles.recurrenceIntervalInput}
-                          value={recurrenceInterval}
-                          onChangeText={setRecurrenceInterval}
-                          keyboardType="number-pad"
-                          placeholder="1"
-                          placeholderTextColor={colors.textTertiary}
-                        />
-                        
-                        <View style={styles.recurrenceButtons}>
-                          <TouchableOpacity
-                            style={[
-                              styles.recurrenceButton,
-                              recurrenceFrequency === 'daily' && styles.recurrenceButtonSelected,
-                            ]}
-                            onPress={() => setRecurrenceFrequency('daily')}
-                          >
-                            <Text style={[
-                              styles.recurrenceButtonText,
-                              recurrenceFrequency === 'daily' && styles.recurrenceButtonTextSelected,
-                            ]}>Day</Text>
-                          </TouchableOpacity>
-                          
-                          <TouchableOpacity
-                            style={[
-                              styles.recurrenceButton,
-                              recurrenceFrequency === 'weekly' && styles.recurrenceButtonSelected,
-                            ]}
-                            onPress={() => setRecurrenceFrequency('weekly')}
-                          >
-                            <Text style={[
-                              styles.recurrenceButtonText,
-                              recurrenceFrequency === 'weekly' && styles.recurrenceButtonTextSelected,
-                            ]}>Week</Text>
-                          </TouchableOpacity>
-                          
-                          <TouchableOpacity
-                            style={[
-                              styles.recurrenceButton,
-                              recurrenceFrequency === 'monthly' && styles.recurrenceButtonSelected,
-                            ]}
-                            onPress={() => setRecurrenceFrequency('monthly')}
-                          >
-                            <Text style={[
-                              styles.recurrenceButtonText,
-                              recurrenceFrequency === 'monthly' && styles.recurrenceButtonTextSelected,
-                            ]}>Month</Text>
-                          </TouchableOpacity>
-                          
-                          <TouchableOpacity
-                            style={[
-                              styles.recurrenceButton,
-                              recurrenceFrequency === 'yearly' && styles.recurrenceButtonSelected,
-                            ]}
-                            onPress={() => setRecurrenceFrequency('yearly')}
-                          >
-                            <Text style={[
-                              styles.recurrenceButtonText,
-                              recurrenceFrequency === 'yearly' && styles.recurrenceButtonTextSelected,
-                            ]}>Year</Text>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                      
-                      <Text style={styles.editLabel}>End Date (optional)</Text>
-                      <View style={styles.editInputWithIcon}>
-                        <Calendar size={16} color={colors.textTertiary} style={styles.editInputIcon} />
-                        <TextInput
-                          style={styles.editInput}
-                          value={recurrenceEndDate}
-                          onChangeText={setRecurrenceEndDate}
-                          placeholder="YYYY-MM-DD"
-                          placeholderTextColor={colors.textTertiary}
-                        />
-                      </View>
-                      
-                      <Text style={styles.editLabel}>Number of Occurrences</Text>
-                      <View style={styles.editInputWithIcon}>
-                        <Repeat size={16} color={colors.textTertiary} style={styles.editInputIcon} />
-                        <TextInput
-                          style={styles.editInput}
-                          value={recurrenceOccurrences}
-                          onChangeText={setRecurrenceOccurrences}
-                          placeholder="e.g. 10"
-                          placeholderTextColor={colors.textTertiary}
-                          keyboardType="number-pad"
-                        />
-                      </View>
-                    </>
-                  )}
-                </>
-              )}
-              
               <View style={styles.editButtons}>
                 <TouchableOpacity 
                   style={styles.cancelButton}
                   onPress={() => {
                     setEditTitle(task.title);
                     setEditDescription(task.description || '');
-                    setEditTime(task.time || '');
-                    setEditLocation(task.location || '');
-                    setEditEstimatedDuration(task.estimatedDuration?.toString() || '');
-                    setEditCategory(task.category);
-                    setIsRecurring(!!task.recurrence);
-                    setRecurrenceFrequency(task.recurrence?.frequency || 'daily');
-                    setRecurrenceInterval(task.recurrence?.interval?.toString() || '1');
-                    setRecurrenceEndDate(task.recurrence?.endDate || '');
-                    setRecurrenceOccurrences(task.recurrence?.occurrences?.toString() || '');
-                    setShowAdvancedOptions(false);
                     setIsEditing(false);
                   }}
                 >
@@ -355,40 +154,6 @@ export default function TaskDetailScreen() {
                   <View style={styles.detailItem}>
                     <Clock size={16} color={colors.textSecondary} strokeWidth={1.5} />
                     <Text style={styles.detailText}>{task.time}</Text>
-                  </View>
-                ) : null}
-                
-                {task.estimatedDuration ? (
-                  <View style={styles.detailItem}>
-                    <Timer size={16} color={colors.textSecondary} strokeWidth={1.5} />
-                    <Text style={styles.detailText}>{task.estimatedDuration} minutes</Text>
-                  </View>
-                ) : null}
-                
-                {task.location ? (
-                  <View style={styles.detailItem}>
-                    <MapPin size={16} color={colors.textSecondary} strokeWidth={1.5} />
-                    <Text style={styles.detailText}>{task.location}</Text>
-                  </View>
-                ) : null}
-                
-                {task.category ? (
-                  <View style={styles.detailItem}>
-                    <Tag size={16} color={colors.textSecondary} strokeWidth={1.5} />
-                    <Text style={styles.detailText}>
-                      {useTaskStore.getState().categories.find(c => c.id === task.category)?.name || 'Category'}
-                    </Text>
-                  </View>
-                ) : null}
-                
-                {task.recurrence ? (
-                  <View style={styles.detailItem}>
-                    <Repeat size={16} color={colors.textSecondary} strokeWidth={1.5} />
-                    <Text style={styles.detailText}>
-                      {`Every ${task.recurrence.interval} ${task.recurrence.frequency}`}
-                      {task.recurrence.endDate ? ` until ${task.recurrence.endDate}` : ''}
-                      {task.recurrence.occurrences ? ` for ${task.recurrence.occurrences} occurrences` : ''}
-                    </Text>
                   </View>
                 ) : null}
                 
@@ -571,19 +336,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontWeight: '400',
   },
-  editInputWithIcon: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    marginBottom: 16,
-    borderWidth: 0.5,
-    borderColor: colors.border,
-  },
-  editInputIcon: {
-    marginRight: 8,
-  },
   editTextArea: {
     minHeight: 80,
   },
@@ -617,65 +369,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 4,
     fontSize: 13,
-  },
-  advancedOptionsToggle: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    marginBottom: 16,
-  },
-  advancedOptionsToggleText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: colors.primary,
-  },
-  switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  recurrenceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  recurrenceIntervalInput: {
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 15,
-    color: colors.text,
-    width: 60,
-    marginRight: 12,
-    textAlign: 'center',
-    borderWidth: 0.5,
-    borderColor: colors.border,
-  },
-  recurrenceButtons: {
-    flexDirection: 'row',
-    flex: 1,
-  },
-  recurrenceButton: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 10,
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: 8,
-    marginHorizontal: 2,
-    borderWidth: 0.5,
-    borderColor: colors.border,
-  },
-  recurrenceButtonSelected: {
-    backgroundColor: colors.primary + '20',
-  },
-  recurrenceButtonText: {
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  recurrenceButtonTextSelected: {
-    color: colors.primary,
-    fontWeight: '500',
   },
 });

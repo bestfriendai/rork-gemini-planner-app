@@ -1,9 +1,8 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { MessageSquare, CalendarDays, ListTodo, Settings, FolderKanban } from "lucide-react-native";
+import { MessageSquare, CalendarDays, ListTodo, Settings } from "lucide-react-native";
 import { colors } from "@/constants/colors";
 import { Platform } from "react-native";
-import { shadows } from "@/utils/shadowUtils";
 
 export default function TabLayout() {
   return (
@@ -14,40 +13,46 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
-          borderTopWidth: 0.5,
-          paddingTop: 8,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 12,
-          height: Platform.OS === 'ios' ? 88 : 68,
+          borderTopWidth: 1,
+          paddingTop: 10,
+          paddingBottom: Platform.OS === 'ios' ? 32 : 16,
+          height: Platform.OS === 'ios' ? 92 : 72,
           position: 'absolute',
           bottom: 0,
           left: 0,
           right: 0,
-          ...shadows.tab,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: 0.15,
+          shadowRadius: 12,
+          elevation: 12,
         },
         headerStyle: {
           backgroundColor: colors.background,
-          borderBottomWidth: 0,
+          borderBottomWidth: 1,
+          borderBottomColor: colors.border,
           elevation: 0,
-          shadowOpacity: 0,
+          shadowOpacity: 0.1,
         },
-        headerShadowVisible: false,
+        headerShadowVisible: true,
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: '600',
-          marginTop: 4,
-          letterSpacing: 0.3,
+          fontWeight: '700',
+          marginTop: 6,
+          letterSpacing: 0.5,
+          textTransform: 'uppercase',
         },
         headerTitleStyle: {
-          fontWeight: '600',
-          fontSize: 17,
+          fontWeight: '700',
+          fontSize: 18,
           color: colors.text,
         },
         tabBarItemStyle: {
-          paddingTop: 6,
-          paddingBottom: 4,
+          paddingTop: 8,
+          paddingBottom: 6,
         },
         tabBarIconStyle: {
-          marginBottom: 2,
+          marginBottom: 4,
         },
       }}
     >
@@ -56,7 +61,7 @@ export default function TabLayout() {
         options={{
           title: "Assistant",
           tabBarLabel: "Assistant",
-          tabBarIcon: ({ color, size }) => <MessageSquare size={24} color={color} strokeWidth={1.8} />,
+          tabBarIcon: ({ color, size }) => <MessageSquare size={26} color={color} strokeWidth={2} />,
           headerTitle: "Jarva",
         }}
       />
@@ -65,7 +70,7 @@ export default function TabLayout() {
         options={{
           title: "Planner",
           tabBarLabel: "Planner",
-          tabBarIcon: ({ color, size }) => <CalendarDays size={24} color={color} strokeWidth={1.8} />,
+          tabBarIcon: ({ color, size }) => <CalendarDays size={26} color={color} strokeWidth={2} />,
         }}
       />
       <Tabs.Screen
@@ -73,15 +78,7 @@ export default function TabLayout() {
         options={{
           title: "Tasks",
           tabBarLabel: "Tasks",
-          tabBarIcon: ({ color, size }) => <ListTodo size={24} color={color} strokeWidth={1.8} />,
-        }}
-      />
-      <Tabs.Screen
-        name="organize"
-        options={{
-          title: "Organize",
-          tabBarLabel: "Organize",
-          tabBarIcon: ({ color, size }) => <FolderKanban size={24} color={color} strokeWidth={1.8} />,
+          tabBarIcon: ({ color, size }) => <ListTodo size={26} color={color} strokeWidth={2} />,
         }}
       />
       <Tabs.Screen
@@ -89,7 +86,7 @@ export default function TabLayout() {
         options={{
           title: "Settings",
           tabBarLabel: "Settings",
-          tabBarIcon: ({ color, size }) => <Settings size={24} color={color} strokeWidth={1.8} />,
+          tabBarIcon: ({ color, size }) => <Settings size={26} color={color} strokeWidth={2} />,
         }}
       />
     </Tabs>

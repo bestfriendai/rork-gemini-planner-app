@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { formatDateForDisplay, isToday, isSameDay } from '@/utils/dateUtils';
 import { colors } from '@/constants/colors';
-import { shadows } from '@/utils/shadowUtils';
 
 interface DateSelectorProps {
   dates: string[];
@@ -66,62 +65,52 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: colors.surface,
     paddingVertical: 16,
-    borderBottomWidth: 0.5, // Apple uses thin dividers
+    borderBottomWidth: 0.5,
     borderBottomColor: colors.border,
-    ...shadows.small,
   },
   currentDate: {
-    fontSize: 20, // Apple uses larger headers
-    fontWeight: '600', // SF Pro Display Semibold
+    fontSize: 16,
+    fontWeight: '600',
     color: colors.text,
-    marginBottom: 16, // Slightly more spacing
+    marginBottom: 12,
     paddingHorizontal: 16,
-    letterSpacing: -0.5, // Apple's SF Pro Display has tighter letter spacing
   },
   scrollContent: {
     paddingHorizontal: 12,
-    paddingBottom: 6, // Slightly more padding
   },
   dateItem: {
-    width: 44, // Apple calendar size
-    height: 70, // Taller for better touch targets
+    width: 44,
+    height: 56,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10, // Apple calendar style
-    marginHorizontal: 6,
-    backgroundColor: colors.surface,
-    ...shadows.small,
-    borderWidth: 0, // Apple typically doesn't use borders
+    borderRadius: 8,
+    marginHorizontal: 4,
+    backgroundColor: colors.surfaceSecondary,
   },
   selectedDateItem: {
     backgroundColor: colors.primary,
-    transform: [{ scale: 1.05 }], // Apple uses subtle scale effects for selection
   },
   todayDateItem: {
-    backgroundColor: colors.primaryMuted, // Apple uses background tint instead of borders
+    borderWidth: 1,
+    borderColor: colors.primary,
   },
   dayName: {
-    fontSize: 12, // SF Pro Text caption size
+    fontSize: 11,
     color: colors.textSecondary,
-    marginBottom: 4, // Slightly more spacing
-    fontWeight: '500', // SF Pro Text Medium
-    letterSpacing: -0.24, // Apple's SF Pro has tighter letter spacing
-    textTransform: 'uppercase', // Apple often uses uppercase for day abbreviations
+    marginBottom: 2,
+    fontWeight: '500',
   },
   dayNumber: {
-    fontSize: 20, // Apple uses larger numbers for better readability
-    fontWeight: '600', // SF Pro Display Semibold
+    fontSize: 14,
+    fontWeight: '600',
     color: colors.text,
-    marginTop: 2,
-    letterSpacing: -0.5, // Apple's SF Pro Display has tighter letter spacing
   },
   selectedText: {
-    color: colors.white,
+    color: colors.text,
   },
   todayText: {
     color: colors.primary,
-    fontWeight: '700', // SF Pro Text Bold for today's date
   },
 });

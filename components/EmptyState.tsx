@@ -1,34 +1,71 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Bot, Sparkles } from 'lucide-react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, Animated } from 'react-native';
+import { Bot } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
-import { shadows } from '@/utils/shadowUtils';
 
 export const EmptyState: React.FC = () => {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    // Initial entrance animation
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        tension: 50,
+        friction: 8,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Continuous pulse animation for the icon
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.1,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <View style={styles.iconContainer}>
-        <Bot size={40} color={colors.primary} strokeWidth={1.5} />
-        <View style={styles.sparklesContainer}>
-          <Sparkles size={18} color={colors.white} strokeWidth={1.5} />
-        </View>
-      </View>
+    <Animated.View 
+      style={[
+        styles.container,
+        {
+          opacity: fadeAnim,
+          transform: [{ scale: scaleAnim }],
+        },
+      ]}
+    >
+      <Animated.View 
+        style={[
+          styles.iconContainer,
+          {
+            transform: [{ scale: pulseAnim }],
+          },
+        ]}
+      >
+        <Bot size={48} color={colors.primary} strokeWidth={1.5} />
+      </Animated.View>
       <Text style={styles.title}>Jarva AI Assistant</Text>
       <Text style={styles.subtitle}>
         Your intelligent companion for productivity, planning, and getting things done. Ask me anything!
       </Text>
-      <View style={styles.featuresContainer}>
-        <View style={styles.featureItem}>
-          <Text style={styles.featureText}>Plan your day</Text>
-        </View>
-        <View style={styles.featureItem}>
-          <Text style={styles.featureText}>Manage tasks</Text>
-        </View>
-        <View style={styles.featureItem}>
-          <Text style={styles.featureText}>Get answers</Text>
-        </View>
-      </View>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -41,64 +78,34 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   iconContainer: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
+    width: 96,
+    height: 96,
+    borderRadius: 48,
     backgroundColor: colors.primaryMuted,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 24,
-    ...shadows.medium,
-    position: 'relative',
-  },
-  sparklesContainer: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.secondary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...shadows.small,
-    borderWidth: 2,
-    borderColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.primary + '30',
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 8,
   },
   title: {
     fontSize: 24,
     fontWeight: '700',
     color: colors.text,
-    marginBottom: 10,
+    marginBottom: 12,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
     color: colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 22,
-    maxWidth: 300,
-    marginBottom: 24,
-  },
-  featuresContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    marginTop: 10,
-    gap: 8,
-  },
-  featureItem: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: 20,
-    ...shadows.small,
-    borderWidth: 0.5,
-    borderColor: colors.border,
-  },
-  featureText: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    fontWeight: '500',
+    lineHeight: 24,
+    maxWidth: 280,
+    fontWeight: '400',
   },
 });

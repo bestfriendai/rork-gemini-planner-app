@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Platform } from 'react-native';
-import { Send, Mic, Sparkles } from 'lucide-react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Platform, Animated } from 'react-native';
+import { Send, Mic } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
-import { shadows } from '@/utils/shadowUtils';
-import { useSpeechStore } from '@/store/speechStore';
 
 interface ChatInputProps {
   onSend: (message: string) => void;
@@ -12,60 +10,59 @@ interface ChatInputProps {
 
 export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
   const [message, setMessage] = useState('');
-  const { 
-    startRecording, 
-    stopRecording, 
-    isRecording, 
-    recordedText, 
-    clearRecordedText,
-    startListening,
-    isSupported,
-    checkSupport
-  } = useSpeechStore();
-
-  useEffect(() => {
-    // Check if speech recognition is supported
-    checkSupport();
-  }, []);
-
-  useEffect(() => {
-    // Update message with recorded text when available
-    if (recordedText) {
-      setMessage(prev => prev + (prev ? ' ' : '') + recordedText);
-      clearRecordedText();
-    }
-  }, [recordedText]);
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const glowAnim = useRef(new Animated.Value(0)).current;
 
   const handleSend = () => {
     if (message.trim() && !isLoading) {
       onSend(message.trim());
       setMessage('');
+      
+      // Animate send button
+      Animated.sequence([
+        Animated.timing(scaleAnim, {
+          toValue: 0.9,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+      ]).start();
     }
   };
 
-  const handleMicPress = () => {
-    if (Platform.OS === 'web') {
-      // For web, use the Web Speech API
-      startListening((text) => {
-        setMessage(prev => prev + (prev ? ' ' : '') + text);
-      });
+  useEffect(() => {
+    if (message.trim()) {
+      Animated.timing(glowAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: false,
+      }).start();
     } else {
-      // For native platforms, toggle recording state
-      if (isRecording) {
-        stopRecording();
-      } else {
-        startRecording();
-      }
+      Animated.timing(glowAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }).start();
     }
-  };
+  }, [message]);
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <TouchableOpacity style={styles.aiButton}>
-          <Sparkles size={20} color={colors.primary} strokeWidth={1.5} />
-        </TouchableOpacity>
-        
+      <Animated.View 
+        style={[
+          styles.inputContainer,
+          {
+            shadowOpacity: glowAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0.1, 0.25],
+            }),
+          },
+        ]}
+      >
         <TextInput
           style={styles.input}
           value={message}
@@ -79,25 +76,35 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
         />
         
         <TouchableOpacity 
-          style={[styles.micButton, isRecording && styles.micButtonActive]} 
-          onPress={handleMicPress}
-          disabled={isLoading || !isSupported}
+          style={styles.micButton} 
+          disabled={isLoading}
+          activeOpacity={0.7}
         >
-          <Mic size={22} color={isRecording ? colors.primary : colors.textSecondary} strokeWidth={1.5} />
+          <Mic size={20} color={colors.textSecondary} strokeWidth={2} />
         </TouchableOpacity>
         
-        <TouchableOpacity 
-          style={[styles.sendButton, (!message.trim() || isLoading) && styles.sendButtonDisabled]} 
-          onPress={handleSend}
-          disabled={isLoading || !message.trim()}
-        >
-          {isLoading ? (
-            <ActivityIndicator size="small" color={colors.text} />
-          ) : (
-            <Send size={22} color={message.trim() ? colors.text : colors.textTertiary} strokeWidth={1.5} />
-          )}
-        </TouchableOpacity>
-      </View>
+        <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+          <TouchableOpacity 
+            style={[
+              styles.sendButton, 
+              (!message.trim() || isLoading) && styles.sendButtonDisabled
+            ]} 
+            onPress={handleSend}
+            disabled={isLoading || !message.trim()}
+            activeOpacity={0.8}
+          >
+            {isLoading ? (
+              <ActivityIndicator size="small" color={colors.textSecondary} />
+            ) : (
+              <Send 
+                size={20} 
+                color={message.trim() ? colors.text : colors.textTertiary} 
+                strokeWidth={2} 
+              />
+            )}
+          </TouchableOpacity>
+        </Animated.View>
+      </Animated.View>
     </View>
   );
 };
@@ -108,69 +115,59 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 16,
     backgroundColor: colors.background,
-    borderTopWidth: 0.5, // Apple uses thinner borders
-    borderTopColor: colors.borderLight,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
   inputContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: 24, // Apple uses rounded input fields
-    paddingHorizontal: 12, // Slightly tighter padding
-    paddingVertical: 8, // Slightly tighter padding
-    borderWidth: 0.5, // Apple uses thinner borders
-    borderColor: colors.borderLight,
-    ...shadows.card, // Using Apple-style card shadow
+    alignItems: 'flex-end',
+    backgroundColor: colors.surface,
+    borderRadius: 28,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
+    elevation: 8,
   },
   input: {
     flex: 1,
-    fontSize: 17, // SF Pro Text standard size
+    fontSize: 16,
     color: colors.text,
     maxHeight: 120,
-    marginRight: 8, // Slightly tighter spacing
+    marginRight: 12,
     paddingVertical: 8,
-    fontWeight: '400', // SF Pro Text Regular
-    lineHeight: 22, // Apple line height
-    letterSpacing: -0.41, // Apple's SF Pro has tighter letter spacing
-  },
-  aiButton: {
-    width: 36, // Slightly smaller for Apple style
-    height: 36, // Slightly smaller for Apple style
-    borderRadius: 18, // Perfect circle
-    marginRight: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.primaryMuted,
-    borderWidth: 0, // Apple typically doesn't use borders on buttons
-    ...shadows.button, // Using Apple-style button shadow
+    fontWeight: '400',
+    lineHeight: 22,
   },
   micButton: {
-    width: 36, // Slightly smaller for Apple style
-    height: 36, // Slightly smaller for Apple style
-    borderRadius: 18, // Perfect circle
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     marginRight: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.surfaceTertiary,
-    borderWidth: 0, // Apple typically doesn't use borders on buttons
-    ...shadows.button, // Using Apple-style button shadow
+    backgroundColor: colors.surfaceSecondary,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   sendButton: {
-    width: 36, // Slightly smaller for Apple style
-    height: 36, // Slightly smaller for Apple style
-    borderRadius: 18, // Perfect circle
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    borderWidth: 0, // Apple typically doesn't use borders on buttons
-    ...shadows.button, // Using Apple-style button shadow
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4,
   },
   sendButtonDisabled: {
-    backgroundColor: colors.surfaceTertiary,
-    opacity: 0.7, // Apple uses more subtle opacity changes
-  },
-  micButtonActive: {
-    backgroundColor: colors.primaryMuted,
-    transform: [{ scale: 1.05 }], // Apple uses subtle scale effects for active states
+    backgroundColor: colors.surfaceSecondary,
+    shadowOpacity: 0,
   },
 });

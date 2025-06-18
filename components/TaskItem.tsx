@@ -1,10 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Check, Clock, Flag, Calendar, MapPin, Tag, Repeat, Timer } from 'lucide-react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { Check, Clock, Flag } from 'lucide-react-native';
 import { Task } from '@/types';
 import { useTaskStore } from '@/store/taskStore';
 import { colors } from '@/constants/colors';
-import { shadows } from '@/utils/shadowUtils';
 
 interface TaskItemProps {
   task: Task;
@@ -12,10 +11,45 @@ interface TaskItemProps {
 }
 
 export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
-  const { toggleTaskCompletion, categories } = useTaskStore();
+  const { toggleTaskCompletion } = useTaskStore();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  const handleToggleComplete = () => {
+    Animated.sequence([
+      Animated.timing(scaleAnim, {
+        toValue: 0.95,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    
+    toggleTaskCompletion(task.id);
+  };
 
   const priorityColors = {
-    low: colors.primary + '20',
+    low: colors.surfaceSecondary,
     medium: colors.warning + '20',
     high: colors.error + '20',
   };
@@ -25,215 +59,176 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
     medium: colors.warning,
     high: colors.error,
   };
-  
+
   const priorityBorderColors = {
-    low: colors.primary,
-    medium: colors.warning,
-    high: colors.error,
+    low: colors.primary + '30',
+    medium: colors.warning + '30',
+    high: colors.error + '30',
   };
 
   return (
-    <TouchableOpacity 
-      style={[styles.container, { borderLeftColor: priorityBorderColors[task.priority] }]} 
-      onPress={onPress}
-      activeOpacity={0.7}
+    <Animated.View
+      style={[
+        {
+          opacity: fadeAnim,
+          transform: [
+            { translateY: slideAnim },
+            { scale: scaleAnim },
+          ],
+        },
+      ]}
     >
       <TouchableOpacity 
-        style={[styles.checkbox, task.completed && styles.checkboxChecked]}
-        onPress={() => toggleTaskCompletion(task.id)}
+        style={styles.container} 
+        onPress={onPress}
+        activeOpacity={0.8}
       >
-        {task.completed ? (
-          <Check size={14} color={colors.text} strokeWidth={2} />
-        ) : (
-          <View style={styles.checkboxEmpty} />
-        )}
-      </TouchableOpacity>
-      
-      <View style={styles.content}>
-        <Text 
-          style={[styles.title, task.completed && styles.completedTitle]}
-          numberOfLines={1}
+        <TouchableOpacity 
+          style={[styles.checkbox, task.completed && styles.checkboxChecked]}
+          onPress={handleToggleComplete}
+          activeOpacity={0.8}
         >
-          {task.title}
-        </Text>
+          {task.completed ? (
+            <Check size={16} color={colors.text} strokeWidth={2.5} />
+          ) : (
+            <View style={styles.checkboxEmpty} />
+          )}
+        </TouchableOpacity>
         
-        {task.description ? (
+        <View style={styles.content}>
           <Text 
-            style={styles.description}
-            numberOfLines={1}
+            style={[styles.title, task.completed && styles.completedTitle]}
+            numberOfLines={2}
           >
-            {task.description}
+            {task.title}
           </Text>
-        ) : null}
-        
-        <View style={styles.details}>
-          {task.date && !isToday(task.date) ? (
-            <View style={styles.detailItem}>
-              <Calendar size={12} color={colors.textSecondary} strokeWidth={1.5} />
-              <Text style={styles.detailText}>{formatDate(task.date)}</Text>
-            </View>
-          ) : null}
           
-          {task.time ? (
-            <View style={styles.detailItem}>
-              <Clock size={12} color={colors.textSecondary} strokeWidth={1.5} />
-              <Text style={styles.detailText}>{task.time}</Text>
-            </View>
-          ) : null}
-          
-          {task.estimatedDuration ? (
-            <View style={styles.detailItem}>
-              <Timer size={12} color={colors.textSecondary} strokeWidth={1.5} />
-              <Text style={styles.detailText}>{task.estimatedDuration} min</Text>
-            </View>
-          ) : null}
-          
-          {task.location ? (
-            <View style={styles.detailItem}>
-              <MapPin size={12} color={colors.textSecondary} strokeWidth={1.5} />
-              <Text style={styles.detailText} numberOfLines={1}>{task.location}</Text>
-            </View>
-          ) : null}
-          
-          {task.category ? (
-            <View style={styles.detailItem}>
-              <Tag size={12} color={colors.textSecondary} strokeWidth={1.5} />
-              <Text style={styles.detailText}>
-                {categories.find(c => c.id === task.category)?.name || 'Category'}
-              </Text>
-            </View>
-          ) : null}
-          
-          {task.recurrence ? (
-            <View style={styles.detailItem}>
-              <Repeat size={12} color={colors.textSecondary} strokeWidth={1.5} />
-              <Text style={styles.detailText}>
-                {`Every ${task.recurrence.interval} ${task.recurrence.frequency}`}
-              </Text>
-            </View>
-          ) : null}
-          
-          <View style={[
-            styles.priority, 
-            { backgroundColor: priorityColors[task.priority] }
-          ]}>
-            <Flag size={10} color={priorityTextColors[task.priority]} strokeWidth={1.5} />
-            <Text style={[
-              styles.priorityText, 
-              { color: priorityTextColors[task.priority] }
-            ]}>
-              {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+          {task.description ? (
+            <Text 
+              style={styles.description}
+              numberOfLines={2}
+            >
+              {task.description}
             </Text>
+          ) : null}
+          
+          <View style={styles.details}>
+            {task.time ? (
+              <View style={styles.detailItem}>
+                <Clock size={14} color={colors.textSecondary} strokeWidth={2} />
+                <Text style={styles.detailText}>{task.time}</Text>
+              </View>
+            ) : null}
+            
+            <View style={[
+              styles.priority, 
+              { 
+                backgroundColor: priorityColors[task.priority],
+                borderColor: priorityBorderColors[task.priority],
+              }
+            ]}>
+              <Flag size={12} color={priorityTextColors[task.priority]} strokeWidth={2} />
+              <Text style={[
+                styles.priorityText, 
+                { color: priorityTextColors[task.priority] }
+              ]}>
+                {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Animated.View>
   );
-};
-
-// Helper function to check if a date is today
-const isToday = (dateString: string) => {
-  const today = new Date();
-  const date = new Date(dateString);
-  return date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear();
-};
-
-// Helper function to format date in a more readable way
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    padding: 16,
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: 16, // Apple uses more rounded corners
+    padding: 18,
+    backgroundColor: colors.surface,
+    borderRadius: 12,
     marginBottom: 12,
-    marginHorizontal: 16,
-    borderLeftWidth: 3, // Slightly thinner accent border
-    borderColor: colors.borderLight,
-    ...shadows.card, // Using Apple-style card shadow
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   checkbox: {
-    width: 22, // Slightly smaller for Apple style
-    height: 22, // Slightly smaller for Apple style
-    borderRadius: 11,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     marginRight: 14,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 2,
-    borderWidth: 1.5, // Slightly thicker border for Apple style
-    borderColor: colors.borderLight,
-    backgroundColor: 'transparent', // Apple prefers transparent checkboxes
   },
   checkboxChecked: {
-    backgroundColor: colors.primary,
-    borderColor: 'transparent', // Apple removes borders when checked
+    backgroundColor: colors.success,
+    borderWidth: 0,
   },
   checkboxEmpty: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    borderWidth: 1.5,
-    borderColor: colors.textSecondary,
+    width: '100%',
+    height: '100%',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: colors.primary,
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
   },
   title: {
-    fontSize: 17, // SF Pro Text size
-    fontWeight: '600', // SF Pro Text Semibold
+    fontSize: 16,
+    fontWeight: '600',
     color: colors.text,
-    marginBottom: 4, // Tighter spacing
-    letterSpacing: -0.4, // Apple's SF Pro has tighter letter spacing
+    marginBottom: 6,
+    lineHeight: 22,
   },
   completedTitle: {
     textDecorationLine: 'line-through',
     color: colors.textSecondary,
   },
   description: {
-    fontSize: 15, // SF Pro Text size
+    fontSize: 14,
     color: colors.textSecondary,
-    marginBottom: 10,
+    marginBottom: 12,
+    fontWeight: '400',
     lineHeight: 20,
-    letterSpacing: -0.24, // Apple's SF Pro has tighter letter spacing
   },
   details: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
-    marginTop: 2, // Slight spacing adjustment
   },
   detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 14,
+    marginRight: 16,
     marginBottom: 4,
   },
   detailText: {
-    fontSize: 13, // SF Pro Text size
+    fontSize: 13,
     color: colors.textSecondary,
-    marginLeft: 4, // Tighter spacing
-    fontWeight: '500', // SF Pro Text Medium
-    letterSpacing: -0.08, // Apple's SF Pro has tighter letter spacing
+    marginLeft: 6,
+    fontWeight: '600',
   },
   priority: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,
-    paddingVertical: 3, // Slightly smaller
-    borderRadius: 12, // More rounded for Apple style
-    borderWidth: 0, // Apple typically doesn't use borders here
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    marginBottom: 4,
   },
   priorityText: {
-    fontSize: 12, // SF Pro Text size
-    fontWeight: '600', // SF Pro Text Semibold
+    fontSize: 11,
+    fontWeight: '700',
     marginLeft: 4,
-    letterSpacing: -0.08, // Apple's SF Pro has tighter letter spacing
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
 });

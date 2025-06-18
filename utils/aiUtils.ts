@@ -2,14 +2,12 @@ import { CoreMessage, Task } from '@/types';
 import Constants from 'expo-constants';
 
 // Use environment variables for API keys (fallback to hardcoded for development)
-const OPENROUTER_API_KEY = Constants.expoConfig?.extra?.OPENROUTER_API_KEY || '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';
-const PERPLEXITY_API_KEY = Constants.expoConfig?.extra?.PERPLEXITY_API_KEY || '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';
+const OPENROUTER_API_KEY = Constants.expoConfig?.extra?.OPENROUTER_API_KEY || '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';
+const PERPLEXITY_API_KEY = Constants.expoConfig?.extra?.PERPLEXITY_API_KEY || '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';
 
-
-
-// Updated models for 2025 - using available models
-const GEMINI_MODEL = 'google/gemini-flash-1.5';
-const PERPLEXITY_MODEL = 'llama-3.1-sonar-small-128k-online';
+// Fixed models for 2025
+const GEMINI_MODEL = 'google/gemini-2.5-flash';
+const PERPLEXITY_MODEL = 'sonar';
 
 // Enhanced query classification
 interface QueryClassification {
@@ -17,61 +15,6 @@ interface QueryClassification {
   queryType: 'general' | 'creative' | 'analytical' | 'research' | 'news';
   complexity: 'simple' | 'medium' | 'complex';
   urgency: 'low' | 'medium' | 'high';
-}
-
-// Model configuration for different query types
-interface ModelConfig {
-  primary: string;
-  fallback: string[];
-  maxTokens: number;
-  temperature: number;
-  reasoning?: 'fast' | 'balanced' | 'thorough';
-}
-
-const MODEL_CONFIGS: Record<string, ModelConfig> = {
-  'general': {
-    primary: 'google/gemini-flash-1.5',
-    fallback: ['openai/gpt-4o-mini', 'anthropic/claude-3-haiku'],
-    maxTokens: 2000,
-    temperature: 0.7,
-    reasoning: 'balanced'
-  },
-  'creative': {
-    primary: 'anthropic/claude-3-sonnet',
-    fallback: ['openai/gpt-4o', 'google/gemini-2.5-flash'],
-    maxTokens: 3000,
-    temperature: 0.9,
-    reasoning: 'fast'
-  },
-  'analytical': {
-    primary: 'openai/gpt-4o',
-    fallback: ['anthropic/claude-3-opus', 'google/gemini-2.5-flash'],
-    maxTokens: 2500,
-    temperature: 0.3,
-    reasoning: 'thorough'
-  },
-  'research': {
-    primary: 'anthropic/claude-3-sonnet',
-    fallback: ['openai/gpt-4o', 'google/gemini-2.5-flash'],
-    maxTokens: 3000,
-    temperature: 0.5,
-    reasoning: 'thorough'
-  },
-  'news': {
-    primary: 'sonar',
-    fallback: ['sonar-pro'],
-    maxTokens: 2000,
-    temperature: 0.7,
-    reasoning: 'balanced'
-  }
-};
-
-// Perplexity configuration for different query types
-interface PerplexityConfig {
-  model: string;
-  searchMode?: 'web' | 'academic';
-  reasoningEffort?: 'low' | 'medium' | 'high';
-  maxSources?: number;
 }
 
 // Validate API keys
@@ -152,47 +95,6 @@ const classifyQuery = (query: string): QueryClassification => {
                  query.includes('quick') || query.includes('fast') ? 'medium' : 'low';
 
   return { needsWebSearch, queryType, complexity, urgency };
-};
-
-// Get Perplexity configuration based on query
-const getPerplexityConfig = (query: string): PerplexityConfig => {
-  // Academic queries
-  if (query.match(/research|study|paper|academic|scientific|journal/i)) {
-    return {
-      model: 'sonar',
-      searchMode: 'academic',
-      reasoningEffort: 'high',
-      maxSources: 8
-    };
-  }
-  
-  // Breaking news and current events
-  if (query.match(/news|breaking|latest|current|today|happening|live/i)) {
-    return {
-      model: 'sonar',
-      searchMode: 'web',
-      reasoningEffort: 'medium',
-      maxSources: 6
-    };
-  }
-  
-  // Social media and trending topics
-  if (query.match(/trending|viral|social|twitter|reddit|discussion/i)) {
-    return {
-      model: 'sonar',
-      searchMode: 'web',
-      reasoningEffort: 'medium',
-      maxSources: 8
-    };
-  }
-  
-  // Default configuration for general queries
-  return {
-    model: 'sonar',
-    searchMode: 'web',
-    reasoningEffort: 'medium',
-    maxSources: 6
-  };
 };
 
 // Enhanced error handling
@@ -284,7 +186,7 @@ const handleAIError = (error: any, service: 'openrouter' | 'perplexity'): AIErro
 // Retry logic with exponential backoff
 const withRetry = async <T>(
   fn: () => Promise<T>,
-  maxRetries: number = 3,
+  maxRetries: number = 2,
   baseDelay: number = 1000
 ): Promise<T> => {
   let lastError: Error;
@@ -301,7 +203,7 @@ const withRetry = async <T>(
       }
       
       // Exponential backoff with jitter
-      const delay = baseDelay * Math.pow(2, i) + Math.random() * 1000;
+      const delay = baseDelay * Math.pow(2, i) + Math.random() * 500;
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
@@ -344,8 +246,6 @@ const callGeminiAI = async (
   onStream?: (chunk: string) => void
 ): Promise<string> => {
   try {
-    const config = MODEL_CONFIGS[classification.queryType] || MODEL_CONFIGS['general'];
-    
     // Add current date/time context to system message
     const enhancedMessages = messages.map((msg, index) => {
       if (index === 0 && msg.role === 'system') {
@@ -370,8 +270,8 @@ When users ask about "today", "now", "current time", etc., use this information.
     const requestBody = {
       model: GEMINI_MODEL,
       messages: enhancedMessages,
-      max_tokens: config.maxTokens,
-      temperature: config.temperature,
+      max_tokens: 2000,
+      temperature: 0.7,
       stream: false
     };
 
@@ -381,9 +281,7 @@ When users ask about "today", "now", "current time", etc., use this information.
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'HTTP-Referer': 'https://expo.dev',
-        'X-Title': 'Jarva Assistant App',
-        'OR-Site-URL': 'https://expo.dev',
-        'OR-App-Name': 'Jarva Assistant'
+        'X-Title': 'Jarva Assistant App'
       },
       body: JSON.stringify(requestBody),
     });
@@ -394,8 +292,7 @@ When users ask about "today", "now", "current time", etc., use this information.
         status: response.status,
         statusText: response.statusText,
         error: errorText,
-        model: GEMINI_MODEL,
-        url: response.url
+        model: GEMINI_MODEL
       });
       throw handleAIError({ status: response.status, message: errorText }, 'openrouter');
     }
@@ -425,8 +322,6 @@ const callPerplexityAI = async (
   onStream?: (chunk: string) => void
 ): Promise<string> => {
   try {
-    const config = getPerplexityConfig(typeof messages[messages.length - 1].content === 'string' ? messages[messages.length - 1].content as string : '');
-    
     // Prepare messages for Perplexity - use only the last user message and system message
     const systemMessage = messages.find(msg => msg.role === 'system');
     const lastUserMessage = [...messages].reverse().find(msg => msg.role === 'user');
@@ -449,7 +344,6 @@ CURRENT DATE & TIME CONTEXT:
 - ISO Date: ${currentDateTime.isoDate}
 
 Query Type: ${classification.queryType}
-Search Mode: ${config.searchMode}
 
 Use web search to provide current, accurate information. Always cite your sources when possible.`
       });
@@ -457,22 +351,14 @@ Use web search to provide current, accurate information. Always cite your source
     
     perplexityMessages.push(lastUserMessage);
 
-    const requestBody: any = {
+    // Simplified request body - only use supported parameters
+    const requestBody = {
       model: PERPLEXITY_MODEL,
       messages: perplexityMessages,
       max_tokens: 2000,
       temperature: 0.7,
       stream: false
     };
-
-    // Add search-specific parameters if available
-    if (config.searchMode) {
-      requestBody.search_mode = config.searchMode;
-    }
-    
-    if (config.reasoningEffort) {
-      requestBody.reasoning_effort = config.reasoningEffort;
-    }
 
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
@@ -490,8 +376,7 @@ Use web search to provide current, accurate information. Always cite your source
         status: response.status,
         statusText: response.statusText,
         error: errorText,
-        model: PERPLEXITY_MODEL,
-        url: response.url
+        model: PERPLEXITY_MODEL
       });
       
       // Fallback to Gemini if Perplexity fails

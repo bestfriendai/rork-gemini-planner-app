@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity, Platform } from 'react-native';
 import { Plus } from 'lucide-react-native';
-import { shadows } from '@/utils/shadowUtils';
 import { useTaskStore } from '@/store/taskStore';
 import { TaskItem } from '@/components/TaskItem';
 import { EmptyState } from '@/components/EmptyState';
@@ -105,6 +104,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    ...shadows.large,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
 });
