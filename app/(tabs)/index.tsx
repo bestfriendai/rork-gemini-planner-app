@@ -183,7 +183,7 @@ export default function AssistantScreen() {
             <EmptyState
               title="Jarva AI Assistant"
               message="Your intelligent companion for productivity, planning, and getting things done. Ask me anything!"
-              icon={<Zap size={64} color={colors.primary} />}
+              icon={<Zap size={72} color={colors.primary} />}
             />
             <QuickActions onAction={handleQuickAction} />
           </View>
@@ -209,7 +209,7 @@ export default function AssistantScreen() {
             onPress={handleAddExtractedTasks}
           >
             <View style={styles.taskPromptContent}>
-              <ListPlus size={18} color={colors.primary} />
+              <ListPlus size={20} color={colors.primary} />
               <Text style={styles.taskPromptText}>
                 Add {extractedTasks.length} task{extractedTasks.length > 1 ? 's' : ''} to your planner
               </Text>
@@ -236,25 +236,25 @@ const styles = StyleSheet.create({
   },
   messageList: {
     padding: 16,
-    paddingBottom: 100,
+    paddingBottom: 120,
   },
   taskPrompt: {
     margin: 16,
     backgroundColor: colors.surface,
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: colors.border,
   },
   taskPromptContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    padding: 20,
     justifyContent: 'center',
   },
   taskPromptText: {
     color: colors.text,
     fontWeight: '600',
-    marginLeft: 8,
-    fontSize: 14,
+    marginLeft: 12,
+    fontSize: 16,
   },
 });

@@ -90,9 +90,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
 
   const getMicIcon = () => {
     if (Platform.OS === 'web') {
-      return isListening ? <MicOff size={18} color={colors.text} /> : <Mic size={18} color={colors.textSecondary} />;
+      return isListening ? <MicOff size={20} color={colors.error} /> : <Mic size={20} color={colors.textSecondary} />;
     } else {
-      return <Mic size={18} color={colors.textSecondary} />;
+      return <Mic size={20} color={colors.textSecondary} />;
     }
   };
 
@@ -128,7 +128,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
             {isLoading ? (
               <ActivityIndicator size="small" color={colors.textSecondary} />
             ) : (
-              <Send size={18} color={message.trim() ? colors.primary : colors.textTertiary} />
+              <Send size={20} color={message.trim() ? colors.primary : colors.textTertiary} />
             )}
           </TouchableOpacity>
         </View>
@@ -216,54 +216,60 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: Platform.OS === 'ios' ? 34 : 16,
+    paddingBottom: Platform.OS === 'ios' ? 100 : 84,
     paddingHorizontal: 16,
     paddingTop: 16,
     backgroundColor: colors.background,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopWidth: 0.5,
+    borderTopColor: colors.borderLight,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     backgroundColor: colors.surface,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    borderRadius: 24,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
     borderWidth: 1,
     borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   input: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 16,
     color: colors.text,
-    maxHeight: 100,
+    maxHeight: 120,
     marginRight: 12,
-    paddingVertical: 2,
-    fontWeight: '500',
+    paddingVertical: 0,
+    fontWeight: '400',
+    lineHeight: 22,
   },
   micButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     marginRight: 8,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.surfaceSecondary,
   },
   micButtonActive: {
-    backgroundColor: colors.error,
+    backgroundColor: colors.error + '20',
   },
   sendButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: colors.primary,
   },
   sendButtonDisabled: {
-    opacity: 0.5,
+    backgroundColor: colors.surfaceSecondary,
   },
   modalOverlay: {
     flex: 1,

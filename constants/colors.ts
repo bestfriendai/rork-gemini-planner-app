@@ -1,15 +1,15 @@
 export const colors = {
-  // Core dark theme - 2030 minimal style
-  background: '#0B0B0F',
-  surface: '#141419',
-  surfaceSecondary: '#1C1C23',
-  surfaceTertiary: '#25252D',
+  // Core dark theme - Ultra minimal 2030 style
+  background: '#000000',
+  surface: '#0A0A0A',
+  surfaceSecondary: '#111111',
+  surfaceTertiary: '#1A1A1A',
   
   // Primary - Clean blue
-  primary: '#2563EB',
-  primaryLight: '#3B82F6',
-  primaryDark: '#1D4ED8',
-  primaryMuted: 'rgba(37, 99, 235, 0.1)',
+  primary: '#0066FF',
+  primaryLight: '#3385FF',
+  primaryDark: '#0052CC',
+  primaryMuted: 'rgba(0, 102, 255, 0.1)',
   
   // Accent - Subtle purple
   accent: '#8B5CF6',
@@ -19,20 +19,20 @@ export const colors = {
   
   // Text hierarchy
   text: '#FFFFFF',
-  textSecondary: '#A1A1AA',
-  textTertiary: '#71717A',
-  textQuaternary: '#52525B',
-  textMuted: '#3F3F46',
+  textSecondary: '#999999',
+  textTertiary: '#666666',
+  textQuaternary: '#444444',
+  textMuted: '#333333',
   
   // Semantic colors
-  success: '#10B981',
-  warning: '#F59E0B',
-  error: '#EF4444',
+  success: '#00D26A',
+  warning: '#FF9500',
+  error: '#FF3B30',
   
   // Borders and dividers
-  border: 'rgba(161, 161, 170, 0.1)',
-  borderLight: 'rgba(161, 161, 170, 0.05)',
-  borderHeavy: 'rgba(161, 161, 170, 0.2)',
+  border: 'rgba(255, 255, 255, 0.08)',
+  borderLight: 'rgba(255, 255, 255, 0.04)',
+  borderHeavy: 'rgba(255, 255, 255, 0.12)',
   
   // Interactive states
   hover: 'rgba(255, 255, 255, 0.05)',
@@ -40,6 +40,6 @@ export const colors = {
   disabled: 'rgba(255, 255, 255, 0.3)',
   
   // Glass effects
-  glass: 'rgba(20, 20, 25, 0.8)',
-  glassLight: 'rgba(28, 28, 35, 0.6)',
+  glass: 'rgba(10, 10, 10, 0.9)',
+  glassLight: 'rgba(17, 17, 17, 0.8)',
 };
