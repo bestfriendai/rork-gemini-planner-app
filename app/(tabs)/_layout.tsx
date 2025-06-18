@@ -14,45 +14,46 @@ export default function TabLayout() {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
           borderTopWidth: 1,
-          paddingTop: 10,
-          paddingBottom: Platform.OS === 'ios' ? 32 : 16,
-          height: Platform.OS === 'ios' ? 92 : 72,
+          paddingTop: 12,
+          paddingBottom: Platform.OS === 'ios' ? 34 : 18,
+          height: Platform.OS === 'ios' ? 96 : 76,
           position: 'absolute',
           bottom: 0,
           left: 0,
           right: 0,
           shadowColor: '#000',
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.15,
-          shadowRadius: 12,
-          elevation: 12,
+          shadowOffset: { width: 0, height: -8 },
+          shadowOpacity: 0.25,
+          shadowRadius: 16,
+          elevation: 16,
         },
         headerStyle: {
           backgroundColor: colors.background,
           borderBottomWidth: 1,
           borderBottomColor: colors.border,
           elevation: 0,
-          shadowOpacity: 0.1,
+          shadowOpacity: 0.15,
+          height: 100,
         },
         headerShadowVisible: true,
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: '700',
-          marginTop: 6,
+          marginTop: 8,
           letterSpacing: 0.5,
           textTransform: 'uppercase',
         },
         headerTitleStyle: {
           fontWeight: '700',
-          fontSize: 18,
+          fontSize: 20,
           color: colors.text,
         },
         tabBarItemStyle: {
-          paddingTop: 8,
-          paddingBottom: 6,
+          paddingTop: 10,
+          paddingBottom: 8,
         },
         tabBarIconStyle: {
-          marginBottom: 4,
+          marginBottom: 6,
         },
       }}
     >
@@ -61,8 +62,8 @@ export default function TabLayout() {
         options={{
           title: "Assistant",
           tabBarLabel: "Assistant",
-          tabBarIcon: ({ color, size }) => <MessageSquare size={26} color={color} strokeWidth={2} />,
-          headerTitle: "Jarva",
+          tabBarIcon: ({ color, size }) => <MessageSquare size={28} color={color} strokeWidth={2} />,
+          headerTitle: "Jarva AI",
         }}
       />
       <Tabs.Screen
@@ -70,7 +71,7 @@ export default function TabLayout() {
         options={{
           title: "Planner",
           tabBarLabel: "Planner",
-          tabBarIcon: ({ color, size }) => <CalendarDays size={26} color={color} strokeWidth={2} />,
+          tabBarIcon: ({ color, size }) => <CalendarDays size={28} color={color} strokeWidth={2} />,
         }}
       />
       <Tabs.Screen
@@ -78,7 +79,7 @@ export default function TabLayout() {
         options={{
           title: "Tasks",
           tabBarLabel: "Tasks",
-          tabBarIcon: ({ color, size }) => <ListTodo size={26} color={color} strokeWidth={2} />,
+          tabBarIcon: ({ color, size }) => <ListTodo size={28} color={color} strokeWidth={2} />,
         }}
       />
       <Tabs.Screen
@@ -86,7 +87,7 @@ export default function TabLayout() {
         options={{
           title: "Settings",
           tabBarLabel: "Settings",
-          tabBarIcon: ({ color, size }) => <Settings size={26} color={color} strokeWidth={2} />,
+          tabBarIcon: ({ color, size }) => <Settings size={28} color={color} strokeWidth={2} />,
         }}
       />
     </Tabs>

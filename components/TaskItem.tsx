@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
-import { Check, Clock, Flag } from 'lucide-react-native';
+import { Check, Clock, Flag, MoreHorizontal } from 'lucide-react-native';
 import { Task } from '@/types';
 import { useTaskStore } from '@/store/taskStore';
 import { colors } from '@/constants/colors';
@@ -15,6 +15,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const checkAnim = useRef(new Animated.Value(task.completed ? 1 : 0)).current;
 
   useEffect(() => {
     Animated.parallel([
@@ -30,6 +31,15 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
       }),
     ]).start();
   }, []);
+
+  useEffect(() => {
+    Animated.spring(checkAnim, {
+      toValue: task.completed ? 1 : 0,
+      tension: 100,
+      friction: 8,
+      useNativeDriver: true,
+    }).start();
+  }, [task.completed]);
 
   const handleToggleComplete = () => {
     Animated.sequence([
@@ -49,21 +59,15 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
   };
 
   const priorityColors = {
-    low: colors.surfaceSecondary,
-    medium: colors.warning + '20',
-    high: colors.error + '20',
-  };
-
-  const priorityTextColors = {
-    low: colors.primary,
+    low: colors.accent4,
     medium: colors.warning,
     high: colors.error,
   };
 
-  const priorityBorderColors = {
-    low: colors.primary + '30',
-    medium: colors.warning + '30',
-    high: colors.error + '30',
+  const priorityBgColors = {
+    low: colors.accent4 + '20',
+    medium: colors.warning + '20',
+    high: colors.error + '20',
   };
 
   return (
@@ -79,7 +83,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
       ]}
     >
       <TouchableOpacity 
-        style={styles.container} 
+        style={[styles.container, task.completed && styles.completedContainer]} 
         onPress={onPress}
         activeOpacity={0.8}
       >
@@ -88,24 +92,44 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
           onPress={handleToggleComplete}
           activeOpacity={0.8}
         >
-          {task.completed ? (
-            <Check size={16} color={colors.text} strokeWidth={2.5} />
-          ) : (
-            <View style={styles.checkboxEmpty} />
-          )}
+          <Animated.View
+            style={[
+              styles.checkIcon,
+              {
+                opacity: checkAnim,
+                transform: [
+                  {
+                    scale: checkAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 1],
+                    }),
+                  },
+                ],
+              },
+            ]}
+          >
+            <Check size={16} color={colors.text} strokeWidth={3} />
+          </Animated.View>
+          {!task.completed && <View style={styles.checkboxEmpty} />}
         </TouchableOpacity>
         
         <View style={styles.content}>
-          <Text 
-            style={[styles.title, task.completed && styles.completedTitle]}
-            numberOfLines={2}
-          >
-            {task.title}
-          </Text>
+          <View style={styles.header}>
+            <Text 
+              style={[styles.title, task.completed && styles.completedTitle]}
+              numberOfLines={2}
+            >
+              {task.title}
+            </Text>
+            
+            <TouchableOpacity style={styles.moreButton} activeOpacity={0.7}>
+              <MoreHorizontal size={16} color={colors.textTertiary} strokeWidth={2} />
+            </TouchableOpacity>
+          </View>
           
           {task.description ? (
             <Text 
-              style={styles.description}
+              style={[styles.description, task.completed && styles.completedDescription]}
               numberOfLines={2}
             >
               {task.description}
@@ -123,14 +147,14 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
             <View style={[
               styles.priority, 
               { 
-                backgroundColor: priorityColors[task.priority],
-                borderColor: priorityBorderColors[task.priority],
+                backgroundColor: priorityBgColors[task.priority],
+                borderColor: priorityColors[task.priority] + '40',
               }
             ]}>
-              <Flag size={12} color={priorityTextColors[task.priority]} strokeWidth={2} />
+              <Flag size={12} color={priorityColors[task.priority]} strokeWidth={2} />
               <Text style={[
                 styles.priorityText, 
-                { color: priorityTextColors[task.priority] }
+                { color: priorityColors[task.priority] }
               ]}>
                 {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
               </Text>
@@ -145,69 +169,90 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    padding: 18,
+    padding: 20,
     backgroundColor: colors.surface,
-    borderRadius: 12,
+    borderRadius: 16,
     marginBottom: 12,
     borderWidth: 1,
     borderColor: colors.border,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  completedContainer: {
+    opacity: 0.7,
+    backgroundColor: colors.surfaceSecondary,
   },
   checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    marginRight: 14,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    marginRight: 16,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 2,
+    borderWidth: 2,
+    borderColor: colors.primary,
   },
   checkboxChecked: {
     backgroundColor: colors.success,
-    borderWidth: 0,
+    borderColor: colors.success,
+  },
+  checkIcon: {
+    position: 'absolute',
   },
   checkboxEmpty: {
     width: '100%',
     height: '100%',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: colors.primary,
+    borderRadius: 14,
   },
   content: {
     flex: 1,
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
   title: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 6,
-    lineHeight: 22,
+    lineHeight: 24,
+    flex: 1,
+    marginRight: 8,
   },
   completedTitle: {
     textDecorationLine: 'line-through',
     color: colors.textSecondary,
   },
+  moreButton: {
+    padding: 4,
+    borderRadius: 8,
+    backgroundColor: colors.surfaceSecondary,
+  },
   description: {
-    fontSize: 14,
+    fontSize: 15,
     color: colors.textSecondary,
     marginBottom: 12,
     fontWeight: '400',
-    lineHeight: 20,
+    lineHeight: 22,
+  },
+  completedDescription: {
+    color: colors.textTertiary,
   },
   details: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
+    gap: 12,
   },
   detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 16,
-    marginBottom: 4,
   },
   detailText: {
     fontSize: 13,
@@ -218,11 +263,10 @@ const styles = StyleSheet.create({
   priority: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
     borderWidth: 1,
-    marginBottom: 4,
   },
   priorityText: {
     fontSize: 11,

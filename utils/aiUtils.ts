@@ -351,7 +351,7 @@ Use web search to provide current, accurate information. Always cite your source
     
     perplexityMessages.push(lastUserMessage);
 
-    // Simplified request body - only use supported parameters
+    // Simplified request body - only use supported parameters for sonar model
     const requestBody = {
       model: PERPLEXITY_MODEL,
       messages: perplexityMessages,

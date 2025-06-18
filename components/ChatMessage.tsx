@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
-import { Volume2, User, Bot } from 'lucide-react-native';
+import { Volume2, User, Bot, Copy, Share } from 'lucide-react-native';
 import { Message } from '@/types';
 import { colors } from '@/constants/colors';
 
@@ -13,21 +13,38 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
   const isUser = message.role === 'user';
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
+  const scaleAnim = useRef(new Animated.Value(0.95)).current;
 
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 400,
+        duration: 500,
         useNativeDriver: true,
       }),
       Animated.timing(slideAnim, {
         toValue: 0,
-        duration: 400,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        tension: 100,
+        friction: 8,
         useNativeDriver: true,
       }),
     ]).start();
   }, []);
+
+  const handleCopy = () => {
+    // Copy functionality would go here
+    console.log('Copy message:', message.content);
+  };
+
+  const handleShare = () => {
+    // Share functionality would go here
+    console.log('Share message:', message.content);
+  };
 
   return (
     <Animated.View 
@@ -36,15 +53,18 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
         isUser ? styles.userContainer : styles.assistantContainer,
         {
           opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }],
+          transform: [
+            { translateY: slideAnim },
+            { scale: scaleAnim },
+          ],
         },
       ]}
     >
       <View style={[styles.avatar, isUser ? styles.userAvatar : styles.assistantAvatar]}>
         {isUser ? (
-          <User size={16} color={colors.text} strokeWidth={2} />
+          <User size={18} color={colors.text} strokeWidth={2} />
         ) : (
-          <Bot size={16} color={colors.primary} strokeWidth={2} />
+          <Bot size={18} color={colors.primary} strokeWidth={2} />
         )}
       </View>
 
@@ -55,30 +75,42 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
         
         {isStreaming && (
           <View style={styles.streamingIndicator}>
-            <View style={styles.streamingDot} />
+            <Animated.View style={styles.streamingDot} />
             <Text style={styles.streamingText}>Thinking...</Text>
           </View>
         )}
         
-        {!isStreaming && !isUser && (
-          <TouchableOpacity style={styles.speakButton} activeOpacity={0.7}>
-            <Volume2 size={14} color={colors.textTertiary} strokeWidth={2} />
-          </TouchableOpacity>
+        {!isStreaming && (
+          <View style={styles.messageActions}>
+            <Text style={[styles.timestamp, isUser ? styles.userTimestamp : styles.assistantTimestamp]}>
+              {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </Text>
+            
+            <View style={styles.actionButtons}>
+              {!isUser && (
+                <TouchableOpacity style={styles.actionButton} onPress={() => {}} activeOpacity={0.7}>
+                  <Volume2 size={14} color={colors.textTertiary} strokeWidth={2} />
+                </TouchableOpacity>
+              )}
+              
+              <TouchableOpacity style={styles.actionButton} onPress={handleCopy} activeOpacity={0.7}>
+                <Copy size={14} color={colors.textTertiary} strokeWidth={2} />
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.actionButton} onPress={handleShare} activeOpacity={0.7}>
+                <Share size={14} color={colors.textTertiary} strokeWidth={2} />
+              </TouchableOpacity>
+            </View>
+          </View>
         )}
       </View>
-      
-      {!isStreaming && (
-        <Text style={[styles.timestamp, isUser ? styles.userTimestamp : styles.assistantTimestamp]}>
-          {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </Text>
-      )}
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 12,
+    marginVertical: 16,
     maxWidth: '85%',
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -91,50 +123,55 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 10,
-    marginTop: 2,
-    borderWidth: 1,
+    marginHorizontal: 12,
+    marginTop: 4,
+    borderWidth: 2,
     borderColor: colors.border,
-  },
-  userAvatar: {
-    backgroundColor: colors.surfaceSecondary,
-  },
-  assistantAvatar: {
-    backgroundColor: colors.primaryMuted,
-    borderColor: colors.primary + '30',
-  },
-  bubble: {
-    borderRadius: 20,
-    flex: 1,
-    position: 'relative',
-    paddingHorizontal: 18,
-    paddingVertical: 14,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  userAvatar: {
+    backgroundColor: colors.surfaceSecondary,
+    borderColor: colors.primary + '40',
+  },
+  assistantAvatar: {
+    backgroundColor: colors.primaryMuted,
+    borderColor: colors.primary + '60',
+  },
+  bubble: {
+    borderRadius: 24,
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
   },
   userBubble: {
     backgroundColor: colors.primary,
-    marginLeft: 40,
+    marginLeft: 50,
     borderBottomRightRadius: 8,
   },
   assistantBubble: {
     backgroundColor: colors.surface,
-    marginRight: 40,
+    marginRight: 50,
     borderWidth: 1,
     borderColor: colors.border,
     borderBottomLeftRadius: 8,
   },
   messageText: {
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 16,
+    lineHeight: 24,
     fontWeight: '400',
   },
   userText: {
@@ -143,43 +180,54 @@ const styles = StyleSheet.create({
   assistantText: {
     color: colors.text,
   },
+  messageActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 12,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
   timestamp: {
-    fontSize: 11,
-    marginTop: 6,
+    fontSize: 12,
     fontWeight: '500',
-    position: 'absolute',
-    bottom: -18,
+    opacity: 0.7,
   },
   userTimestamp: {
-    color: colors.textTertiary,
-    right: 10,
+    color: colors.text,
   },
   assistantTimestamp: {
-    color: colors.textTertiary,
-    left: 10,
+    color: colors.textSecondary,
   },
-  speakButton: {
-    position: 'absolute',
-    bottom: 10,
-    right: 12,
-    padding: 6,
-    borderRadius: 10,
+  actionButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  actionButton: {
+    padding: 8,
+    borderRadius: 12,
     backgroundColor: colors.surfaceSecondary,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   streamingIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 12,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
   streamingDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     backgroundColor: colors.primary,
     marginRight: 8,
   },
   streamingText: {
-    fontSize: 12,
+    fontSize: 13,
     color: colors.textSecondary,
     fontStyle: 'italic',
     fontWeight: '500',
