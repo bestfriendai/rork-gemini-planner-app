@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity, Platform } from 'react-native';
 import { Plus } from 'lucide-react-native';
 import { useTaskStore } from '@/store/taskStore';
 import { TaskItem } from '@/components/TaskItem';

@@ -6,8 +6,71 @@ const OPENROUTER_API_KEY = Constants.expoConfig?.extra?.OPENROUTER_API_KEY || 's
 const PERPLEXITY_API_KEY = Constants.expoConfig?.extra?.PERPLEXITY_API_KEY || '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';
 
 // Updated models for 2025 - using available models
-const GEMINI_MODEL = 'google/gemini-2.5-flash-lite-preview-06-17';
-const PERPLEXITY_MODEL = 'llama-3.1-sonar-small-128k-online';
+const GEMINI_MODEL = 'google/gemini-2.0-flash-thinking-exp';
+const PERPLEXITY_MODEL = 'llama-3.1-sonar-large-128k-online';
+
+// Enhanced query classification
+interface QueryClassification {
+  needsWebSearch: boolean;
+  queryType: 'general' | 'creative' | 'analytical' | 'research' | 'news';
+  complexity: 'simple' | 'medium' | 'complex';
+  urgency: 'low' | 'medium' | 'high';
+}
+
+// Model configuration for different query types
+interface ModelConfig {
+  primary: string;
+  fallback: string[];
+  maxTokens: number;
+  temperature: number;
+  reasoning?: 'fast' | 'balanced' | 'thorough';
+}
+
+const MODEL_CONFIGS: Record<string, ModelConfig> = {
+  'general': {
+    primary: 'google/gemini-2.0-flash-thinking-exp',
+    fallback: ['openai/gpt-4o-mini', 'anthropic/claude-3-5-haiku'],
+    maxTokens: 2000,
+    temperature: 0.7,
+    reasoning: 'balanced'
+  },
+  'creative': {
+    primary: 'anthropic/claude-3-5-sonnet',
+    fallback: ['openai/gpt-4o', 'google/gemini-1.5-pro'],
+    maxTokens: 3000,
+    temperature: 0.9,
+    reasoning: 'fast'
+  },
+  'analytical': {
+    primary: 'openai/gpt-4o',
+    fallback: ['anthropic/claude-3-opus', 'google/gemini-1.5-pro'],
+    maxTokens: 2500,
+    temperature: 0.3,
+    reasoning: 'thorough'
+  },
+  'research': {
+    primary: 'anthropic/claude-3-5-sonnet',
+    fallback: ['openai/gpt-4o', 'google/gemini-1.5-pro'],
+    maxTokens: 3000,
+    temperature: 0.5,
+    reasoning: 'thorough'
+  },
+  'news': {
+    primary: 'llama-3.1-sonar-large-128k-online',
+    fallback: ['llama-3.1-sonar-small-128k-online'],
+    maxTokens: 2000,
+    temperature: 0.7,
+    reasoning: 'balanced'
+  }
+};
+
+// Perplexity configuration for different query types
+interface PerplexityConfig {
+  model: string;
+  searchMode?: 'web' | 'academic' | 'news' | 'social';
+  reasoningEffort?: 'fast' | 'balanced' | 'thorough';
+  maxSources?: number;
+}
 
 // Validate API keys
 const validateApiKeys = () => {
@@ -44,7 +107,7 @@ const getCurrentDateTime = () => {
 };
 
 // Enhanced query classification
-const needsWebSearch = (query: string): boolean => {
+const classifyQuery = (query: string): QueryClassification => {
   const webSearchKeywords = [
     'current', 'latest', 'recent', 'today', 'news', 'weather', 'stock', 'price',
     'what is happening', 'what happened', 'search for', 'find information',
@@ -53,9 +116,195 @@ const needsWebSearch = (query: string): boolean => {
     'real-time', 'current events', 'happening now'
   ];
   
-  return webSearchKeywords.some(keyword => 
+  const creativeKeywords = [
+    'write', 'create', 'generate', 'story', 'poem', 'creative', 'imagine', 'design'
+  ];
+  
+  const analyticalKeywords = [
+    'analyze', 'compare', 'evaluate', 'calculate', 'solve', 'explain', 'breakdown'
+  ];
+  
+  const researchKeywords = [
+    'research', 'study', 'investigate', 'explore', 'academic', 'scientific', 'paper'
+  ];
+
+  const needsWebSearch = webSearchKeywords.some(keyword => 
     query.toLowerCase().includes(keyword.toLowerCase())
   );
+  
+  let queryType: QueryClassification['queryType'] = 'general';
+  if (creativeKeywords.some(k => query.toLowerCase().includes(k))) {
+    queryType = 'creative';
+  } else if (analyticalKeywords.some(k => query.toLowerCase().includes(k))) {
+    queryType = 'analytical';
+  } else if (researchKeywords.some(k => query.toLowerCase().includes(k))) {
+    queryType = 'research';
+  } else if (needsWebSearch) {
+    queryType = 'news';
+  }
+  
+  const complexity = query.length > 200 ? 'complex' : 
+                    query.length > 50 ? 'medium' : 'simple';
+  
+  const urgency = query.includes('urgent') || query.includes('asap') ? 'high' :
+                 query.includes('quick') || query.includes('fast') ? 'medium' : 'low';
+
+  return { needsWebSearch, queryType, complexity, urgency };
+};
+
+// Get Perplexity configuration based on query
+const getPerplexityConfig = (query: string): PerplexityConfig => {
+  // Academic queries
+  if (query.match(/research|study|paper|academic|scientific|journal/i)) {
+    return {
+      model: 'llama-3.1-sonar-large-128k-online',
+      searchMode: 'academic',
+      reasoningEffort: 'thorough',
+      maxSources: 8
+    };
+  }
+  
+  // Breaking news and current events
+  if (query.match(/news|breaking|latest|current|today|happening|live/i)) {
+    return {
+      model: 'llama-3.1-sonar-small-128k-online',
+      searchMode: 'news',
+      reasoningEffort: 'fast',
+      maxSources: 6
+    };
+  }
+  
+  // Social media and trending topics
+  if (query.match(/trending|viral|social|twitter|reddit|discussion/i)) {
+    return {
+      model: 'llama-3.1-sonar-large-128k-online',
+      searchMode: 'social',
+      reasoningEffort: 'balanced',
+      maxSources: 8
+    };
+  }
+  
+  // Default configuration for general queries
+  return {
+    model: 'llama-3.1-sonar-large-128k-online',
+    searchMode: 'web',
+    reasoningEffort: 'balanced',
+    maxSources: 6
+  };
+};
+
+// Enhanced error handling
+class AIError extends Error {
+  constructor(
+    message: string,
+    public service: 'openrouter' | 'perplexity',
+    public statusCode?: number,
+    public retryable: boolean = false
+  ) {
+    super(message);
+    this.name = 'AIError';
+  }
+}
+
+const handleAIError = (error: any, service: 'openrouter' | 'perplexity'): AIError => {
+  if (error instanceof AIError) {
+    return error;
+  }
+  
+  // Network errors
+  if (error.name === 'TypeError' && error.message.includes('fetch')) {
+    return new AIError(
+      'Network connection failed. Please check your internet connection.',
+      service,
+      undefined,
+      true
+    );
+  }
+  
+  // Timeout errors
+  if (error.name === 'AbortError' || error.message.includes('timeout')) {
+    return new AIError(
+      'Request timed out. The service may be experiencing high load.',
+      service,
+      408,
+      true
+    );
+  }
+  
+  // Rate limiting
+  if (error.status === 429) {
+    return new AIError(
+      'Rate limit exceeded. Please wait before making another request.',
+      service,
+      429,
+      true
+    );
+  }
+  
+  // Authentication errors
+  if (error.status === 401 || error.status === 403) {
+    return new AIError(
+      'Authentication failed. Please check your API key configuration.',
+      service,
+      error.status,
+      false
+    );
+  }
+  
+  // Server errors
+  if (error.status >= 500) {
+    return new AIError(
+      `${service} server error. Please try again later.`,
+      service,
+      error.status,
+      true
+    );
+  }
+  
+  // Client errors
+  if (error.status >= 400) {
+    return new AIError(
+      `Invalid request to ${service}. Please check your input.`,
+      service,
+      error.status,
+      false
+    );
+  }
+  
+  return new AIError(
+    `Unexpected error with ${service}: ${error.message}`,
+    service,
+    undefined,
+    false
+  );
+};
+
+// Retry logic with exponential backoff
+const withRetry = async <T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 3,
+  baseDelay: number = 1000
+): Promise<T> => {
+  let lastError: Error;
+  
+  for (let i = 0; i <= maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error as Error;
+      const aiError = error as AIError;
+      
+      if (i === maxRetries || !aiError.retryable) {
+        throw error;
+      }
+      
+      // Exponential backoff with jitter
+      const delay = baseDelay * Math.pow(2, i) + Math.random() * 1000;
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  
+  throw lastError!;
 };
 
 export const callAI = async (
@@ -67,18 +316,21 @@ export const callAI = async (
     const lastMessage = messages[messages.length - 1];
     const userQuery = typeof lastMessage.content === 'string' ? lastMessage.content : '';
     
-    // Check if we need web search
-    const useWebSearch = needsWebSearch(userQuery);
+    // Classify the query to determine the best approach
+    const classification = classifyQuery(userQuery);
     
-    if (useWebSearch) {
-      return await callPerplexityAI(messages, currentDateTime, onStream);
+    if (classification.needsWebSearch) {
+      return await withRetry(() => callPerplexityAI(messages, currentDateTime, classification, onStream));
     } else {
-      return await callGeminiAI(messages, currentDateTime, onStream);
+      return await withRetry(() => callGeminiAI(messages, currentDateTime, classification, onStream));
     }
   } catch (error) {
     console.error('Error calling AI:', error);
     
-    // Return a helpful error message instead of throwing
+    if (error instanceof AIError) {
+      return `I apologize, but I'm experiencing some technical difficulties: ${error.message}`;
+    }
+    
     return "I apologize, but I'm having trouble connecting to my AI services right now. This could be due to network issues or temporary service unavailability. Please check your internet connection and try again in a moment.";
   }
 };
@@ -86,9 +338,12 @@ export const callAI = async (
 const callGeminiAI = async (
   messages: CoreMessage[], 
   currentDateTime: any,
+  classification: QueryClassification,
   onStream?: (chunk: string) => void
 ): Promise<string> => {
   try {
+    const config = MODEL_CONFIGS[classification.queryType] || MODEL_CONFIGS['general'];
+    
     // Add current date/time context to system message
     const enhancedMessages = messages.map((msg, index) => {
       if (index === 0 && msg.role === 'system') {
@@ -102,11 +357,28 @@ CURRENT DATE & TIME CONTEXT:
 - Timezone: ${currentDateTime.timezone}
 - ISO Date: ${currentDateTime.isoDate}
 
+Query Classification: ${classification.queryType} (${classification.complexity} complexity, ${classification.urgency} urgency)
+
 When users ask about "today", "now", "current time", etc., use this information.`
         };
       }
       return msg;
     });
+
+    const requestBody = {
+      model: config.primary,
+      models: [config.primary, ...config.fallback],
+      messages: enhancedMessages,
+      max_tokens: config.maxTokens,
+      temperature: config.temperature,
+      stream: false,
+      provider: {
+        allow_fallbacks: true,
+        require_parameters: true,
+        data_collection: 'deny'
+      },
+      route: 'fallback'
+    };
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -115,14 +387,10 @@ When users ask about "today", "now", "current time", etc., use this information.
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'HTTP-Referer': 'https://expo.dev',
         'X-Title': 'Jarva Assistant App',
+        'OR-Site-URL': 'https://expo.dev',
+        'OR-App-Name': 'Jarva Assistant'
       },
-      body: JSON.stringify({
-        model: GEMINI_MODEL,
-        messages: enhancedMessages,
-        max_tokens: 2000,
-        temperature: 0.7,
-        stream: false,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
@@ -131,13 +399,12 @@ When users ask about "today", "now", "current time", etc., use this information.
         status: response.status,
         statusText: response.statusText,
         error: errorText,
-        model: GEMINI_MODEL,
+        model: config.primary,
         url: response.url
       });
-      throw new Error(`OpenRouter API error: ${response.status} - ${response.statusText}`);
+      throw handleAIError({ status: response.status, message: errorText }, 'openrouter');
     }
 
-    // Read response text first to avoid "Already read" error
     const responseText = await response.text();
     try {
       const data = JSON.parse(responseText);
@@ -146,29 +413,31 @@ When users ask about "today", "now", "current time", etc., use this information.
       console.error('Failed to parse JSON response:', { 
         error: jsonError, 
         responseText: responseText.substring(0, 200),
-        status: response.status,
-        headers: Object.fromEntries(response.headers.entries())
+        status: response.status
       });
-      throw new Error(`Invalid JSON response: ${jsonError}`);
+      throw new AIError(`Invalid JSON response: ${jsonError}`, 'openrouter');
     }
   } catch (error) {
     console.error('Gemini AI error:', error);
-    throw error;
+    throw handleAIError(error, 'openrouter');
   }
 };
 
 const callPerplexityAI = async (
   messages: CoreMessage[], 
   currentDateTime: any,
+  classification: QueryClassification,
   onStream?: (chunk: string) => void
 ): Promise<string> => {
   try {
+    const config = getPerplexityConfig(typeof messages[messages.length - 1].content === 'string' ? messages[messages.length - 1].content as string : '');
+    
     // Prepare messages for Perplexity - use only the last user message and system message
     const systemMessage = messages.find(msg => msg.role === 'system');
     const lastUserMessage = [...messages].reverse().find(msg => msg.role === 'user');
     
     if (!lastUserMessage) {
-      throw new Error('No user message found');
+      throw new AIError('No user message found', 'perplexity');
     }
 
     const perplexityMessages: CoreMessage[] = [];
@@ -184,25 +453,38 @@ CURRENT DATE & TIME CONTEXT:
 - Timezone: ${currentDateTime.timezone}
 - ISO Date: ${currentDateTime.isoDate}
 
-Use web search to provide current, accurate information.`
+Query Type: ${classification.queryType}
+Search Mode: ${config.searchMode}
+
+Use web search to provide current, accurate information. Always cite your sources when possible.`
       });
     }
     
     perplexityMessages.push(lastUserMessage);
 
-    const requestBody = {
-      model: PERPLEXITY_MODEL,
+    const requestBody: any = {
+      model: config.model,
       messages: perplexityMessages,
       max_tokens: 2000,
       temperature: 0.7,
       stream: false,
     };
 
+    // Add search-specific parameters if available
+    if (config.searchMode) {
+      requestBody.search_mode = config.searchMode;
+    }
+    
+    if (config.reasoningEffort) {
+      requestBody.reasoning_effort = config.reasoningEffort;
+    }
+
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
+        'User-Agent': 'Jarva-Assistant/1.0'
       },
       body: JSON.stringify(requestBody),
     });
@@ -213,35 +495,48 @@ Use web search to provide current, accurate information.`
         status: response.status,
         statusText: response.statusText,
         error: errorText,
-        model: PERPLEXITY_MODEL,
+        model: config.model,
         url: response.url
       });
       
       // Fallback to Gemini if Perplexity fails
       console.log('Falling back to Gemini AI due to Perplexity error...');
-      return await callGeminiAI(messages, currentDateTime, onStream);
+      return await callGeminiAI(messages, currentDateTime, classification, onStream);
     }
 
-    // Read response text first to avoid "Already read" error
     const responseText = await response.text();
     try {
       const data = JSON.parse(responseText);
-      return data.choices?.[0]?.message?.content || 'No response received from search service';
+      const content = data.choices?.[0]?.message?.content || 'No response received from search service';
+      
+      // Add source information if available
+      if (data.search_results && data.search_results.length > 0) {
+        const sources = data.search_results.slice(0, 3).map((result: any, index: number) => 
+          `[${index + 1}] ${result.title} - ${result.url}`
+        ).join('\n');
+        
+        return `${content}\n\n**Sources:**\n${sources}`;
+      }
+      
+      return content;
     } catch (jsonError) {
       console.error('Failed to parse Perplexity JSON response:', { 
         error: jsonError, 
         responseText: responseText.substring(0, 200),
-        status: response.status,
-        headers: Object.fromEntries(response.headers.entries())
+        status: response.status
       });
-      throw new Error(`Invalid JSON response from Perplexity: ${jsonError}`);
+      throw new AIError(`Invalid JSON response from Perplexity: ${jsonError}`, 'perplexity');
     }
   } catch (error) {
     console.error('Perplexity AI error:', error);
     
-    // Fallback to Gemini if Perplexity fails
-    console.log('Falling back to Gemini AI due to error...');
-    return await callGeminiAI(messages, currentDateTime, onStream);
+    if (error instanceof AIError && error.service === 'perplexity') {
+      // Fallback to Gemini if Perplexity fails
+      console.log('Falling back to Gemini AI due to error...');
+      return await callGeminiAI(messages, currentDateTime, classification, onStream);
+    }
+    
+    throw handleAIError(error, 'perplexity');
   }
 };
 
@@ -272,7 +567,7 @@ export const extractTasksFromAIResponse = (text: string): Task[] => {
       const time = match[3] || undefined;
       const priority = (match[4]?.toLowerCase() || 'medium') as 'low' | 'medium' | 'high';
       
-      if (title) {
+      if (title && title.length > 3) {
         tasks.push({
           id: Math.random().toString(36).substring(2, 9),
           title,
@@ -291,12 +586,12 @@ export const extractTasksFromAIResponse = (text: string): Task[] => {
   // If no structured tasks were found but there's text that might be a task
   if (tasks.length === 0) {
     // Look for sentences that might be tasks
-    const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 0);
+    const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 10);
     
     for (const sentence of sentences) {
       // Check if sentence contains action verbs or time indicators
-      const actionVerbPattern = /\b(go|do|buy|call|meet|work|study|exercise|clean|cook|prepare|finish|start|attend|visit|pick|drop|send|write|read|watch|make)\b/i;
-      if (actionVerbPattern.test(sentence)) {
+      const actionVerbPattern = /\b(go|do|buy|call|meet|work|study|exercise|clean|cook|prepare|finish|start|attend|visit|pick|drop|send|write|read|watch|make|schedule|plan|book|order|pay|check)\b/i;
+      if (actionVerbPattern.test(sentence) && sentence.length < 100) {
         tasks.push({
           id: Math.random().toString(36).substring(2, 9),
           title: sentence.trim(),
@@ -307,6 +602,9 @@ export const extractTasksFromAIResponse = (text: string): Task[] => {
           tags: [],
           createdAt: Date.now(),
         });
+        
+        // Limit to 3 extracted tasks to avoid spam
+        if (tasks.length >= 3) break;
       }
     }
   }
