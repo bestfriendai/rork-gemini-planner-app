@@ -5,7 +5,6 @@ import { Clock, Calendar, Flag, Trash2, Edit2, Save } from 'lucide-react-native'
 import { useTaskStore } from '@/store/taskStore';
 import { formatDateForDisplay } from '@/utils/dateUtils';
 import { colors } from '@/constants/colors';
-import { LinearGradient } from 'expo-linear-gradient';
 
 export default function TaskDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -21,22 +20,13 @@ export default function TaskDetailScreen() {
   if (!task) {
     return (
       <View style={styles.container}>
-        <LinearGradient
-          colors={[colors.background, colors.surface]}
-          style={styles.backgroundGradient}
-        />
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Task not found</Text>
           <TouchableOpacity 
             style={styles.backButton}
             onPress={() => router.back()}
           >
-            <LinearGradient
-              colors={[colors.primary, colors.primaryLight]}
-              style={styles.backButtonGradient}
-            >
-              <Text style={styles.backButtonText}>Go Back</Text>
-            </LinearGradient>
+            <Text style={styles.backButtonText}>Go Back</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -89,11 +79,6 @@ export default function TaskDetailScreen() {
   
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={[colors.background, colors.surface]}
-        style={styles.backgroundGradient}
-      />
-      
       <ScrollView style={styles.scrollView}>
         <View style={styles.card}>
           {isEditing ? (
@@ -136,13 +121,8 @@ export default function TaskDetailScreen() {
                   onPress={handleSaveEdit}
                   disabled={!editTitle.trim()}
                 >
-                  <LinearGradient
-                    colors={[colors.primary, colors.primaryLight]}
-                    style={styles.saveButtonGradient}
-                  >
-                    <Save size={16} color={colors.text} />
-                    <Text style={styles.saveButtonText}>Save</Text>
-                  </LinearGradient>
+                  <Save size={14} color={colors.text} />
+                  <Text style={styles.saveButtonText}>Save</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -154,7 +134,7 @@ export default function TaskDetailScreen() {
                   style={styles.editIconButton}
                   onPress={() => setIsEditing(true)}
                 >
-                  <Edit2 size={20} color={colors.primary} />
+                  <Edit2 size={18} color={colors.primary} />
                 </TouchableOpacity>
               </View>
               
@@ -164,7 +144,7 @@ export default function TaskDetailScreen() {
               
               <View style={styles.detailsContainer}>
                 <View style={styles.detailItem}>
-                  <Calendar size={20} color={colors.textSecondary} />
+                  <Calendar size={16} color={colors.textSecondary} />
                   <Text style={styles.detailText}>
                     {formatDateForDisplay(task.date)}
                   </Text>
@@ -172,7 +152,7 @@ export default function TaskDetailScreen() {
                 
                 {task.time ? (
                   <View style={styles.detailItem}>
-                    <Clock size={20} color={colors.textSecondary} />
+                    <Clock size={16} color={colors.textSecondary} />
                     <Text style={styles.detailText}>{task.time}</Text>
                   </View>
                 ) : null}
@@ -181,7 +161,7 @@ export default function TaskDetailScreen() {
                   styles.priority, 
                   { backgroundColor: priorityColors[task.priority] }
                 ]}>
-                  <Flag size={16} color={priorityTextColors[task.priority]} />
+                  <Flag size={12} color={priorityTextColors[task.priority]} />
                   <Text style={[
                     styles.priorityText, 
                     { color: priorityTextColors[task.priority] }
@@ -196,30 +176,20 @@ export default function TaskDetailScreen() {
         
         <View style={styles.actions}>
           <TouchableOpacity 
-            style={styles.actionButton}
+            style={[styles.actionButton, task.completed ? styles.incompleteButton : styles.completeButton]}
             onPress={handleToggleComplete}
           >
-            <LinearGradient
-              colors={task.completed ? [colors.textQuaternary, colors.textTertiary] : [colors.success, '#4AE54A']}
-              style={styles.actionButtonGradient}
-            >
-              <Text style={styles.actionButtonText}>
-                {task.completed ? 'Mark as Incomplete' : 'Mark as Complete'}
-              </Text>
-            </LinearGradient>
+            <Text style={styles.actionButtonText}>
+              {task.completed ? 'Mark as Incomplete' : 'Mark as Complete'}
+            </Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
-            style={styles.actionButton}
+            style={[styles.actionButton, styles.deleteButton]}
             onPress={handleDelete}
           >
-            <LinearGradient
-              colors={[colors.error, '#FF6B6B']}
-              style={styles.actionButtonGradient}
-            >
-              <Trash2 size={18} color={colors.text} />
-              <Text style={styles.actionButtonText}>Delete Task</Text>
-            </LinearGradient>
+            <Trash2 size={16} color={colors.text} />
+            <Text style={styles.actionButtonText}>Delete Task</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -232,182 +202,170 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  backgroundGradient: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
   scrollView: {
     flex: 1,
-    padding: 24,
+    padding: 16,
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 24,
-    padding: 32,
-    marginBottom: 24,
-    borderWidth: 0.5,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    borderWidth: 1,
     borderColor: colors.border,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-    elevation: 8,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '900',
+    fontSize: 20,
+    fontWeight: '700',
     color: colors.text,
     flex: 1,
-    letterSpacing: -0.8,
   },
   editIconButton: {
-    padding: 8,
+    padding: 4,
   },
   description: {
-    fontSize: 17,
+    fontSize: 14,
     color: colors.textSecondary,
-    marginBottom: 24,
-    lineHeight: 26,
+    marginBottom: 16,
+    lineHeight: 20,
     fontWeight: '500',
   },
   detailsContainer: {
-    marginTop: 8,
+    marginTop: 4,
   },
   detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   detailText: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.textSecondary,
-    marginLeft: 12,
+    marginLeft: 8,
     fontWeight: '600',
   },
   priority: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
     alignSelf: 'flex-start',
-    marginTop: 8,
+    marginTop: 4,
   },
   priorityText: {
-    fontSize: 14,
-    fontWeight: '800',
-    marginLeft: 8,
-    letterSpacing: 0.3,
+    fontSize: 12,
+    fontWeight: '700',
+    marginLeft: 6,
   },
   actions: {
-    marginTop: 16,
+    marginTop: 12,
   },
   actionButton: {
-    borderRadius: 20,
-    overflow: 'hidden',
-    marginBottom: 16,
-  },
-  actionButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  completeButton: {
+    backgroundColor: colors.success,
+  },
+  incompleteButton: {
+    backgroundColor: colors.textQuaternary,
+  },
+  deleteButton: {
+    backgroundColor: colors.error,
   },
   actionButtonText: {
     color: colors.text,
-    fontSize: 16,
-    fontWeight: '800',
-    marginLeft: 8,
-    letterSpacing: 0.3,
+    fontSize: 14,
+    fontWeight: '700',
+    marginLeft: 6,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 48,
+    padding: 32,
   },
   errorText: {
-    fontSize: 24,
+    fontSize: 18,
     color: colors.text,
     textAlign: 'center',
-    marginBottom: 32,
-    fontWeight: '800',
+    marginBottom: 24,
+    fontWeight: '700',
   },
   backButton: {
-    borderRadius: 20,
-    overflow: 'hidden',
-  },
-  backButtonGradient: {
-    padding: 20,
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    padding: 16,
     alignItems: 'center',
   },
   backButtonText: {
     color: colors.text,
-    fontSize: 16,
-    fontWeight: '800',
+    fontSize: 14,
+    fontWeight: '700',
   },
   editContainer: {
     padding: 4,
   },
   editLabel: {
-    fontSize: 14,
-    fontWeight: '800',
+    fontSize: 12,
+    fontWeight: '700',
     color: colors.text,
-    marginBottom: 12,
-    letterSpacing: 0.3,
+    marginBottom: 8,
   },
   editInput: {
     backgroundColor: colors.surfaceSecondary,
-    borderRadius: 16,
-    padding: 20,
-    fontSize: 16,
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 14,
     color: colors.text,
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: colors.border,
-    marginBottom: 20,
+    marginBottom: 16,
     fontWeight: '500',
   },
   editTextArea: {
-    minHeight: 120,
+    minHeight: 100,
   },
   editButtons: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop: 8,
+    marginTop: 4,
   },
   cancelButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 16,
-    marginRight: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginRight: 8,
     backgroundColor: colors.surfaceSecondary,
   },
   saveButton: {
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
-  saveButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    backgroundColor: colors.primary,
   },
   cancelButtonText: {
     color: colors.text,
-    fontWeight: '700',
+    fontWeight: '600',
+    fontSize: 12,
   },
   saveButtonText: {
     color: colors.text,
-    fontWeight: '800',
-    marginLeft: 6,
+    fontWeight: '700',
+    marginLeft: 4,
+    fontSize: 12,
   },
 });

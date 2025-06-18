@@ -4,8 +4,7 @@ import * as Speech from 'expo-speech';
 import type { 
   SpeechRecognitionEvent, 
   SpeechRecognitionErrorEvent, 
-  SpeechRecognition,
-  SpeechRecognitionClass 
+  SpeechRecognition
 } from '@/types/speech';
 
 interface SpeechState {

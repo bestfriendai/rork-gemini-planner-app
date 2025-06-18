@@ -10,7 +10,6 @@ import { EmptyState } from '@/components/EmptyState';
 import { QuickActions } from '@/components/QuickActions';
 import { callAI, extractTasksFromAIResponse } from '@/utils/aiUtils';
 import { colors } from '@/constants/colors';
-import { LinearGradient } from 'expo-linear-gradient';
 
 export default function AssistantScreen() {
   const flatListRef = useRef<FlatList>(null);
@@ -174,11 +173,6 @@ export default function AssistantScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={[colors.background, colors.surface]}
-        style={styles.backgroundGradient}
-      />
-      
       <KeyboardAvoidingView
         style={styles.keyboardContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -189,7 +183,7 @@ export default function AssistantScreen() {
             <EmptyState
               title="Jarva AI Assistant"
               message="Your intelligent companion for productivity, planning, and getting things done. Ask me anything!"
-              icon={<Zap size={72} color={colors.primary} />}
+              icon={<Zap size={64} color={colors.primary} />}
             />
             <QuickActions onAction={handleQuickAction} />
           </View>
@@ -214,15 +208,12 @@ export default function AssistantScreen() {
             style={styles.taskPrompt}
             onPress={handleAddExtractedTasks}
           >
-            <LinearGradient
-              colors={[colors.primary, colors.accent]}
-              style={styles.taskPromptGradient}
-            >
-              <ListPlus size={20} color={colors.text} />
+            <View style={styles.taskPromptContent}>
+              <ListPlus size={18} color={colors.primary} />
               <Text style={styles.taskPromptText}>
                 Add {extractedTasks.length} task{extractedTasks.length > 1 ? 's' : ''} to your planner
               </Text>
-            </LinearGradient>
+            </View>
           </TouchableOpacity>
         )}
         
@@ -237,13 +228,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  backgroundGradient: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
   keyboardContainer: {
     flex: 1,
   },
@@ -251,30 +235,26 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messageList: {
-    padding: 24,
-    paddingBottom: 120,
+    padding: 16,
+    paddingBottom: 100,
   },
   taskPrompt: {
-    margin: 24,
-    borderRadius: 24,
-    overflow: 'hidden',
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.4,
-    shadowRadius: 24,
-    elevation: 16,
+    margin: 16,
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  taskPromptGradient: {
+  taskPromptContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 24,
+    padding: 16,
     justifyContent: 'center',
   },
   taskPromptText: {
     color: colors.text,
-    fontWeight: '700',
-    marginLeft: 12,
-    fontSize: 16,
-    letterSpacing: 0.3,
+    fontWeight: '600',
+    marginLeft: 8,
+    fontSize: 14,
   },
 });

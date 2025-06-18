@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Platform, Alert, Modal, Text } from 'react-native';
-import { Send, Mic, MicOff, Square, X, Check, Volume2, Sparkles } from 'lucide-react-native';
+import { Send, Mic, MicOff, Square, X, Check, Volume2 } from 'lucide-react-native';
 import { useSpeechStore } from '@/store/speechStore';
 import { colors } from '@/constants/colors';
-import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 
 interface ChatInputProps {
@@ -91,60 +90,48 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
 
   const getMicIcon = () => {
     if (Platform.OS === 'web') {
-      return isListening ? <MicOff size={20} color={colors.text} /> : <Mic size={20} color={colors.text} />;
+      return isListening ? <MicOff size={18} color={colors.text} /> : <Mic size={18} color={colors.textSecondary} />;
     } else {
-      return <Mic size={20} color={colors.text} />;
+      return <Mic size={18} color={colors.textSecondary} />;
     }
   };
 
   return (
     <>
       <View style={styles.container}>
-        <BlurView intensity={100} style={styles.blurContainer}>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={message}
-              onChangeText={setMessage}
-              placeholder="Ask Jarva anything..."
-              placeholderTextColor={colors.textTertiary}
-              multiline
-              maxLength={500}
-              onSubmitEditing={handleSend}
-              editable={!isLoading}
-            />
-            
-            <TouchableOpacity 
-              style={[styles.micButton, isListening && styles.micButtonActive]} 
-              onPress={toggleListening}
-              disabled={isLoading}
-            >
-              <LinearGradient
-                colors={isListening ? [colors.error, '#FF6B6B'] : [colors.accent, colors.primary]}
-                style={styles.buttonGradient}
-              >
-                {getMicIcon()}
-              </LinearGradient>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={[styles.sendButton, (!message.trim() || isLoading) && styles.sendButtonDisabled]} 
-              onPress={handleSend}
-              disabled={isLoading || !message.trim()}
-            >
-              <LinearGradient
-                colors={(!message.trim() || isLoading) ? [colors.textQuaternary, colors.textTertiary] : [colors.primary, colors.accent]}
-                style={styles.buttonGradient}
-              >
-                {isLoading ? (
-                  <ActivityIndicator size="small" color={colors.text} />
-                ) : (
-                  <Send size={20} color={colors.text} />
-                )}
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
-        </BlurView>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            value={message}
+            onChangeText={setMessage}
+            placeholder="Ask Jarva anything..."
+            placeholderTextColor={colors.textTertiary}
+            multiline
+            maxLength={500}
+            onSubmitEditing={handleSend}
+            editable={!isLoading}
+          />
+          
+          <TouchableOpacity 
+            style={[styles.micButton, isListening && styles.micButtonActive]} 
+            onPress={toggleListening}
+            disabled={isLoading}
+          >
+            {getMicIcon()}
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[styles.sendButton, (!message.trim() || isLoading) && styles.sendButtonDisabled]} 
+            onPress={handleSend}
+            disabled={isLoading || !message.trim()}
+          >
+            {isLoading ? (
+              <ActivityIndicator size="small" color={colors.textSecondary} />
+            ) : (
+              <Send size={18} color={message.trim() ? colors.primary : colors.textTertiary} />
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Mobile Recording Modal */}
@@ -160,7 +147,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Voice Input</Text>
                 <TouchableOpacity onPress={handleCancelRecording} style={styles.closeButton}>
-                  <X size={24} color={colors.text} />
+                  <X size={20} color={colors.text} />
                 </TouchableOpacity>
               </View>
               
@@ -172,7 +159,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
               </View>
               
               <View style={styles.instructionContainer}>
-                <Volume2 size={24} color={colors.primary} />
+                <Volume2 size={20} color={colors.primary} />
                 <Text style={styles.instructionText}>
                   Speak your message clearly, then type what you said in the text field below and tap "Use Text".
                 </Text>
@@ -194,15 +181,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
                   style={styles.recordButton}
                   onPress={isRecording ? handleStopRecording : startRecording}
                 >
-                  <LinearGradient
-                    colors={isRecording ? [colors.error, '#FF6B6B'] : [colors.accent, colors.primary]}
-                    style={styles.modalButtonGradient}
-                  >
-                    {isRecording ? <Square size={20} color={colors.text} /> : <Mic size={20} color={colors.text} />}
+                  <View style={styles.modalButtonContent}>
+                    {isRecording ? <Square size={16} color={colors.text} /> : <Mic size={16} color={colors.text} />}
                     <Text style={styles.recordButtonText}>
                       {isRecording ? 'Stop' : 'Record'}
                     </Text>
-                  </LinearGradient>
+                  </View>
                 </TouchableOpacity>
                 
                 <TouchableOpacity 
@@ -210,13 +194,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
                   onPress={handleUseRecordedText}
                   disabled={!recordedText.trim()}
                 >
-                  <LinearGradient
-                    colors={!recordedText.trim() ? [colors.textQuaternary, colors.textTertiary] : [colors.primary, colors.accent]}
-                    style={styles.modalButtonGradient}
-                  >
-                    <Check size={20} color={colors.text} />
+                  <View style={styles.modalButtonContent}>
+                    <Check size={16} color={colors.text} />
                     <Text style={styles.useButtonText}>Use Text</Text>
-                  </LinearGradient>
+                  </View>
                 </TouchableOpacity>
               </View>
               
@@ -235,89 +216,82 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: Platform.OS === 'ios' ? 34 : 20,
-  },
-  blurContainer: {
-    paddingHorizontal: 24,
-    paddingTop: 24,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 16,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    backgroundColor: colors.background,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     backgroundColor: colors.surface,
-    borderRadius: 32,
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-    borderWidth: 0.5,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderWidth: 1,
     borderColor: colors.border,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.3,
-    shadowRadius: 24,
-    elevation: 12,
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 14,
     color: colors.text,
-    maxHeight: 120,
-    marginRight: 16,
-    paddingVertical: 4,
-    letterSpacing: 0.2,
+    maxHeight: 100,
+    marginRight: 12,
+    paddingVertical: 2,
     fontWeight: '500',
   },
   micButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    marginRight: 12,
-    overflow: 'hidden',
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    marginRight: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceSecondary,
   },
   micButtonActive: {
-    transform: [{ scale: 1.1 }],
+    backgroundColor: colors.error,
   },
   sendButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    overflow: 'hidden',
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceSecondary,
   },
   sendButtonDisabled: {
     opacity: 0.5,
-  },
-  buttonGradient: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
   modalBlur: {
     width: '100%',
     maxWidth: 400,
-    borderRadius: 32,
+    borderRadius: 16,
     overflow: 'hidden',
   },
   modalContent: {
     backgroundColor: colors.glass,
-    padding: 32,
+    padding: 24,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 24,
   },
   modalTitle: {
-    fontSize: 24,
-    fontWeight: '800',
+    fontSize: 18,
+    fontWeight: '700',
     color: colors.text,
-    letterSpacing: -0.5,
   },
   closeButton: {
     padding: 4,
@@ -326,107 +300,101 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 28,
+    marginBottom: 20,
   },
   recordingDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     backgroundColor: colors.textTertiary,
-    marginRight: 12,
+    marginRight: 8,
   },
   recordingDotActive: {
     backgroundColor: colors.error,
   },
   recordingText: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.text,
-    fontWeight: '700',
-    letterSpacing: 0.2,
+    fontWeight: '600',
   },
   instructionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surfaceSecondary,
-    padding: 24,
-    borderRadius: 20,
-    marginBottom: 28,
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 20,
   },
   instructionText: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.text,
-    marginLeft: 16,
+    marginLeft: 12,
     flex: 1,
-    lineHeight: 20,
-    letterSpacing: 0.1,
+    lineHeight: 16,
     fontWeight: '500',
   },
   recordedTextInput: {
     backgroundColor: colors.surface,
-    borderRadius: 20,
-    padding: 24,
-    fontSize: 16,
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 14,
     color: colors.text,
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: colors.border,
-    marginBottom: 32,
-    minHeight: 120,
-    letterSpacing: 0.2,
+    marginBottom: 24,
+    minHeight: 100,
     fontWeight: '500',
   },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 28,
+    marginBottom: 20,
   },
   recordButton: {
     flex: 1,
-    marginRight: 12,
-    borderRadius: 20,
-    overflow: 'hidden',
+    marginRight: 8,
+    borderRadius: 12,
+    backgroundColor: colors.error,
   },
   useButton: {
     flex: 1,
-    marginLeft: 12,
-    borderRadius: 20,
-    overflow: 'hidden',
+    marginLeft: 8,
+    borderRadius: 12,
+    backgroundColor: colors.primary,
   },
   useButtonDisabled: {
     opacity: 0.5,
   },
-  modalButtonGradient: {
+  modalButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 20,
-    paddingHorizontal: 24,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
   },
   recordButtonText: {
     color: colors.text,
-    fontWeight: '800',
-    marginLeft: 12,
-    letterSpacing: 0.3,
+    fontWeight: '700',
+    marginLeft: 8,
   },
   useButtonText: {
     color: colors.text,
-    fontWeight: '800',
-    marginLeft: 12,
-    letterSpacing: 0.3,
+    fontWeight: '700',
+    marginLeft: 8,
   },
   helpContainer: {
     backgroundColor: colors.surfaceTertiary,
-    padding: 24,
-    borderRadius: 20,
+    padding: 16,
+    borderRadius: 12,
   },
   helpText: {
-    fontSize: 13,
+    fontSize: 11,
     color: colors.textSecondary,
-    lineHeight: 18,
-    letterSpacing: 0.1,
+    lineHeight: 14,
     fontWeight: '500',
   },
   helpBold: {
-    fontWeight: '800',
+    fontWeight: '700',
     color: colors.accent,
   },
 });

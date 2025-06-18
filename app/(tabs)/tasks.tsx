@@ -8,7 +8,6 @@ import { AddTaskModal } from '@/components/AddTaskModal';
 import { getCurrentDate } from '@/utils/dateUtils';
 import { useRouter } from 'expo-router';
 import { colors } from '@/constants/colors';
-import { LinearGradient } from 'expo-linear-gradient';
 
 export default function TasksScreen() {
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
@@ -56,30 +55,17 @@ export default function TasksScreen() {
       ]}
       onPress={() => setFilter(value)}
     >
-      {filter === value ? (
-        <LinearGradient
-          colors={[colors.primary, colors.primaryLight]}
-          style={styles.filterButtonGradient}
-        >
-          <Text style={styles.filterButtonTextActive}>
-            {label}
-          </Text>
-        </LinearGradient>
-      ) : (
-        <Text style={styles.filterButtonText}>
-          {label}
-        </Text>
-      )}
+      <Text style={[
+        styles.filterButtonText,
+        filter === value && styles.filterButtonTextActive
+      ]}>
+        {label}
+      </Text>
     </TouchableOpacity>
   );
   
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={[colors.background, colors.surface]}
-        style={styles.backgroundGradient}
-      />
-      
       <View style={styles.filterContainer}>
         <FilterButton value="all" label="All" />
         <FilterButton value="today" label="Today" />
@@ -92,7 +78,7 @@ export default function TasksScreen() {
           <EmptyState
             title="No Tasks Found"
             message={`You don't have any ${filter} tasks. Add some to stay organized.`}
-            icon={<CheckSquare size={72} color={colors.primary} />}
+            icon={<CheckSquare size={56} color={colors.primary} />}
           />
         ) : (
           <FlatList
@@ -114,12 +100,7 @@ export default function TasksScreen() {
         style={styles.addButton}
         onPress={() => setIsAddModalVisible(true)}
       >
-        <LinearGradient
-          colors={[colors.primary, colors.primaryLight]}
-          style={styles.addButtonGradient}
-        >
-          <Plus size={28} color={colors.text} />
-        </LinearGradient>
+        <Plus size={24} color={colors.text} />
       </TouchableOpacity>
       
       <AddTaskModal
@@ -136,69 +117,48 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  backgroundGradient: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
   filterContainer: {
     flexDirection: 'row',
-    padding: 16,
+    padding: 12,
     backgroundColor: colors.surface,
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   filterButton: {
     flex: 1,
-    marginHorizontal: 6,
-    borderRadius: 16,
-    overflow: 'hidden',
+    marginHorizontal: 4,
+    borderRadius: 12,
     backgroundColor: colors.surfaceSecondary,
-  },
-  filterButtonActive: {
-    backgroundColor: 'transparent',
-  },
-  filterButtonGradient: {
-    paddingVertical: 12,
+    paddingVertical: 8,
     alignItems: 'center',
   },
+  filterButtonActive: {
+    backgroundColor: colors.primary,
+  },
   filterButtonText: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.textSecondary,
-    fontWeight: '700',
-    paddingVertical: 12,
-    textAlign: 'center',
+    fontWeight: '600',
   },
   filterButtonTextActive: {
     color: colors.text,
-    fontSize: 14,
-    fontWeight: '800',
+    fontWeight: '700',
   },
   content: {
     flex: 1,
-    padding: 24,
+    padding: 16,
   },
   taskList: {
-    paddingBottom: 120,
+    paddingBottom: 100,
   },
   addButton: {
     position: 'absolute',
-    bottom: 120,
-    right: 24,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    overflow: 'hidden',
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 12,
-  },
-  addButtonGradient: {
-    flex: 1,
+    bottom: 100,
+    right: 16,
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },

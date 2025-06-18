@@ -9,7 +9,6 @@ import { AddTaskModal } from '@/components/AddTaskModal';
 import { getCurrentDate, getDaysOfWeek } from '@/utils/dateUtils';
 import { useRouter } from 'expo-router';
 import { colors } from '@/constants/colors';
-import { LinearGradient } from 'expo-linear-gradient';
 
 export default function PlannerScreen() {
   const [selectedDate, setSelectedDate] = useState(getCurrentDate());
@@ -46,11 +45,6 @@ export default function PlannerScreen() {
   
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={[colors.background, colors.surface]}
-        style={styles.backgroundGradient}
-      />
-      
       <DateSelector
         dates={weekDates}
         selectedDate={selectedDate}
@@ -62,7 +56,7 @@ export default function PlannerScreen() {
           <EmptyState
             title="No Tasks Scheduled"
             message="Add tasks to your planner to stay organized and productive."
-            icon={<CalendarClock size={72} color={colors.primary} />}
+            icon={<CalendarClock size={56} color={colors.primary} />}
           />
         ) : (
           <FlatList
@@ -84,12 +78,7 @@ export default function PlannerScreen() {
         style={styles.addButton}
         onPress={() => setIsAddModalVisible(true)}
       >
-        <LinearGradient
-          colors={[colors.primary, colors.primaryLight]}
-          style={styles.addButtonGradient}
-        >
-          <Plus size={28} color={colors.text} />
-        </LinearGradient>
+        <Plus size={24} color={colors.text} />
       </TouchableOpacity>
       
       <AddTaskModal
@@ -106,36 +95,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  backgroundGradient: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
   content: {
     flex: 1,
-    padding: 24,
+    padding: 16,
   },
   taskList: {
-    paddingBottom: 120,
+    paddingBottom: 100,
   },
   addButton: {
     position: 'absolute',
-    bottom: 120,
-    right: 24,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    overflow: 'hidden',
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 12,
-  },
-  addButtonGradient: {
-    flex: 1,
+    bottom: 100,
+    right: 16,
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },

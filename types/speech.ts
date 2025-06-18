@@ -27,10 +27,6 @@ export interface SpeechRecognitionAlternative {
   confidence: number;
 }
 
-export interface SpeechRecognitionClass {
-  new(): SpeechRecognition;
-}
-
 export interface SpeechRecognition extends EventTarget {
   continuous: boolean;
   grammars: any;
@@ -58,7 +54,11 @@ export interface SpeechRecognition extends EventTarget {
 
 declare global {
   interface Window {
-    SpeechRecognition?: SpeechRecognitionClass;
-    webkitSpeechRecognition?: SpeechRecognitionClass;
+    SpeechRecognition?: {
+      new(): SpeechRecognition;
+    };
+    webkitSpeechRecognition?: {
+      new(): SpeechRecognition;
+    };
   }
 }

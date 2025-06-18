@@ -1,51 +1,45 @@
 export const colors = {
-  // Core dark theme - 2030 modern style
-  background: '#0A0A0B',
-  surface: '#111113',
-  surfaceSecondary: '#1A1A1D',
-  surfaceTertiary: '#242428',
+  // Core dark theme - 2030 minimal style
+  background: '#0B0B0F',
+  surface: '#141419',
+  surfaceSecondary: '#1C1C23',
+  surfaceTertiary: '#25252D',
   
-  // Primary brand colors - Electric blue
-  primary: '#0066FF',
-  primaryLight: '#3385FF',
-  primaryDark: '#0052CC',
-  primaryGlow: 'rgba(0, 102, 255, 0.3)',
+  // Primary - Clean blue
+  primary: '#2563EB',
+  primaryLight: '#3B82F6',
+  primaryDark: '#1D4ED8',
+  primaryMuted: 'rgba(37, 99, 235, 0.1)',
   
-  // Accent colors - Subtle cyan
-  accent: '#00D4FF',
-  accentLight: '#33DDFF',
-  accentDark: '#00B8E6',
-  accentGlow: 'rgba(0, 212, 255, 0.2)',
+  // Accent - Subtle purple
+  accent: '#8B5CF6',
+  accentLight: '#A78BFA',
+  accentDark: '#7C3AED',
+  accentMuted: 'rgba(139, 92, 246, 0.1)',
   
   // Text hierarchy
   text: '#FFFFFF',
-  textSecondary: '#B8BCC8',
-  textTertiary: '#8B8D98',
-  textQuaternary: '#5A5C66',
-  textMuted: '#3A3C44',
+  textSecondary: '#A1A1AA',
+  textTertiary: '#71717A',
+  textQuaternary: '#52525B',
+  textMuted: '#3F3F46',
   
   // Semantic colors
-  success: '#00D26A',
-  warning: '#FFB800',
-  error: '#FF4757',
-  
-  // Glass/blur effects
-  glass: 'rgba(17, 17, 19, 0.8)',
-  glassLight: 'rgba(26, 26, 29, 0.6)',
-  glassDark: 'rgba(10, 10, 11, 0.9)',
+  success: '#10B981',
+  warning: '#F59E0B',
+  error: '#EF4444',
   
   // Borders and dividers
-  border: 'rgba(184, 188, 200, 0.08)',
-  borderLight: 'rgba(184, 188, 200, 0.04)',
-  borderHeavy: 'rgba(184, 188, 200, 0.15)',
-  
-  // Shadows
-  shadow: 'rgba(0, 0, 0, 0.5)',
-  shadowLight: 'rgba(0, 0, 0, 0.2)',
-  shadowHeavy: 'rgba(0, 0, 0, 0.8)',
+  border: 'rgba(161, 161, 170, 0.1)',
+  borderLight: 'rgba(161, 161, 170, 0.05)',
+  borderHeavy: 'rgba(161, 161, 170, 0.2)',
   
   // Interactive states
   hover: 'rgba(255, 255, 255, 0.05)',
   pressed: 'rgba(255, 255, 255, 0.1)',
   disabled: 'rgba(255, 255, 255, 0.3)',
+  
+  // Glass effects
+  glass: 'rgba(20, 20, 25, 0.8)',
+  glassLight: 'rgba(28, 28, 35, 0.6)',
 };

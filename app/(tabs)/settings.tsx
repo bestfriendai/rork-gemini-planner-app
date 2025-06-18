@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Alert, Platform, Switch } from 'react-native';
-import { User, Bell, Trash2, Moon, Info, Volume2, Wifi, Globe, Smartphone, Monitor, Mic, Speaker, Zap, Brain, Clock, Calendar } from 'lucide-react-native';
+import { User, Bell, Trash2, Info, Volume2, Wifi, Globe, Smartphone, Monitor, Mic, Speaker, Zap, Brain, Clock, Calendar } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useChatStore } from '@/store/chatStore';
 import { useTaskStore } from '@/store/taskStore';
 import { useSpeechStore } from '@/store/speechStore';
 import { SettingsItem } from '@/components/SettingsItem';
 import { colors } from '@/constants/colors';
-import { LinearGradient } from 'expo-linear-gradient';
 
 export default function SettingsScreen() {
   const { username, setUsername, notifications, toggleNotifications } = useSettingsStore();
@@ -88,11 +87,6 @@ export default function SettingsScreen() {
   
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={[colors.background, colors.surface]}
-        style={styles.backgroundGradient}
-      />
-      
       <ScrollView style={styles.scrollView}>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Profile</Text>
@@ -121,12 +115,7 @@ export default function SettingsScreen() {
                   style={styles.saveButton}
                   onPress={handleSaveName}
                 >
-                  <LinearGradient
-                    colors={[colors.primary, colors.primaryLight]}
-                    style={styles.saveButtonGradient}
-                  >
-                    <Text style={styles.saveButtonText}>Save</Text>
-                  </LinearGradient>
+                  <Text style={styles.saveButtonText}>Save</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -134,7 +123,7 @@ export default function SettingsScreen() {
             <SettingsItem
               title="Your Name"
               subtitle={username || "Set your name"}
-              icon={<User size={22} color={colors.primary} />}
+              icon={<User size={18} color={colors.primary} />}
               onPress={() => setEditingName(true)}
             />
           )}
@@ -146,7 +135,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Text-to-Speech"
             subtitle="Allow assistant to speak responses"
-            icon={<Speaker size={22} color={colors.primary} />}
+            icon={<Speaker size={18} color={colors.primary} />}
             isSwitch
             switchValue={textToSpeech}
             onSwitchChange={toggleTextToSpeech}
@@ -155,7 +144,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Voice Input"
             subtitle={getSpeechRecognitionStatus()}
-            icon={<Mic size={22} color={Platform.OS === 'web' && isSupported ? colors.primary : colors.warning} />}
+            icon={<Mic size={18} color={Platform.OS === 'web' && isSupported ? colors.primary : colors.warning} />}
             isSwitch
             switchValue={voiceInput}
             onSwitchChange={setVoiceInput}
@@ -164,7 +153,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Web Search"
             subtitle="Enable internet search for current information"
-            icon={<Globe size={22} color={colors.primary} />}
+            icon={<Globe size={18} color={colors.primary} />}
             isSwitch
             switchValue={webSearch}
             onSwitchChange={setWebSearch}
@@ -173,7 +162,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Smart Suggestions"
             subtitle="Get intelligent quick action suggestions"
-            icon={<Brain size={22} color={colors.primary} />}
+            icon={<Brain size={18} color={colors.primary} />}
             isSwitch
             switchValue={smartSuggestions}
             onSwitchChange={setSmartSuggestions}
@@ -182,7 +171,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Auto Task Extraction"
             subtitle="Automatically detect and suggest tasks from conversations"
-            icon={<Zap size={22} color={colors.primary} />}
+            icon={<Zap size={18} color={colors.primary} />}
             isSwitch
             switchValue={autoTaskExtraction}
             onSwitchChange={setAutoTaskExtraction}
@@ -191,7 +180,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Notifications"
             subtitle="Receive reminders for scheduled tasks"
-            icon={<Bell size={22} color={colors.primary} />}
+            icon={<Bell size={18} color={colors.primary} />}
             isSwitch
             switchValue={notifications}
             onSwitchChange={toggleNotifications}
@@ -205,33 +194,33 @@ export default function SettingsScreen() {
             title="Speech Recognition"
             subtitle={getSpeechRecognitionStatus()}
             icon={Platform.OS === 'web' ? 
-              (isSupported ? <Monitor size={22} color={colors.primary} /> : <Monitor size={22} color={colors.error} />) : 
-              <Smartphone size={22} color={colors.warning} />
+              (isSupported ? <Monitor size={18} color={colors.primary} /> : <Monitor size={18} color={colors.error} />) : 
+              <Smartphone size={18} color={colors.warning} />
             }
           />
           
           <SettingsItem
             title="Voice Output"
             subtitle="Text-to-speech available on all platforms"
-            icon={<Volume2 size={22} color={colors.primary} />}
+            icon={<Volume2 size={18} color={colors.primary} />}
           />
           
           <SettingsItem
             title="Web Search"
             subtitle="Real-time internet search via Perplexity AI"
-            icon={<Wifi size={22} color={colors.primary} />}
+            icon={<Wifi size={18} color={colors.primary} />}
           />
           
           <SettingsItem
             title="Task Management"
             subtitle="Create, organize, and track your tasks"
-            icon={<Bell size={22} color={colors.primary} />}
+            icon={<Bell size={18} color={colors.primary} />}
           />
           
           <SettingsItem
             title="Real-time Data"
             subtitle="Access to current time, date, and device information"
-            icon={<Clock size={22} color={colors.primary} />}
+            icon={<Clock size={18} color={colors.primary} />}
           />
         </View>
         
@@ -241,7 +230,7 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Clear Chat History"
             subtitle="Delete all conversations with the assistant"
-            icon={<Trash2 size={22} color={colors.error} />}
+            icon={<Trash2 size={18} color={colors.error} />}
             onPress={handleClearHistory}
           />
         </View>
@@ -252,25 +241,25 @@ export default function SettingsScreen() {
           <SettingsItem
             title="Current Date"
             subtitle={dateTime.date}
-            icon={<Calendar size={22} color={colors.primary} />}
+            icon={<Calendar size={18} color={colors.primary} />}
           />
           
           <SettingsItem
             title="Current Time"
             subtitle={`${dateTime.time} (${dateTime.timezone})`}
-            icon={<Clock size={22} color={colors.primary} />}
+            icon={<Clock size={18} color={colors.primary} />}
           />
           
           <SettingsItem
             title="Platform"
             subtitle={Platform.OS === 'web' ? 'Web Browser' : `${Platform.OS} App (v${Platform.Version})`}
-            icon={<Info size={22} color={colors.primary} />}
+            icon={<Info size={18} color={colors.primary} />}
           />
           
           <SettingsItem
             title="App Version"
             subtitle="3.0.0 - Modern 2030 Design & Enhanced AI"
-            icon={<Info size={22} color={colors.primary} />}
+            icon={<Info size={18} color={colors.primary} />}
           />
         </View>
         
@@ -332,144 +321,132 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  backgroundGradient: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
   scrollView: {
     flex: 1,
   },
   section: {
-    marginBottom: 32,
+    marginBottom: 24,
     backgroundColor: colors.surface,
-    borderRadius: 20,
+    borderRadius: 16,
     overflow: 'hidden',
-    marginHorizontal: 24,
-    marginTop: 16,
-    borderWidth: 0.5,
+    marginHorizontal: 16,
+    marginTop: 12,
+    borderWidth: 1,
     borderColor: colors.border,
   },
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: '800',
+    fontSize: 12,
+    fontWeight: '700',
     color: colors.textSecondary,
     marginBottom: 8,
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    letterSpacing: 0.5,
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
   editNameContainer: {
-    padding: 24,
+    padding: 16,
     backgroundColor: colors.surface,
   },
   nameInput: {
     backgroundColor: colors.surfaceSecondary,
-    borderRadius: 16,
-    padding: 20,
-    fontSize: 16,
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 14,
     color: colors.text,
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: colors.border,
     fontWeight: '500',
   },
   editNameButtons: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop: 16,
+    marginTop: 12,
   },
   cancelButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 16,
-    marginRight: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginRight: 8,
     backgroundColor: colors.surfaceSecondary,
   },
   saveButton: {
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
-  saveButtonGradient: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    backgroundColor: colors.primary,
   },
   cancelButtonText: {
     color: colors.text,
-    fontWeight: '700',
+    fontWeight: '600',
+    fontSize: 12,
   },
   saveButtonText: {
     color: colors.text,
-    fontWeight: '800',
+    fontWeight: '700',
+    fontSize: 12,
   },
   statsContainer: {
-    margin: 24,
-    padding: 32,
+    margin: 16,
+    padding: 20,
     backgroundColor: colors.surface,
-    borderRadius: 20,
-    borderWidth: 0.5,
+    borderRadius: 16,
+    borderWidth: 1,
     borderColor: colors.border,
   },
   statsTitle: {
-    fontSize: 20,
-    fontWeight: '800',
+    fontSize: 16,
+    fontWeight: '700',
     color: colors.text,
-    marginBottom: 24,
-    letterSpacing: -0.3,
+    marginBottom: 16,
   },
   statsRow: {
     flexDirection: 'row',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   statItem: {
     flex: 1,
     alignItems: 'center',
-    padding: 20,
+    padding: 16,
     backgroundColor: colors.surfaceSecondary,
-    borderRadius: 16,
-    marginHorizontal: 6,
-    borderWidth: 0.5,
+    borderRadius: 12,
+    marginHorizontal: 4,
+    borderWidth: 1,
     borderColor: colors.border,
   },
   statValue: {
-    fontSize: 28,
-    fontWeight: '900',
+    fontSize: 20,
+    fontWeight: '700',
     color: colors.primary,
-    marginBottom: 6,
-    letterSpacing: -0.5,
+    marginBottom: 4,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 10,
     color: colors.textSecondary,
-    fontWeight: '700',
-    letterSpacing: 0.5,
+    fontWeight: '600',
   },
   helpSection: {
-    margin: 24,
-    padding: 32,
+    margin: 16,
+    padding: 20,
     backgroundColor: colors.surfaceSecondary,
-    borderRadius: 20,
-    marginBottom: 120,
-    borderWidth: 0.5,
+    borderRadius: 16,
+    marginBottom: 100,
+    borderWidth: 1,
     borderColor: colors.border,
   },
   helpTitle: {
-    fontSize: 18,
-    fontWeight: '800',
+    fontSize: 14,
+    fontWeight: '700',
     color: colors.text,
-    marginBottom: 20,
-    letterSpacing: -0.3,
+    marginBottom: 12,
   },
   helpText: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.textSecondary,
-    lineHeight: 22,
-    marginBottom: 12,
+    lineHeight: 16,
+    marginBottom: 8,
     fontWeight: '500',
   },
   helpBold: {
-    fontWeight: '800',
+    fontWeight: '700',
     color: colors.primary,
   },
 });

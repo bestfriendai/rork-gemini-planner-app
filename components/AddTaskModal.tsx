@@ -13,7 +13,6 @@ import {
 import { X } from 'lucide-react-native';
 import { useTaskStore } from '@/store/taskStore';
 import { colors } from '@/constants/colors';
-import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 
 interface AddTaskModalProps {
@@ -66,20 +65,12 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
       ]}
       onPress={() => setPriority(value)}
     >
-      {priority === value ? (
-        <LinearGradient
-          colors={[colors.primary, colors.primaryLight]}
-          style={styles.priorityButtonGradient}
-        >
-          <Text style={styles.priorityButtonTextSelected}>
-            {label}
-          </Text>
-        </LinearGradient>
-      ) : (
-        <Text style={styles.priorityButtonText}>
-          {label}
-        </Text>
-      )}
+      <Text style={[
+        styles.priorityButtonText,
+        priority === value && styles.priorityButtonTextSelected,
+      ]}>
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 
@@ -102,7 +93,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                   <View style={styles.header}>
                     <Text style={styles.headerTitle}>Add New Task</Text>
                     <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                      <X size={24} color={colors.text} />
+                      <X size={20} color={colors.text} />
                     </TouchableOpacity>
                   </View>
                   
@@ -154,16 +145,11 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                     </View>
                     
                     <TouchableOpacity 
-                      style={styles.addButton}
+                      style={[styles.addButton, !title.trim() && styles.addButtonDisabled]}
                       onPress={handleAddTask}
                       disabled={!title.trim()}
                     >
-                      <LinearGradient
-                        colors={!title.trim() ? [colors.textQuaternary, colors.textTertiary] : [colors.primary, colors.primaryLight]}
-                        style={styles.addButtonGradient}
-                      >
-                        <Text style={styles.addButtonText}>Add Task</Text>
-                      </LinearGradient>
+                      <Text style={styles.addButtonText}>Add Task</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -187,56 +173,54 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalBlur: {
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     overflow: 'hidden',
   },
   modalContent: {
     backgroundColor: colors.glass,
-    paddingBottom: Platform.OS === 'ios' ? 40 : 24,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 20,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 24,
-    borderBottomWidth: 0.5,
+    padding: 20,
+    borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: '800',
+    fontSize: 16,
+    fontWeight: '700',
     color: colors.text,
-    letterSpacing: -0.3,
   },
   closeButton: {
     padding: 4,
   },
   form: {
-    padding: 24,
+    padding: 20,
   },
   formGroup: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 12,
+    fontWeight: '600',
     color: colors.text,
-    marginBottom: 12,
-    letterSpacing: 0.3,
+    marginBottom: 8,
   },
   input: {
     backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 20,
-    fontSize: 16,
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 14,
     color: colors.text,
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: colors.border,
     fontWeight: '500',
   },
   textArea: {
-    minHeight: 100,
+    minHeight: 80,
   },
   priorityButtons: {
     flexDirection: 'row',
@@ -244,45 +228,40 @@ const styles = StyleSheet.create({
   },
   priorityButton: {
     flex: 1,
-    marginHorizontal: 6,
-    borderRadius: 16,
-    overflow: 'hidden',
+    marginHorizontal: 4,
+    borderRadius: 12,
     backgroundColor: colors.surfaceSecondary,
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: colors.border,
-  },
-  priorityButtonSelected: {
-    borderColor: 'transparent',
-  },
-  priorityButtonGradient: {
-    paddingVertical: 16,
+    paddingVertical: 12,
     alignItems: 'center',
   },
+  priorityButtonSelected: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
   priorityButtonText: {
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 12,
+    fontWeight: '600',
     color: colors.textSecondary,
-    paddingVertical: 16,
-    textAlign: 'center',
   },
   priorityButtonTextSelected: {
     color: colors.text,
-    fontSize: 14,
-    fontWeight: '800',
+    fontWeight: '700',
   },
   addButton: {
-    borderRadius: 20,
-    overflow: 'hidden',
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
     marginTop: 8,
   },
-  addButtonGradient: {
-    padding: 20,
-    alignItems: 'center',
+  addButtonDisabled: {
+    opacity: 0.5,
   },
   addButtonText: {
     color: colors.text,
-    fontSize: 16,
-    fontWeight: '800',
-    letterSpacing: 0.3,
+    fontSize: 14,
+    fontWeight: '700',
   },
 });

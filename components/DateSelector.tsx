@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { formatDateForDisplay, isToday, isSameDay } from '@/utils/dateUtils';
 import { colors } from '@/constants/colors';
-import { LinearGradient } from 'expo-linear-gradient';
 
 interface DateSelectorProps {
   dates: string[];
@@ -35,37 +34,27 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           return (
             <TouchableOpacity
               key={date}
-              style={styles.dateItemContainer}
+              style={[
+                styles.dateItem,
+                isSelected && styles.selectedDateItem,
+                today && !isSelected && styles.todayDateItem,
+              ]}
               onPress={() => onSelectDate(date)}
             >
-              {isSelected ? (
-                <LinearGradient
-                  colors={[colors.primary, colors.primaryLight]}
-                  style={styles.dateItem}
-                >
-                  <Text style={styles.selectedDayName}>{dayName}</Text>
-                  <Text style={styles.selectedDayNumber}>{day}</Text>
-                </LinearGradient>
-              ) : (
-                <View style={[
-                  styles.dateItem,
-                  styles.unselectedDateItem,
-                  today && styles.todayDateItem,
-                ]}>
-                  <Text style={[
-                    styles.dayName,
-                    today && styles.todayText,
-                  ]}>
-                    {dayName}
-                  </Text>
-                  <Text style={[
-                    styles.dayNumber,
-                    today && styles.todayText,
-                  ]}>
-                    {day}
-                  </Text>
-                </View>
-              )}
+              <Text style={[
+                styles.dayName,
+                isSelected && styles.selectedText,
+                today && !isSelected && styles.todayText,
+              ]}>
+                {dayName}
+              </Text>
+              <Text style={[
+                styles.dayNumber,
+                isSelected && styles.selectedText,
+                today && !isSelected && styles.todayText,
+              ]}>
+                {day}
+              </Text>
             </TouchableOpacity>
           );
         })}
@@ -77,65 +66,49 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.surface,
-    paddingVertical: 24,
-    borderBottomWidth: 0.5,
+    paddingVertical: 20,
+    borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   currentDate: {
-    fontSize: 24,
-    fontWeight: '800',
+    fontSize: 18,
+    fontWeight: '700',
     color: colors.text,
-    marginBottom: 20,
-    paddingHorizontal: 24,
-    letterSpacing: -0.5,
-  },
-  scrollContent: {
+    marginBottom: 16,
     paddingHorizontal: 16,
   },
-  dateItemContainer: {
-    marginHorizontal: 8,
-    borderRadius: 20,
-    overflow: 'hidden',
+  scrollContent: {
+    paddingHorizontal: 12,
   },
   dateItem: {
-    width: 68,
-    height: 84,
+    width: 56,
+    height: 72,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 20,
-  },
-  unselectedDateItem: {
+    borderRadius: 12,
+    marginHorizontal: 4,
     backgroundColor: colors.surfaceSecondary,
+  },
+  selectedDateItem: {
+    backgroundColor: colors.primary,
   },
   todayDateItem: {
     borderWidth: 1,
     borderColor: colors.primary,
   },
   dayName: {
-    fontSize: 12,
+    fontSize: 11,
     color: colors.textSecondary,
-    marginBottom: 6,
-    fontWeight: '700',
-    letterSpacing: 0.5,
+    marginBottom: 4,
+    fontWeight: '600',
   },
   dayNumber: {
-    fontSize: 20,
-    fontWeight: '900',
-    color: colors.text,
-    letterSpacing: -0.5,
-  },
-  selectedDayName: {
-    fontSize: 12,
-    color: colors.text,
-    marginBottom: 6,
+    fontSize: 16,
     fontWeight: '700',
-    letterSpacing: 0.5,
-  },
-  selectedDayNumber: {
-    fontSize: 20,
-    fontWeight: '900',
     color: colors.text,
-    letterSpacing: -0.5,
+  },
+  selectedText: {
+    color: colors.text,
   },
   todayText: {
     color: colors.primary,

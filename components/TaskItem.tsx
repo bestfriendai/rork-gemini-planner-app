@@ -4,7 +4,6 @@ import { Check, Clock, Flag } from 'lucide-react-native';
 import { Task } from '@/types';
 import { useTaskStore } from '@/store/taskStore';
 import { colors } from '@/constants/colors';
-import { LinearGradient } from 'expo-linear-gradient';
 
 interface TaskItemProps {
   task: Task;
@@ -32,130 +31,115 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onPress }) => {
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <LinearGradient
-        colors={[colors.surface, colors.surfaceSecondary]}
-        style={styles.gradient}
+      <TouchableOpacity 
+        style={[styles.checkbox, task.completed && styles.checkboxChecked]}
+        onPress={() => toggleTaskCompletion(task.id)}
       >
-        <TouchableOpacity 
-          style={[styles.checkbox, task.completed && styles.checkboxChecked]}
-          onPress={() => toggleTaskCompletion(task.id)}
+        {task.completed ? (
+          <View style={styles.checkboxCheckedContent}>
+            <Check size={14} color={colors.text} />
+          </View>
+        ) : (
+          <View style={styles.checkboxEmpty} />
+        )}
+      </TouchableOpacity>
+      
+      <View style={styles.content}>
+        <Text 
+          style={[styles.title, task.completed && styles.completedTitle]}
+          numberOfLines={1}
         >
-          {task.completed ? (
-            <LinearGradient
-              colors={[colors.success, '#4AE54A']}
-              style={styles.checkboxGradient}
-            >
-              <Check size={16} color={colors.text} />
-            </LinearGradient>
-          ) : (
-            <View style={styles.checkboxEmpty} />
-          )}
-        </TouchableOpacity>
+          {task.title}
+        </Text>
         
-        <View style={styles.content}>
+        {task.description ? (
           <Text 
-            style={[styles.title, task.completed && styles.completedTitle]}
+            style={styles.description}
             numberOfLines={1}
           >
-            {task.title}
+            {task.description}
           </Text>
-          
-          {task.description ? (
-            <Text 
-              style={styles.description}
-              numberOfLines={1}
-            >
-              {task.description}
-            </Text>
+        ) : null}
+        
+        <View style={styles.details}>
+          {task.time ? (
+            <View style={styles.detailItem}>
+              <Clock size={12} color={colors.textSecondary} />
+              <Text style={styles.detailText}>{task.time}</Text>
+            </View>
           ) : null}
           
-          <View style={styles.details}>
-            {task.time ? (
-              <View style={styles.detailItem}>
-                <Clock size={14} color={colors.textSecondary} />
-                <Text style={styles.detailText}>{task.time}</Text>
-              </View>
-            ) : null}
-            
-            <View style={[
-              styles.priority, 
-              { backgroundColor: priorityColors[task.priority] }
+          <View style={[
+            styles.priority, 
+            { backgroundColor: priorityColors[task.priority] }
+          ]}>
+            <Flag size={10} color={priorityTextColors[task.priority]} />
+            <Text style={[
+              styles.priorityText, 
+              { color: priorityTextColors[task.priority] }
             ]}>
-              <Flag size={12} color={priorityTextColors[task.priority]} />
-              <Text style={[
-                styles.priorityText, 
-                { color: priorityTextColors[task.priority] }
-              ]}>
-                {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-              </Text>
-            </View>
+              {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+            </Text>
           </View>
         </View>
-      </LinearGradient>
+      </View>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
-    borderRadius: 20,
-    overflow: 'hidden',
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  gradient: {
     flexDirection: 'row',
-    padding: 20,
-    borderWidth: 0.5,
+    padding: 16,
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
     borderColor: colors.border,
   },
   checkbox: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    marginRight: 20,
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    marginRight: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden',
+    marginTop: 2,
   },
   checkboxChecked: {
+    backgroundColor: colors.success,
     borderWidth: 0,
+  },
+  checkboxCheckedContent: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   checkboxEmpty: {
     width: '100%',
     height: '100%',
-    borderRadius: 14,
+    borderRadius: 6,
     borderWidth: 2,
     borderColor: colors.primary,
-  },
-  checkboxGradient: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   content: {
     flex: 1,
   },
   title: {
-    fontSize: 17,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '600',
     color: colors.text,
-    marginBottom: 6,
-    letterSpacing: 0.2,
+    marginBottom: 4,
   },
   completedTitle: {
     textDecorationLine: 'line-through',
     color: colors.textSecondary,
   },
   description: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.textSecondary,
-    marginBottom: 12,
+    marginBottom: 8,
     fontWeight: '500',
   },
   details: {
@@ -165,25 +149,24 @@ const styles = StyleSheet.create({
   detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 16,
+    marginRight: 12,
   },
   detailText: {
-    fontSize: 12,
+    fontSize: 11,
     color: colors.textSecondary,
-    marginLeft: 6,
-    fontWeight: '700',
+    marginLeft: 4,
+    fontWeight: '600',
   },
   priority: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   priorityText: {
-    fontSize: 12,
-    fontWeight: '800',
-    marginLeft: 6,
-    letterSpacing: 0.3,
+    fontSize: 10,
+    fontWeight: '700',
+    marginLeft: 4,
   },
 });

@@ -14,10 +14,10 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: Platform.OS === 'ios' ? 'transparent' : colors.glass,
           borderTopColor: colors.border,
-          borderTopWidth: 0.5,
-          paddingTop: 16,
-          paddingBottom: 16,
-          height: 92,
+          borderTopWidth: 1,
+          paddingTop: 8,
+          paddingBottom: 8,
+          height: 80,
           position: 'absolute',
         },
         tabBarBackground: Platform.OS === 'ios' ? () => (
@@ -35,21 +35,19 @@ export default function TabLayout() {
         ) : undefined,
         headerStyle: {
           backgroundColor: colors.surface,
-          borderBottomWidth: 0.5,
+          borderBottomWidth: 1,
           borderBottomColor: colors.border,
         },
         headerShadowVisible: false,
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '700',
-          marginTop: 8,
-          letterSpacing: 0.5,
+          fontSize: 11,
+          fontWeight: '600',
+          marginTop: 4,
         },
         headerTitleStyle: {
-          fontWeight: '800',
-          fontSize: 24,
+          fontWeight: '700',
+          fontSize: 20,
           color: colors.text,
-          letterSpacing: -0.8,
         },
       }}
     >
