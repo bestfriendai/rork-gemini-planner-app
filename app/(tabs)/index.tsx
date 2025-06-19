@@ -5,7 +5,7 @@ import { useChatStore } from '@/store/chatStore';
 import { ChatMessage } from '@/components/ChatMessage';
 import { ChatInput } from '@/components/ChatInput';
 import { EmptyState } from '@/components/EmptyState';
-import { StatusIndicator } from '@/components/StatusIndicator';
+import StatusIndicator from '@/components/StatusIndicator';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
 
 export default function ChatScreen() {
@@ -57,7 +57,7 @@ export default function ChatScreen() {
       
       {isLoading && <LoadingIndicator />}
       
-      <ChatInput onSendMessage={handleSendMessage} disabled={isLoading || !isInitialized} />
+      <ChatInput />
     </KeyboardAvoidingView>
   );
 }
