@@ -52,11 +52,7 @@ export default function HomeScreen() {
       // Show alert for missing API keys
       Alert.alert(
         "API Configuration Issue",
-        `The following issues were found:
-
-${validation.errors.join('\n')}
-
-Please check your API keys in the app configuration.`,
+        `The following issues were found:\n\n${validation.errors.join('\n')}\n\nPlease check your API keys in the app configuration.`,
         [{ text: "OK" }]
       );
     } else {

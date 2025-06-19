@@ -14,11 +14,17 @@ export const API_CONFIG = {
   }
 };
 
+// Debug logging for API keys
+console.log('=== API Configuration Debug ===');
+console.log('Constants.expoConfig?.extra:', Constants.expoConfig?.extra);
+console.log('OpenRouter Key from config:', API_CONFIG.openrouter.apiKey ? `${API_CONFIG.openrouter.apiKey.substring(0, 15)}...` : 'NOT SET');
+console.log('Perplexity Key from config:', API_CONFIG.perplexity.apiKey ? `${API_CONFIG.perplexity.apiKey.substring(0, 15)}...` : 'NOT SET');
+
 // Validate API keys on app start
 export const validateAPIKeys = (): { valid: boolean; errors: string[] } => {
   const errors: string[] = [];
   
-  console.log('Validating API Keys:');
+  console.log('=== Validating API Keys ===');
   console.log('OpenRouter Key:', API_CONFIG.openrouter.apiKey ? `${API_CONFIG.openrouter.apiKey.substring(0, 15)}...` : 'NOT SET');
   console.log('Perplexity Key:', API_CONFIG.perplexity.apiKey ? `${API_CONFIG.perplexity.apiKey.substring(0, 15)}...` : 'NOT SET');
   
@@ -33,6 +39,8 @@ export const validateAPIKeys = (): { valid: boolean; errors: string[] } => {
   } else if (!API_CONFIG.perplexity.apiKey.startsWith('pplx-')) {
     errors.push('Perplexity API key format is invalid');
   }
+  
+  console.log('Validation result:', { valid: errors.length === 0, errors });
   
   return {
     valid: errors.length === 0,

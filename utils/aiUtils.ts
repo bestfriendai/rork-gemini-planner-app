@@ -42,7 +42,7 @@ interface ModelConfig {
 
 const MODEL_CONFIGS: Record<string, ModelConfig> = {
   'general': {
-    primary: 'google/gemini-2.0-flash-thinking-exp',
+    primary: 'google/gemini-2.5-flash-lite-preview-06-17',
     fallback: ['openai/gpt-4o-mini', 'anthropic/claude-3-5-haiku'],
     maxTokens: 2000,
     temperature: 0.7,
@@ -130,7 +130,7 @@ const TASK_TOOLS = [
 ];
 
 interface PerplexityConfig {
-  model: 'sonar-small-online' | 'sonar-large-online' | 'sonar-huge-online' | 'sonar-research' | 'sonar-code';
+  model: 'llama-3.1-sonar-small-128k-online' | 'llama-3.1-sonar-large-128k-online' | 'llama-3.1-sonar-huge-128k-online';
   searchMode?: 'web' | 'academic' | 'news' | 'social' | 'code';
   reasoningEffort?: 'fast' | 'balanced' | 'thorough' | 'adaptive';
   searchContextSize?: 'compact' | 'standard' | 'extended' | 'comprehensive';
@@ -145,7 +145,7 @@ interface PerplexityConfig {
 const getPerplexityConfig = (query: string): PerplexityConfig => {
   if (query.match(/code|programming|github|repository|function|class|api/i)) {
     return {
-      model: 'sonar-code',
+      model: 'llama-3.1-sonar-large-128k-online',
       searchMode: 'code',
       reasoningEffort: 'thorough',
       searchContextSize: 'extended',
@@ -155,7 +155,7 @@ const getPerplexityConfig = (query: string): PerplexityConfig => {
   
   if (query.match(/research|study|paper|academic|scientific|journal/i)) {
     return {
-      model: 'sonar-large-online',
+      model: 'llama-3.1-sonar-large-128k-online',
       searchMode: 'academic',
       reasoningEffort: 'thorough',
       searchContextSize: 'comprehensive',
@@ -167,7 +167,7 @@ const getPerplexityConfig = (query: string): PerplexityConfig => {
   
   if (query.match(/news|breaking|latest|current|today|happening|live/i)) {
     return {
-      model: 'sonar-small-online',
+      model: 'llama-3.1-sonar-small-128k-online',
       searchMode: 'news',
       reasoningEffort: 'fast',
       searchContextSize: 'standard',
@@ -179,7 +179,7 @@ const getPerplexityConfig = (query: string): PerplexityConfig => {
   
   if (query.length > 150 || query.match(/analyze|compare|evaluate|comprehensive|detailed/i)) {
     return {
-      model: 'sonar-research',
+      model: 'llama-3.1-sonar-huge-128k-online',
       reasoningEffort: 'adaptive',
       searchContextSize: 'comprehensive',
       factCheck: true,
@@ -190,7 +190,7 @@ const getPerplexityConfig = (query: string): PerplexityConfig => {
   
   if (query.match(/trending|viral|social|twitter|reddit|discussion/i)) {
     return {
-      model: 'sonar-large-online',
+      model: 'llama-3.1-sonar-large-128k-online',
       searchMode: 'social',
       reasoningEffort: 'balanced',
       searchContextSize: 'standard',
@@ -200,7 +200,7 @@ const getPerplexityConfig = (query: string): PerplexityConfig => {
   }
   
   return {
-    model: 'sonar-large-online',
+    model: 'llama-3.1-sonar-small-128k-online',
     searchMode: 'web',
     reasoningEffort: 'balanced',
     searchContextSize: 'standard',
@@ -262,6 +262,19 @@ export const callGeminiAI = async (
   currentDateTime: any,
   onStream?: (chunk: string) => void
 ): Promise<string> => {
+  console.log('=== OpenRouter API Call ===');
+  console.log('API Key:', API_CONFIG.openrouter.apiKey ? `${API_CONFIG.openrouter.apiKey.substring(0, 15)}...` : 'NOT SET');
+  
+  if (!API_CONFIG.openrouter.apiKey) {
+    throw new AIError(
+      'OpenRouter API key is not configured. Please check your app configuration.',
+      'openrouter',
+      401,
+      false,
+      ErrorSeverity.CRITICAL
+    );
+  }
+
   if (!rateLimiter.canMakeRequest('openrouter')) {
     throw new AIError(
       'Rate limit exceeded for OpenRouter API. Please try again later.',
@@ -280,6 +293,8 @@ export const callGeminiAI = async (
     const config = MODEL_CONFIGS[classification.queryType] || MODEL_CONFIGS['general'];
 
     const enhancedMessages = messages.map(msg => ({ ...msg }));
+
+    console.log('Making request to OpenRouter with model:', config.primary);
 
     const response = await fetch(`${API_CONFIG.openrouter.baseUrl}/chat/completions`, {
       method: 'POST',
@@ -302,8 +317,11 @@ export const callGeminiAI = async (
       }),
     });
 
+    console.log('OpenRouter response status:', response.status);
+
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('OpenRouter API error:', errorText);
       throw new AIError(
         `OpenRouter API error: ${errorText}`,
         'openrouter',
@@ -389,6 +407,19 @@ export const callPerplexityAI = async (
   currentDateTime: any,
   onStream?: (chunk: string) => void
 ): Promise<string> => {
+  console.log('=== Perplexity API Call ===');
+  console.log('API Key:', API_CONFIG.perplexity.apiKey ? `${API_CONFIG.perplexity.apiKey.substring(0, 15)}...` : 'NOT SET');
+  
+  if (!API_CONFIG.perplexity.apiKey) {
+    throw new AIError(
+      'Perplexity API key is not configured. Please check your app configuration.',
+      'perplexity',
+      401,
+      false,
+      ErrorSeverity.CRITICAL
+    );
+  }
+
   if (!rateLimiter.canMakeRequest('perplexity')) {
     throw new AIError(
       'Rate limit exceeded for Perplexity API. Please try again later.',
@@ -408,26 +439,12 @@ export const callPerplexityAI = async (
     const requestBody: any = {
       model: config.model,
       messages,
-      max_tokens: config.model === 'sonar-research' ? 2000 : 1000,
+      max_tokens: config.model === 'llama-3.1-sonar-huge-128k-online' ? 2000 : 1000,
       temperature: 0.7,
       stream: !!onStream
     };
 
-    if (config.searchMode) {
-      requestBody.search_mode = config.searchMode;
-    }
-    
-    if (config.reasoningEffort) {
-      requestBody.reasoning_effort = config.reasoningEffort;
-    }
-    
-    if (config.searchContextSize || config.domainFilter || config.dateFilter) {
-      requestBody.web_search_options = {
-        search_context_size: config.searchContextSize,
-        domain_filter: config.domainFilter,
-        date_filter: config.dateFilter
-      };
-    }
+    console.log('Making request to Perplexity with model:', config.model);
 
     const response = await fetch(`${API_CONFIG.perplexity.baseUrl}/chat/completions`, {
       method: 'POST',
@@ -438,8 +455,11 @@ export const callPerplexityAI = async (
       body: JSON.stringify(requestBody),
     });
 
+    console.log('Perplexity response status:', response.status);
+
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('Perplexity API error:', errorText);
       throw new AIError(
         `Perplexity API error: ${errorText}`,
         'perplexity',
@@ -528,13 +548,20 @@ export const processAIRequest = async (
   const query = typeof lastMessage.content === 'string' ? lastMessage.content : '';
   const classification = classifyQuery(query);
   
+  console.log('=== Processing AI Request ===');
+  console.log('Query:', query.substring(0, 100) + '...');
+  console.log('Classification:', classification);
+  
   try {
     if (classification.needsWebSearch) {
+      console.log('Using Perplexity for web search');
       return await callPerplexityAI(messages, currentDateTime, onStream);
     } else {
+      console.log('Using OpenRouter for general query');
       return await callGeminiAI(messages, currentDateTime, onStream);
     }
   } catch (error) {
+    console.error('Primary AI service failed:', error);
     if (classification.needsWebSearch && error instanceof AIError && error.retryable) {
       console.log('Falling back to Gemini AI after Perplexity error');
       return await callGeminiAI(messages, currentDateTime, onStream);
