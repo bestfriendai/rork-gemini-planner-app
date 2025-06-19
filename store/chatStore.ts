@@ -4,14 +4,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Message, CoreMessage } from '@/types';
 import { Platform } from 'react-native';
 import { processAIRequest, AIError, ErrorSeverity } from '@/utils/aiUtils';
+import { initializeAPIKeys, validateAPIKeys } from '@/utils/config';
 
 interface ChatState {
   messages: Message[];
   isLoading: boolean;
+  isInitialized: boolean;
+  initError: string | null;
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => Promise<void>;
   clearMessages: () => void;
   setLoading: (loading: boolean) => void;
   formatMessagesForAPI: () => CoreMessage[];
+  initializeAPI: () => Promise<void>;
 }
 
 export const useChatStore = create<ChatState>()(
@@ -19,6 +23,31 @@ export const useChatStore = create<ChatState>()(
     (set, get) => ({
       messages: [],
       isLoading: false,
+      isInitialized: false,
+      initError: null,
+      
+      initializeAPI: async () => {
+        try {
+          await initializeAPIKeys();
+          const validation = validateAPIKeys();
+          
+          if (!validation.valid) {
+            set({ 
+              isInitialized: false, 
+              initError: validation.errors.join(', ') 
+            });
+            return;
+          }
+          
+          set({ isInitialized: true, initError: null });
+        } catch (error) {
+          console.error('Failed to initialize API:', error);
+          set({ 
+            isInitialized: false, 
+            initError: 'Failed to initialize API keys. Please check your connection.' 
+          });
+        }
+      },
       
       addMessage: async (message) => {
         const newMessage: Message = {
@@ -36,6 +65,14 @@ export const useChatStore = create<ChatState>()(
           set({ isLoading: true });
           
           try {
+            // Ensure API is initialized
+            if (!get().isInitialized) {
+              await get().initializeAPI();
+              if (!get().isInitialized) {
+                throw new Error(get().initError || 'API not initialized');
+              }
+            }
+            
             const apiMessages = get().formatMessagesForAPI();
             const currentDateTime = new Date();
             

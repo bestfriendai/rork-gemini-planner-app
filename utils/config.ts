@@ -1,26 +1,62 @@
 import Constants from 'expo-constants';
+import { trpcClient } from '@/lib/trpc';
 
-// API Configuration - Read from app.config.js extra section
+// API Configuration - Read from secure backend
 export const API_CONFIG = {
   openrouter: {
-    apiKey: Constants.expoConfig?.extra?.OPENROUTER_API_KEY || '',
+    apiKey: '',
     baseUrl: 'https://openrouter.ai/api/v1',
     defaultModel: 'google/gemini-2.5-flash-lite-preview-06-17'
   },
   perplexity: {
-    apiKey: Constants.expoConfig?.extra?.PERPLEXITY_API_KEY || '',
+    apiKey: '',
     baseUrl: 'https://api.perplexity.ai',
     defaultModel: 'sonar-small-online'
   }
 };
 
-// Debug logging for API keys
-console.log('=== API Configuration Debug ===');
-console.log('Constants.expoConfig?.extra:', Constants.expoConfig?.extra);
-console.log('OpenRouter Key from config:', API_CONFIG.openrouter.apiKey ? `${API_CONFIG.openrouter.apiKey.substring(0, 15)}...` : 'NOT SET');
-console.log('Perplexity Key from config:', API_CONFIG.perplexity.apiKey ? `${API_CONFIG.perplexity.apiKey.substring(0, 15)}...` : 'NOT SET');
+// Initialize API keys from backend
+export const initializeAPIKeys = async (): Promise<void> => {
+  try {
+    console.log('=== Initializing API Keys from Backend ===');
+    
+    // Fetch OpenRouter API key
+    const openrouterResponse = await trpcClient.api.getKey.query({ 
+      service: 'openrouter' 
+    });
+    API_CONFIG.openrouter.apiKey = openrouterResponse.apiKey;
+    
+    // Fetch Perplexity API key
+    const perplexityResponse = await trpcClient.api.getKey.query({ 
+      service: 'perplexity' 
+    });
+    API_CONFIG.perplexity.apiKey = perplexityResponse.apiKey;
+    
+    console.log('OpenRouter Key from backend:', API_CONFIG.openrouter.apiKey ? `${API_CONFIG.openrouter.apiKey.substring(0, 15)}...` : 'NOT SET');
+    console.log('Perplexity Key from backend:', API_CONFIG.perplexity.apiKey ? `${API_CONFIG.perplexity.apiKey.substring(0, 15)}...` : 'NOT SET');
+  } catch (error) {
+    console.error('Failed to initialize API keys from backend:', error);
+    // Fallback to any keys in app config (for development only)
+    if (Constants.expoConfig?.extra?.OPENROUTER_API_KEY) {
+      console.log('Using fallback OpenRouter key from app config');
+      API_CONFIG.openrouter.apiKey = Constants.expoConfig.extra.OPENROUTER_API_KEY;
+    }
+    
+    if (Constants.expoConfig?.extra?.PERPLEXITY_API_KEY) {
+      console.log('Using fallback Perplexity key from app config');
+      API_CONFIG.perplexity.apiKey = Constants.expoConfig.extra.PERPLEXITY_API_KEY;
+    }
+  }
+};
 
-// Validate API keys on app start
+// Debug logging for API keys
+export const logAPIConfig = (): void => {
+  console.log('=== API Configuration Debug ===');
+  console.log('OpenRouter Key:', API_CONFIG.openrouter.apiKey ? `${API_CONFIG.openrouter.apiKey.substring(0, 15)}...` : 'NOT SET');
+  console.log('Perplexity Key:', API_CONFIG.perplexity.apiKey ? `${API_CONFIG.perplexity.apiKey.substring(0, 15)}...` : 'NOT SET');
+};
+
+// Validate API keys
 export const validateAPIKeys = (): { valid: boolean; errors: string[] } => {
   const errors: string[] = [];
   

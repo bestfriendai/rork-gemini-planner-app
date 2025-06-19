@@ -1,53 +1,86 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useChatStore } from '@/store/chatStore';
+import { validateAPIKeys } from '@/utils/config';
 
-interface StatusIndicatorProps {
-  status: 'online' | 'offline' | 'loading';
-  text?: string;
-}
+export default function StatusIndicator() {
+  const { isInitialized, initError, initializeAPI } = useChatStore();
+  const [status, setStatus] = useState<'loading' | 'error' | 'ready'>('loading');
+  const [message, setMessage] = useState('Initializing...');
 
-export const StatusIndicator: React.FC<StatusIndicatorProps> = ({ status, text }) => {
-  const getStatusColor = () => {
-    switch (status) {
-      case 'online': return '#34C759';
-      case 'offline': return '#FF3B30';
-      case 'loading': return '#F9A826';
-      default: return '#6E7A8A';
-    }
-  };
+  useEffect(() => {
+    const checkStatus = async () => {
+      if (isInitialized) {
+        const validation = validateAPIKeys();
+        if (validation.valid) {
+          setStatus('ready');
+          setMessage('API Ready');
+        } else {
+          setStatus('error');
+          setMessage(validation.errors[0]);
+        }
+      } else if (initError) {
+        setStatus('error');
+        setMessage(initError);
+      } else {
+        setStatus('loading');
+        setMessage('Connecting to API...');
+      }
+    };
 
-  const getStatusText = () => {
-    if (text) return text;
-    switch (status) {
-      case 'online': return 'Connected';
-      case 'offline': return 'Offline';
-      case 'loading': return 'Connecting...';
-      default: return 'Unknown';
-    }
+    checkStatus();
+  }, [isInitialized, initError]);
+
+  const handleRetry = async () => {
+    setStatus('loading');
+    setMessage('Reconnecting...');
+    await initializeAPI();
   };
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.dot, { backgroundColor: getStatusColor() }]} />
-      <Text style={styles.text}>{getStatusText()}</Text>
+    <View style={[styles.container, styles[status]]}>
+      <Text style={styles.text}>{message}</Text>
+      {status === 'error' && (
+        <TouchableOpacity style={styles.retryButton} onPress={handleRetry}>
+          <Text style={styles.retryText}>Retry</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  dot: {
-    width: 8,
-    height: 8,
+    justifyContent: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
     borderRadius: 4,
-    marginRight: 8,
+    marginBottom: 8,
+  },
+  loading: {
+    backgroundColor: '#f0f4f9',
+  },
+  error: {
+    backgroundColor: '#ffebee',
+  },
+  ready: {
+    backgroundColor: '#e8f5e9',
   },
   text: {
     fontSize: 14,
-    color: '#6E7A8A',
-    fontWeight: '500',
+    color: '#333',
+  },
+  retryButton: {
+    marginLeft: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 4,
+  },
+  retryText: {
+    fontSize: 12,
+    color: '#333',
   },
 });
