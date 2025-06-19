@@ -367,7 +367,7 @@ export const callGeminiAI = async (
       });
       return content;
     }
-  } catch (error) {
+  } catch (error: any) {
     const endTime = Date.now();
     apiMonitor.recordRequest('openrouter', endTime - startTime, false, error.message);
     if (error instanceof AIError) {
@@ -407,7 +407,7 @@ export const callPerplexityAI = async (
     const requestBody: any = {
       model: config.model,
       messages,
-      max_tokens: config.model === 'sonar-deep-research' ? 2000 : 1000,
+      max_tokens: config.model === 'sonar-research' ? 2000 : 1000,
       temperature: 0.7,
       stream: !!onStream
     };
@@ -501,7 +501,7 @@ export const callPerplexityAI = async (
       });
       return content;
     }
-  } catch (error) {
+  } catch (error: any) {
     const endTime = Date.now();
     apiMonitor.recordRequest('perplexity', endTime - startTime, false, error.message);
     if (error instanceof AIError) {
