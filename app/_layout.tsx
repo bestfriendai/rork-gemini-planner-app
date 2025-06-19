@@ -5,6 +5,11 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { colors } from "@/constants/colors";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { trpc, trpcClient } from "@/lib/trpc";
+
+// Create a client
+const queryClient = new QueryClient();
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",
@@ -42,35 +47,39 @@ function RootLayoutNav() {
   return (
     <>
       <StatusBar style="light" />
-      <Stack
-        screenOptions={{
-          headerBackTitle: "Back",
-          headerStyle: {
-            backgroundColor: colors.surface,
-          },
-          headerShadowVisible: false,
-          headerTitleStyle: {
-            fontWeight: '600',
-            fontSize: 18,
-            color: colors.text,
-          },
-          headerTintColor: colors.primary,
-          contentStyle: {
-            backgroundColor: colors.background,
-          },
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen 
-          name="task/[id]" 
-          options={{ 
-            title: "Task Details",
-            headerStyle: {
-              backgroundColor: colors.surface,
-            },
-          }} 
-        />
-      </Stack>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <Stack
+            screenOptions={{
+              headerBackTitle: "Back",
+              headerStyle: {
+                backgroundColor: colors.surface,
+              },
+              headerShadowVisible: false,
+              headerTitleStyle: {
+                fontWeight: '600',
+                fontSize: 18,
+                color: colors.text,
+              },
+              headerTintColor: colors.primary,
+              contentStyle: {
+                backgroundColor: colors.background,
+              },
+            }}
+          >
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen 
+              name="task/[id]" 
+              options={{ 
+                title: "Task Details",
+                headerStyle: {
+                  backgroundColor: colors.surface,
+                },
+              }} 
+            />
+          </Stack>
+        </QueryClientProvider>
+      </trpc.Provider>
     </>
   );
 }
