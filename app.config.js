@@ -36,8 +36,8 @@ export default {
       typedRoutes: true
     },
     extra: {
-      OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
-      PERPLEXITY_API_KEY: process.env.PERPLEXITY_API_KEY,
+      OPENROUTER_API_KEY: "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",
+      PERPLEXITY_API_KEY: "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",
     }
   }
 };
