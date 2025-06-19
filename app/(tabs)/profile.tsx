@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Alert, Platform, Switch } from 'react-native';
 import { User, Bell, Trash2, Info, Volume2, Globe, Mic, Moon, Sun, Lock } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useChatStore } from '@/store/chatStore';
 import { useTaskStore } from '@/store/taskStore';
 import { colors } from '@/constants/colors';
+import { API_CONFIG } from '@/utils/config';
+import { apiMonitor } from '@/utils/monitoring';
 
 export default function ProfileScreen() {
   const { username, setUsername, notifications, toggleNotifications, theme, setTheme } = useSettingsStore();
@@ -13,6 +15,18 @@ export default function ProfileScreen() {
   
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(username);
+  const [debugInfo, setDebugInfo] = useState<string>('');
+  
+  useEffect(() => {
+    // Gather debug information
+    const openRouterKey = API_CONFIG.openrouter.apiKey ? 'Set' : 'Not Set';
+    const perplexityKey = API_CONFIG.perplexity.apiKey ? 'Set' : 'Not Set';
+    const healthStatus = apiMonitor.getHealthStatus();
+    const openRouterStatus = healthStatus.find(s => s.service === 'openrouter')?.status || 'Unknown';
+    const perplexityStatus = healthStatus.find(s => s.service === 'perplexity')?.status || 'Unknown';
+    
+    setDebugInfo(`Platform: ${Platform.OS}\nAPI Keys - OpenRouter: ${openRouterKey}, Perplexity: ${perplexityKey}\nService Status - OpenRouter: ${openRouterStatus}, Perplexity: ${perplexityStatus}`);
+  }, []);
   
   const handleSaveName = () => {
     setUsername(nameInput.trim());
@@ -228,6 +242,13 @@ export default function ProfileScreen() {
             </View>
           </View>
         </View>
+        
+        {__DEV__ && (
+          <View style={styles.debugContainer}>
+            <Text style={styles.debugTitle}>Debug Information</Text>
+            <Text style={styles.debugText}>{debugInfo}</Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -415,5 +436,26 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  debugContainer: {
+    margin: 16,
+    padding: 16,
+    backgroundColor: colors.surfaceSecondary,
+    borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: colors.border,
+    marginBottom: 40,
+  },
+  debugTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 8,
+  },
+  debugText: {
+    fontSize: 12,
+    color: colors.textTertiary,
+    lineHeight: 18,
+    fontWeight: '400',
   },
 });

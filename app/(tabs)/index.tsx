@@ -1,11 +1,12 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { 
   View, 
   StyleSheet, 
   ScrollView, 
   Platform,
   Animated,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Text,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
@@ -17,11 +18,14 @@ import { QuickActions } from '@/components/QuickActions';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
 import { useChatStore } from '@/store/chatStore';
 import { colors } from '@/constants/colors';
+import { API_CONFIG } from '@/utils/config';
+import { apiMonitor } from '@/utils/monitoring';
 
 export default function HomeScreen() {
   const { messages, isLoading } = useChatStore();
   const scrollViewRef = useRef<ScrollView>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [debugMessage, setDebugMessage] = useState<string>('');
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -36,6 +40,21 @@ export default function HomeScreen() {
       scrollViewRef.current.scrollToEnd({ animated: true });
     }
   }, [messages]);
+
+  useEffect(() => {
+    // Check API key presence and network status for debugging
+    const checkApiStatus = () => {
+      const openRouterKey = API_CONFIG.openrouter.apiKey ? 'Set' : 'Not Set';
+      const perplexityKey = API_CONFIG.perplexity.apiKey ? 'Set' : 'Not Set';
+      const healthStatus = apiMonitor.getHealthStatus();
+      const openRouterStatus = healthStatus.find(s => s.service === 'openrouter')?.status || 'Unknown';
+      const perplexityStatus = healthStatus.find(s => s.service === 'perplexity')?.status || 'Unknown';
+      
+      setDebugMessage(`API Keys - OpenRouter: ${openRouterKey}, Perplexity: ${perplexityKey}\nService Status - OpenRouter: ${openRouterStatus}, Perplexity: ${perplexityStatus}`);
+    };
+    
+    checkApiStatus();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -96,6 +115,12 @@ export default function HomeScreen() {
         )}
 
         <ChatInput />
+        
+        {__DEV__ && (
+          <View style={styles.debugContainer}>
+            <Text style={styles.debugText}>{debugMessage}</Text>
+          </View>
+        )}
       </KeyboardAvoidingView>
     </View>
   );
@@ -123,5 +148,16 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: 'center',
     paddingVertical: 16,
+  },
+  debugContainer: {
+    backgroundColor: colors.surfaceSecondary,
+    padding: 10,
+    borderRadius: 5,
+    margin: 10,
+  },
+  debugText: {
+    color: colors.text,
+    fontSize: 12,
+    fontWeight: '400',
   },
 });
