@@ -14,6 +14,28 @@ export const API_CONFIG = {
   }
 };
 
+// Validate API keys on app start
+export const validateAPIKeys = (): { valid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+  
+  if (!API_CONFIG.openrouter.apiKey) {
+    errors.push('OpenRouter API key is missing');
+  } else if (!API_CONFIG.openrouter.apiKey.startsWith('sk-or-')) {
+    errors.push('OpenRouter API key format is invalid');
+  }
+  
+  if (!API_CONFIG.perplexity.apiKey) {
+    errors.push('Perplexity API key is missing');
+  } else if (!API_CONFIG.perplexity.apiKey.startsWith('pplx-')) {
+    errors.push('Perplexity API key format is invalid');
+  }
+  
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+};
+
 // App Configuration
 export const APP_CONFIG = {
   name: 'Jarva AI',

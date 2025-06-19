@@ -7,6 +7,7 @@ import {
   Animated,
   KeyboardAvoidingView,
   Text,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
@@ -18,14 +19,14 @@ import { QuickActions } from '@/components/QuickActions';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
 import { useChatStore } from '@/store/chatStore';
 import { colors } from '@/constants/colors';
-import { API_CONFIG } from '@/utils/config';
+import { API_CONFIG, validateAPIKeys } from '@/utils/config';
 import { apiMonitor } from '@/utils/monitoring';
 
 export default function HomeScreen() {
   const { messages, isLoading } = useChatStore();
   const scrollViewRef = useRef<ScrollView>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const [debugMessage, setDebugMessage] = useState<string>('');
+  const [apiStatus, setApiStatus] = useState<string>('');
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -42,18 +43,25 @@ export default function HomeScreen() {
   }, [messages]);
 
   useEffect(() => {
-    // Check API key presence and network status for debugging
-    const checkApiStatus = () => {
-      const openRouterKey = API_CONFIG.openrouter.apiKey ? 'Set' : 'Not Set';
-      const perplexityKey = API_CONFIG.perplexity.apiKey ? 'Set' : 'Not Set';
+    // Validate API keys on component mount
+    const validation = validateAPIKeys();
+    
+    if (!validation.valid) {
+      setApiStatus(`API Issues: ${validation.errors.join(', ')}`);
+      
+      // Show alert for missing API keys
+      Alert.alert(
+        "API Configuration Issue",
+        `The following issues were found:\n\n${validation.errors.join('\n')}\n\nPlease check your API keys in the app configuration.`,
+        [{ text: "OK" }]
+      );
+    } else {
       const healthStatus = apiMonitor.getHealthStatus();
       const openRouterStatus = healthStatus.find(s => s.service === 'openrouter')?.status || 'Unknown';
       const perplexityStatus = healthStatus.find(s => s.service === 'perplexity')?.status || 'Unknown';
       
-      setDebugMessage(`API Keys - OpenRouter: ${openRouterKey}, Perplexity: ${perplexityKey}\nService Status - OpenRouter: ${openRouterStatus}, Perplexity: ${perplexityStatus}`);
-    };
-    
-    checkApiStatus();
+      setApiStatus(`OpenRouter: ${openRouterStatus}, Perplexity: ${perplexityStatus}`);
+    }
   }, []);
 
   return (
@@ -118,7 +126,10 @@ export default function HomeScreen() {
         
         {__DEV__ && (
           <View style={styles.debugContainer}>
-            <Text style={styles.debugText}>{debugMessage}</Text>
+            <Text style={styles.debugText}>
+              API Keys: {API_CONFIG.openrouter.apiKey ? 'OR ✓' : 'OR ✗'} {API_CONFIG.perplexity.apiKey ? 'PP ✓' : 'PP ✗'}
+            </Text>
+            <Text style={styles.debugText}>Status: {apiStatus}</Text>
           </View>
         )}
       </KeyboardAvoidingView>
@@ -151,13 +162,13 @@ const styles = StyleSheet.create({
   },
   debugContainer: {
     backgroundColor: colors.surfaceSecondary,
-    padding: 10,
+    padding: 8,
     borderRadius: 5,
     margin: 10,
   },
   debugText: {
     color: colors.text,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '400',
   },
 });
