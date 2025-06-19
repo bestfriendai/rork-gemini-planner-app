@@ -1,7 +1,7 @@
 // API Configuration
 export const API_CONFIG = {
   openrouter: {
-    apiKey: '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',
+    apiKey: process.env.EXPO_PUBLIC_OPENROUTER_API_KEY || '',
     baseUrl: 'https://openrouter.ai/api/v1',
     defaultModel: 'google/gemini-2.5-flash-lite-preview-06-17'
   },
