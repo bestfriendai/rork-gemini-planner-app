@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { StyleSheet, View, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useChatStore } from '@/store/chatStore';
-import ChatMessage from '@/components/ChatMessage';
-import ChatInput from '@/components/ChatInput';
-import EmptyState from '@/components/EmptyState';
-import StatusIndicator from '@/components/StatusIndicator';
-import LoadingIndicator from '@/components/LoadingIndicator';
+import { ChatMessage } from '@/components/ChatMessage';
+import { ChatInput } from '@/components/ChatInput';
+import { EmptyState } from '@/components/EmptyState';
+import { StatusIndicator } from '@/components/StatusIndicator';
+import { LoadingIndicator } from '@/components/LoadingIndicator';
 
 export default function ChatScreen() {
   const insets = useSafeAreaInsets();
