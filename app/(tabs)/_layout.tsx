@@ -1,10 +1,13 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { MessageSquare, CalendarDays, ListTodo, Settings } from "lucide-react-native";
+import { MessageSquare, CalendarDays, User, Brain } from "lucide-react-native";
 import { colors } from "@/constants/colors";
-import { Platform } from "react-native";
+import { Platform, TouchableOpacity, StyleSheet, View } from "react-native";
+import { useRouter } from 'expo-router';
 
 export default function TabLayout() {
+  const router = useRouter();
+
   return (
     <Tabs
       screenOptions={{
@@ -60,36 +63,56 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Assistant",
-          tabBarLabel: "Assistant",
+          title: "Home",
+          tabBarLabel: "Home",
           tabBarIcon: ({ color, size }) => <MessageSquare size={28} color={color} strokeWidth={2} />,
           headerTitle: "Jarva AI",
         }}
       />
       <Tabs.Screen
-        name="planner"
+        name="agenda"
         options={{
-          title: "Planner",
-          tabBarLabel: "Planner",
+          title: "Agenda",
+          tabBarLabel: "Agenda",
           tabBarIcon: ({ color, size }) => <CalendarDays size={28} color={color} strokeWidth={2} />,
         }}
       />
       <Tabs.Screen
-        name="tasks"
+        name="profile"
         options={{
-          title: "Tasks",
-          tabBarLabel: "Tasks",
-          tabBarIcon: ({ color, size }) => <ListTodo size={28} color={color} strokeWidth={2} />,
+          title: "Profile",
+          tabBarLabel: "Profile",
+          tabBarIcon: ({ color, size }) => <User size={28} color={color} strokeWidth={2} />,
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="insights"
         options={{
-          title: "Settings",
-          tabBarLabel: "Settings",
-          tabBarIcon: ({ color, size }) => <Settings size={28} color={color} strokeWidth={2} />,
+          title: "Insights",
+          tabBarLabel: "Insights",
+          tabBarIcon: ({ color, size }) => <Brain size={28} color={color} strokeWidth={2} />,
         }}
       />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  fab: {
+    position: 'absolute',
+    bottom: Platform.OS === 'ios' ? 120 : 100,
+    right: '50%',
+    transform: [{ translateX: 28 }],
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+});

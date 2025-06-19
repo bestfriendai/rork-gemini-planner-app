@@ -93,7 +93,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
           style={styles.input}
           value={message}
           onChangeText={setMessage}
-          placeholder="Message Jarva..."
+          placeholder="Ask Jarva anything..."
           placeholderTextColor={colors.textTertiary}
           multiline
           maxLength={1000}

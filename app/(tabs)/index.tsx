@@ -9,16 +9,18 @@ import { ChatInput } from '@/components/ChatInput';
 import { EmptyState } from '@/components/EmptyState';
 import { QuickActions } from '@/components/QuickActions';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
+import { TaskItem } from '@/components/TaskItem';
 import { callAI, extractTasksFromAIResponse } from '@/utils/aiUtils';
 import { colors } from '@/constants/colors';
+import { getCurrentDate, formatDateForDisplay } from '@/utils/dateUtils';
 
-export default function AssistantScreen() {
+export default function HomeScreen() {
   const flatListRef = useRef<FlatList>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   
   const { messages, addMessage, clearMessages, isLoading, setLoading, formatMessagesForAPI } = useChatStore();
-  const { addTask } = useTaskStore();
+  const { tasks, addTask } = useTaskStore();
   const { username } = useSettingsStore();
   
   const [initialMessageSent, setInitialMessageSent] = useState(false);
@@ -26,6 +28,10 @@ export default function AssistantScreen() {
   const [showTaskPrompt, setShowTaskPrompt] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+
+  const today = getCurrentDate();
+  const todayTasks = tasks.filter(task => task.date === today && !task.completed).slice(0, 3);
 
   useEffect(() => {
     if (messages.length === 0 && !initialMessageSent) {
@@ -45,15 +51,15 @@ export default function AssistantScreen() {
       });
       
       const greeting = username 
-        ? `Hello ${username}! I'm Jarva, your AI assistant. Today is ${currentDate} and it's ${currentTime}. I can help you plan your day, create tasks, search the web for current information, answer questions, and much more. What would you like to do?` 
-        : `Hello! I'm Jarva, your AI assistant. Today is ${currentDate} and it's ${currentTime}. I can help you plan your day, create tasks, search the web for current information, answer questions, and much more. What would you like to do?`;
+        ? `Hello ${username}! I'm Jarva, your AI companion. Today is ${currentDate} and it's ${currentTime}. I've got an overview of your day ready. You have ${todayTasks.length} tasks pending. How can I help you today?` 
+        : `Hello! I'm Jarva, your AI companion. Today is ${currentDate} and it's ${currentTime}. I've got an overview of your day ready. You have ${todayTasks.length} tasks pending. How can I help you today?`;
       
       addMessage({
         role: 'assistant',
         content: greeting,
       });
     }
-  }, [messages, username, initialMessageSent]);
+  }, [messages, username, initialMessageSent, todayTasks]);
 
   useEffect(() => {
     if (showTaskPrompt) {
@@ -88,6 +94,7 @@ export default function AssistantScreen() {
   const handleSendMessage = async (content: string) => {
     setShowTaskPrompt(false);
     setExtractedTasks([]);
+    setShowChat(true);
     
     addMessage({
       role: 'user',
@@ -195,9 +202,17 @@ export default function AssistantScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
-        {displayMessages.length === 0 ? (
+        {messages.length === 1 && !showChat ? (
           <View style={styles.emptyContainer}>
             <EmptyState />
+            {todayTasks.length > 0 && (
+              <View style={styles.todayTasksContainer}>
+                <Text style={styles.sectionTitle}>Today&apos;s Tasks</Text>
+                {todayTasks.map(task => (
+                  <TaskItem key={task.id} task={task} onPress={() => {}} />
+                ))}
+              </View>
+            )}
             <QuickActions onAction={handleQuickAction} />
           </View>
         ) : (
@@ -264,6 +279,17 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
+    padding: 16,
+  },
+  todayTasksContainer: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 12,
   },
   messageList: {
     padding: 16,

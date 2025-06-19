@@ -102,7 +102,7 @@ export const EmptyState: React.FC = () => {
       
       <Text style={styles.title}>Welcome to Jarva</Text>
       <Text style={styles.subtitle}>
-        Your intelligent AI companion for productivity, planning, and getting things done. Ask me anything or try a quick action below!
+        Your intelligent AI companion for productivity and planning. I can help with tasks, schedules, and more. Ask me anything or try a quick action below!
       </Text>
       
       <View style={styles.features}>

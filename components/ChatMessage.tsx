@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
-import { Volume2, User, Bot, Copy, Share } from 'lucide-react-native';
+import { Volume2, User, Bot, Copy, Share2 } from 'lucide-react-native';
 import { Message } from '@/types';
 import { colors } from '@/constants/colors';
 
@@ -76,7 +76,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
         {isStreaming && (
           <View style={styles.streamingIndicator}>
             <Animated.View style={styles.streamingDot} />
-            <Text style={styles.streamingText}>Thinking...</Text>
+            <Text style={styles.streamingText}>Jarva is thinking...</Text>
           </View>
         )}
         
@@ -98,7 +98,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isStreaming =
               </TouchableOpacity>
               
               <TouchableOpacity style={styles.actionButton} onPress={handleShare} activeOpacity={0.7}>
-                <Share size={14} color={colors.textTertiary} strokeWidth={2} />
+                <Share2 size={14} color={colors.textTertiary} strokeWidth={2} />
               </TouchableOpacity>
             </View>
           </View>
