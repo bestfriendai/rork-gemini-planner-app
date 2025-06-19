@@ -32,7 +32,11 @@ export default function RootLayout() {
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
-    if (error) throw error;
+    if (error) {
+      console.error('Font loading error:', error);
+      // Continue anyway - we can proceed without custom fonts if needed
+      SplashScreen.hideAsync();
+    }
   }, [error]);
 
   useEffect(() => {
@@ -41,7 +45,7 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  if (!loaded) {
+  if (!loaded && !error) {
     return null;
   }
 
