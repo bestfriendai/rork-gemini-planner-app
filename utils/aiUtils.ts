@@ -369,12 +369,13 @@ export const callGeminiAI = async (
     }
   } catch (error) {
     const endTime = Date.now();
-    apiMonitor.recordRequest('openrouter', endTime - startTime, false, error instanceof Error ? error.message : 'Unknown error');
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    apiMonitor.recordRequest('openrouter', endTime - startTime, false, errorMessage);
     if (error instanceof AIError) {
       throw error;
     }
     throw new AIError(
-      `Network error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      `Network error: ${errorMessage}`,
       'openrouter',
       undefined,
       true,
@@ -503,12 +504,13 @@ export const callPerplexityAI = async (
     }
   } catch (error) {
     const endTime = Date.now();
-    apiMonitor.recordRequest('perplexity', endTime - startTime, false, error instanceof Error ? error.message : 'Unknown error');
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    apiMonitor.recordRequest('perplexity', endTime - startTime, false, errorMessage);
     if (error instanceof AIError) {
       throw error;
     }
     throw new AIError(
-      `Network error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      `Network error: ${errorMessage}`,
       'perplexity',
       undefined,
       true,

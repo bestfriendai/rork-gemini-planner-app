@@ -3,11 +3,12 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Message, CoreMessage } from '@/types';
 import { Platform } from 'react-native';
+import { processAIRequest, AIError } from '@/utils/aiUtils';
 
 interface ChatState {
   messages: Message[];
   isLoading: boolean;
-  addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
+  addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => Promise<void>;
   clearMessages: () => void;
   setLoading: (loading: boolean) => void;
   formatMessagesForAPI: () => CoreMessage[];
@@ -18,18 +19,115 @@ export const useChatStore = create<ChatState>()(
     (set, get) => ({
       messages: [],
       isLoading: false,
-      addMessage: (message) => set((state) => ({
-        messages: [
-          ...state.messages,
-          {
-            ...message,
-            id: Math.random().toString(36).substring(2, 9),
-            timestamp: Date.now(),
-          },
-        ],
-      })),
+      
+      addMessage: async (message) => {
+        const newMessage: Message = {
+          ...message,
+          id: Math.random().toString(36).substring(2, 9),
+          timestamp: Date.now(),
+        };
+        
+        set((state) => ({
+          messages: [...state.messages, newMessage],
+        }));
+
+        // If it's a user message, get AI response
+        if (message.role === 'user') {
+          set({ isLoading: true });
+          
+          try {
+            const apiMessages = get().formatMessagesForAPI();
+            const currentDateTime = new Date();
+            
+            let streamingResponse = '';
+            const response = await processAIRequest(
+              apiMessages,
+              currentDateTime,
+              (chunk: string) => {
+                if (chunk) {
+                  streamingResponse += chunk;
+                  // Update the last assistant message with streaming content
+                  set((state) => {
+                    const messages = [...state.messages];
+                    const lastMessage = messages[messages.length - 1];
+                    if (lastMessage && lastMessage.role === 'assistant') {
+                      lastMessage.content = streamingResponse;
+                    } else {
+                      messages.push({
+                        id: Math.random().toString(36).substring(2, 9),
+                        role: 'assistant',
+                        content: streamingResponse,
+                        timestamp: Date.now(),
+                      });
+                    }
+                    return { messages };
+                  });
+                }
+              }
+            );
+
+            // Add final response if not streaming or update final content
+            if (!streamingResponse) {
+              const assistantMessage: Message = {
+                id: Math.random().toString(36).substring(2, 9),
+                role: 'assistant',
+                content: response,
+                timestamp: Date.now(),
+              };
+              
+              set((state) => ({
+                messages: [...state.messages, assistantMessage],
+              }));
+            } else {
+              // Ensure final content is set
+              set((state) => {
+                const messages = [...state.messages];
+                const lastMessage = messages[messages.length - 1];
+                if (lastMessage && lastMessage.role === 'assistant') {
+                  lastMessage.content = response || streamingResponse;
+                }
+                return { messages };
+              });
+            }
+          } catch (error) {
+            console.error('AI request failed:', error);
+            
+            let errorMessage = 'Sorry, I encountered an error. Please try again.';
+            
+            if (error instanceof AIError) {
+              switch (error.severity) {
+                case 'LOW':
+                  errorMessage = error.message;
+                  break;
+                case 'MEDIUM':
+                  errorMessage = `${error.message} (Service: ${error.service})`;
+                  break;
+                case 'HIGH':
+                case 'CRITICAL':
+                  errorMessage = `I'm having trouble connecting to my AI services. Please check your internet connection and try again.`;
+                  break;
+              }
+            }
+            
+            const errorResponse: Message = {
+              id: Math.random().toString(36).substring(2, 9),
+              role: 'assistant',
+              content: errorMessage,
+              timestamp: Date.now(),
+            };
+            
+            set((state) => ({
+              messages: [...state.messages, errorResponse],
+            }));
+          } finally {
+            set({ isLoading: false });
+          }
+        }
+      },
+      
       clearMessages: () => set({ messages: [] }),
       setLoading: (loading) => set({ isLoading: loading }),
+      
       formatMessagesForAPI: () => {
         const { messages } = get();
         const currentDateTime = new Date();
@@ -44,7 +142,7 @@ export const useChatStore = create<ChatState>()(
         });
         
         const deviceInfo = Platform.OS === 'web' 
-          ? `Web Browser (${navigator.userAgent.includes('Chrome') ? 'Chrome' : navigator.userAgent.includes('Firefox') ? 'Firefox' : 'Other'})`
+          ? `Web Browser (${typeof navigator !== 'undefined' && navigator.userAgent.includes('Chrome') ? 'Chrome' : typeof navigator !== 'undefined' && navigator.userAgent.includes('Firefox') ? 'Firefox' : 'Other'})`
           : `${Platform.OS} App (${Platform.Version})`;
         
         return [
