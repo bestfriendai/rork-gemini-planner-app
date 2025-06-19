@@ -3,7 +3,7 @@ import { z } from "zod";
 
 // Store API keys securely in the backend
 const API_KEYS = {
-  openrouter: "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",
+  openrouter: "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",
   perplexity: "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"
 };
 
