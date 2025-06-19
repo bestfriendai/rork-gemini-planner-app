@@ -18,6 +18,10 @@ export const API_CONFIG = {
 export const validateAPIKeys = (): { valid: boolean; errors: string[] } => {
   const errors: string[] = [];
   
+  console.log('Validating API Keys:');
+  console.log('OpenRouter Key:', API_CONFIG.openrouter.apiKey ? `${API_CONFIG.openrouter.apiKey.substring(0, 15)}...` : 'NOT SET');
+  console.log('Perplexity Key:', API_CONFIG.perplexity.apiKey ? `${API_CONFIG.perplexity.apiKey.substring(0, 15)}...` : 'NOT SET');
+  
   if (!API_CONFIG.openrouter.apiKey) {
     errors.push('OpenRouter API key is missing');
   } else if (!API_CONFIG.openrouter.apiKey.startsWith('sk-or-')) {

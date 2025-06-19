@@ -52,13 +52,17 @@ export default function HomeScreen() {
       // Show alert for missing API keys
       Alert.alert(
         "API Configuration Issue",
-        `The following issues were found:\n\n${validation.errors.join('\n')}\n\nPlease check your API keys in the app configuration.`,
+        `The following issues were found:
+
+${validation.errors.join('\n')}
+
+Please check your API keys in the app configuration.`,
         [{ text: "OK" }]
       );
     } else {
       const healthStatus = apiMonitor.getHealthStatus();
-      const openRouterStatus = healthStatus.find(s => s.service === 'openrouter')?.status || 'Unknown';
-      const perplexityStatus = healthStatus.find(s => s.service === 'perplexity')?.status || 'Unknown';
+      const openRouterStatus = healthStatus.find(s => s.service === 'openrouter')?.status || 'Ready';
+      const perplexityStatus = healthStatus.find(s => s.service === 'perplexity')?.status || 'Ready';
       
       setApiStatus(`OpenRouter: ${openRouterStatus}, Perplexity: ${perplexityStatus}`);
     }
@@ -130,6 +134,12 @@ export default function HomeScreen() {
               API Keys: {API_CONFIG.openrouter.apiKey ? 'OR ✓' : 'OR ✗'} {API_CONFIG.perplexity.apiKey ? 'PP ✓' : 'PP ✗'}
             </Text>
             <Text style={styles.debugText}>Status: {apiStatus}</Text>
+            <Text style={styles.debugText}>
+              OR Key: {API_CONFIG.openrouter.apiKey ? `${API_CONFIG.openrouter.apiKey.substring(0, 20)}...` : 'Missing'}
+            </Text>
+            <Text style={styles.debugText}>
+              PP Key: {API_CONFIG.perplexity.apiKey ? `${API_CONFIG.perplexity.apiKey.substring(0, 20)}...` : 'Missing'}
+            </Text>
           </View>
         )}
       </KeyboardAvoidingView>
@@ -168,7 +178,8 @@ const styles = StyleSheet.create({
   },
   debugText: {
     color: colors.text,
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '400',
+    marginBottom: 2,
   },
 });

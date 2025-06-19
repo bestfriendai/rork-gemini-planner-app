@@ -36,7 +36,7 @@ export default {
       typedRoutes: true
     },
     extra: {
-      OPENROUTER_API_KEY: "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",
+      OPENROUTER_API_KEY: "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",
       PERPLEXITY_API_KEY: "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",
     }
   }
