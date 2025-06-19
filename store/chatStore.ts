@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Message, CoreMessage } from '@/types';
 import { Platform } from 'react-native';
-import { processAIRequest, AIError } from '@/utils/aiUtils';
+import { processAIRequest, AIError, ErrorSeverity } from '@/utils/aiUtils';
 
 interface ChatState {
   messages: Message[];
@@ -96,14 +96,14 @@ export const useChatStore = create<ChatState>()(
             
             if (error instanceof AIError) {
               switch (error.severity) {
-                case 'LOW':
+                case ErrorSeverity.LOW:
                   errorMessage = error.message;
                   break;
-                case 'MEDIUM':
+                case ErrorSeverity.MEDIUM:
                   errorMessage = `${error.message} (Service: ${error.service})`;
                   break;
-                case 'HIGH':
-                case 'CRITICAL':
+                case ErrorSeverity.HIGH:
+                case ErrorSeverity.CRITICAL:
                   errorMessage = `I'm having trouble connecting to my AI services. Please check your internet connection and try again.`;
                   break;
               }
