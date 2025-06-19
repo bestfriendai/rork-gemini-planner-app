@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated } from 'react-native';
 import { Plus } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 import { DateSelector } from '@/components/DateSelector';
 import { TaskItem } from '@/components/TaskItem';
 import { useTaskStore } from '@/store/taskStore';
@@ -12,6 +13,7 @@ export default function AgendaScreen() {
   const [selectedDate, setSelectedDate] = useState(getCurrentDate());
   const [dates, setDates] = useState<string[]>(getDaysOfWeek(new Date()));
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const router = useRouter();
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -30,6 +32,10 @@ export default function AgendaScreen() {
       completed: false,
       priority: 'medium',
     });
+  };
+
+  const handleTaskPress = (taskId: string) => {
+    router.push(`/task/${taskId}`);
   };
 
   return (
@@ -63,9 +69,7 @@ export default function AgendaScreen() {
                 <TaskItem 
                   key={task.id} 
                   task={task} 
-                  onPress={() => {
-                    // Navigate to task details
-                  }} 
+                  onPress={() => handleTaskPress(task.id)} 
                 />
               ))}
             </>
