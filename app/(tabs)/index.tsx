@@ -3,7 +3,7 @@ import { StyleSheet, View, FlatList, KeyboardAvoidingView, Platform } from 'reac
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useChatStore } from '@/store/chatStore';
 import { ChatMessage } from '@/components/ChatMessage';
-import { ChatInput } from '@/components/ChatInput';
+import ChatInput from '@/components/ChatInput';
 import { EmptyState } from '@/components/EmptyState';
 import StatusIndicator from '@/components/StatusIndicator';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
