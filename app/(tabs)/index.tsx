@@ -20,6 +20,15 @@ export default function ChatScreen() {
     }
   }, [isInitialized, initializeAPI]);
 
+  useEffect(() => {
+    // Scroll to bottom on new messages
+    if (messages.length > 0) {
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [messages]);
+
   const handleSendMessage = async (text: string) => {
     if (text.trim().length === 0) return;
     
@@ -27,11 +36,6 @@ export default function ChatScreen() {
       role: 'user',
       content: text,
     });
-    
-    // Scroll to bottom after sending message
-    setTimeout(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }, 100);
   };
 
   return (

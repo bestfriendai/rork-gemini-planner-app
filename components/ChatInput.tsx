@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   View, 
   TextInput, 
@@ -16,7 +16,7 @@ interface ChatInputProps {
   disabled: boolean;
 }
 
-export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled }) => {
   const [message, setMessage] = useState('');
   const inputRef = useRef<TextInput>(null);
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -168,3 +168,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceSecondary,
   },
 });
+
+export default ChatInput;

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useChatStore } from '@/store/chatStore';
 import { validateAPIKeys } from '@/utils/config';
 
-export default function StatusIndicator() {
+const StatusIndicator: React.FC = () => {
   const { isInitialized, initError, initializeAPI } = useChatStore();
   const [status, setStatus] = useState<'loading' | 'error' | 'ready'>('loading');
   const [message, setMessage] = useState('Initializing...');
@@ -47,7 +47,7 @@ export default function StatusIndicator() {
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -84,3 +84,5 @@ const styles = StyleSheet.create({
     color: '#333',
   },
 });
+
+export default StatusIndicator;

@@ -141,7 +141,7 @@ export const useChatStore = create<ChatState>()(
                   break;
                 case ErrorSeverity.HIGH:
                 case ErrorSeverity.CRITICAL:
-                  errorMessage = `I'm having trouble connecting to my AI services. Please check your internet connection and try again.`;
+                  errorMessage = "I'm having trouble connecting to my AI services. Please check your internet connection and try again.";
                   break;
               }
             }
