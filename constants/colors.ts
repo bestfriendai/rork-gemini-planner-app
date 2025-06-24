@@ -1,65 +1,29 @@
 import { Platform } from 'react-native';
 
-// Modern dark theme inspired by Linear and Notion
+// Light theme with pastel primary/secondary colors inspired by iOS and Notion
 export const colors = {
-  // Base colors
-  primary: '#6366F1', // Indigo
-  primaryMuted: '#6366F120',
+  // Primary - Pastel Blue
+  primary: '#5B9EE1',
+  primaryMuted: '#D6E6F7',
   
-  // Surface colors
-  background: '#000000',
-  surface: '#111111',
-  surfaceSecondary: '#1A1A1A',
-  surfaceTertiary: '#222222',
+  // Secondary - Pastel Coral
+  accent1: '#F28B82',
+  accent2: '#F6C358',
   
-  // Text colors
-  text: '#FFFFFF',
-  textSecondary: '#A1A1AA',
-  textTertiary: '#52525B',
-  textQuaternary: '#27272A',
+  // Neutrals
+  surface: '#FFFFFF',
+  surfaceSecondary: '#F8F9FA',
+  surfaceTertiary: '#E9ECEF',
+  border: '#DEE2E6',
+  text: '#212529',
+  textSecondary: '#495057',
+  textTertiary: '#868E96',
   
-  // Border colors
-  border: '#27272A',
+  // Status
+  success: '#51CF66',
+  warning: '#F6C358',
+  error: '#FF6B6B',
   
-  // Accent colors
-  accent1: '#22D3EE', // Cyan
-  accent2: '#F472B6', // Pink
-  accent3: '#34D399', // Emerald
-  accent4: '#A78BFA', // Violet
-  accent5: '#FB923C', // Orange
-  accent6: '#FACC15', // Yellow
-  
-  // Status colors
-  success: '#22C55E',
-  warning: '#F59E0B',
-  error: '#EF4444',
-  info: '#3B82F6',
-  
-  // Gradients
-  gradients: {
-    primary: ['#6366F1', '#4F46E5'],
-    success: ['#22C55E', '#16A34A'],
-    warning: ['#F59E0B', '#D97706'],
-    error: ['#EF4444', '#DC2626'],
-  },
-  
-  // Platform specific shadows
-  shadows: Platform.select({
-    ios: {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-    },
-    android: {
-      elevation: 5,
-    },
-    web: {
-      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    },
-  }),
+  // Shadows
+  shadow: Platform.OS === 'ios' ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0, 0, 0, 0.2)',
 };
-
-// Type definitions for colors
-export type ColorTheme = typeof colors;
-export type ColorKey = keyof typeof colors;

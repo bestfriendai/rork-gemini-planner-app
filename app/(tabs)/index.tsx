@@ -57,7 +57,7 @@ export default function ChatScreen() {
       
       {isLoading && <LoadingIndicator />}
       
-      <ChatInput />
+      <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
     </KeyboardAvoidingView>
   );
 }

@@ -9,21 +9,21 @@ import {
   Animated,
 } from 'react-native';
 import { Send, Mic, X } from 'lucide-react-native';
-import { useChatStore } from '@/store/chatStore';
 import { colors } from '@/constants/colors';
 
-export const ChatInput: React.FC = () => {
-  const { addMessage, isLoading } = useChatStore();
+interface ChatInputProps {
+  onSendMessage: (text: string) => Promise<void>;
+  disabled: boolean;
+}
+
+export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled }) => {
   const [message, setMessage] = useState('');
   const inputRef = useRef<TextInput>(null);
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const handleSend = () => {
-    if (message.trim() && !isLoading) {
-      addMessage({
-        role: 'user',
-        content: message.trim(),
-      });
+    if (message.trim() && !disabled) {
+      onSendMessage(message.trim());
       setMessage('');
       Keyboard.dismiss();
 
@@ -60,7 +60,7 @@ export const ChatInput: React.FC = () => {
           placeholderTextColor={colors.textTertiary}
           multiline
           maxLength={1000}
-          editable={!isLoading}
+          editable={!disabled}
         />
         
         {message.length > 0 && (
@@ -90,14 +90,14 @@ export const ChatInput: React.FC = () => {
           <TouchableOpacity
             style={[
               styles.sendButton,
-              (!message.trim() || isLoading) && styles.sendButtonDisabled
+              (!message.trim() || disabled) && styles.sendButtonDisabled
             ]}
             onPress={handleSend}
-            disabled={!message.trim() || isLoading}
+            disabled={!message.trim() || disabled}
           >
             <Send 
               size={18} 
-              color={!message.trim() || isLoading ? colors.textTertiary : colors.text} 
+              color={!message.trim() || disabled ? colors.textTertiary : colors.text} 
               strokeWidth={2}
             />
           </TouchableOpacity>

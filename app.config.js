@@ -1,11 +1,11 @@
 export default {
   expo: {
-    name: "Gemini Planner App",
-    slug: "gemini-planner-app",
-    version: "1.0.0",
+    name: "Jarva AI",
+    slug: "jarva-ai",
+    version: "2.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
-    scheme: "myapp",
+    scheme: "jarva",
     userInterfaceStyle: "automatic",
     splash: {
       image: "./assets/images/splash-icon.png",
@@ -16,13 +16,17 @@ export default {
       "**/*"
     ],
     ios: {
-      supportsTablet: true
+      supportsTablet: true,
+      infoPlist: {
+        UIBackgroundModes: ["audio"]
+      }
     },
     android: {
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#ffffff"
-      }
+      },
+      permissions: []
     },
     web: {
       bundler: "metro",
